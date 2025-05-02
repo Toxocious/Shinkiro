@@ -40,10 +40,33 @@ project "Editor"
         "Core-Renderer"
     }
 
-    filter "system:windows"
+    defines
+    {
+        "PLATFORM_WINDOWS"
+    }
+
+    includeDependencies();
+    linkDependencies();
+
+    filter { "system:windows" }
         systemversion "latest"
 
-        defines
+		links
         {
-            "PLATFORM_WINDOWS"
+            "OpenGL32"
         }
+
+	filter { "system:not windows" }
+		links
+        {
+            "GL"
+        }
+
+    filter { "configurations:Debug" }
+        kind "ConsoleApp"
+
+	filter { "configurations:Release" }
+        kind "WindowedApp"
+
+    filter { "configurations:Dist" }
+        kind "WindowedApp"

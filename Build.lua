@@ -1,6 +1,9 @@
 -- Custom Actions
 require "Clean"
 
+-- Build Utility Functions
+include "./Build-Utils.lua"
+
 -- Output Directory Name
 outputdir = "%{cfg.buildcfg}-%{string.gsub(cfg.system, '^%l', string.upper)}-%{cfg.architecture}"
 
@@ -17,7 +20,7 @@ local CoreRendererBinaryDllPath = "Build\\Binaries\\%{outputdir}\\Core-Renderer\
 local EditorBinaryDir = "Build\\Binaries\\%{outputdir}\\Editor"
 
 -- Primary Workspace
-workspace "CppLibTest"
+workspace "Shinkiro"
     architecture "x86_64"
     startproject "Editor"
 
@@ -33,18 +36,18 @@ workspace "CppLibTest"
     -- Configurations for Debug, Release, an Distribution
     filter "configurations:Debug"
         runtime "Debug"
-        symbols "on"
-        optimize "off"
+        optimize "Debug"
+        symbols "Full"
 
     filter "configurations:Release"
         runtime "Release"
-        symbols "on"
-        optimize "on"
+        optimize "On"
+        symbols "On"
 
     filter "configurations:Dist"
         runtime "Release"
-        symbols "off"
-        optimize "on"
+        optimize "On"
+        symbols "Off"
 
     -- Include all project configurations
     include "Projects/Core-Audio"
