@@ -19,6 +19,7 @@ project "Editor"
 
     includedirs
     {
+        "../Core-Asset/Include",
         "../Core-Audio/Include",
         "../Core-Input/Include",
         "../Core-Renderer/Include",
@@ -28,6 +29,7 @@ project "Editor"
 
     links
     {
+        "Core-Asset",
         "Core-Audio",
         "Core-Input",
         "Core-Renderer"
@@ -35,6 +37,7 @@ project "Editor"
 
     dependson
     {
+        "Core-Asset",
         "Core-Audio",
         "Core-Input",
         "Core-Renderer"

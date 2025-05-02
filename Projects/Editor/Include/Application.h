@@ -24,7 +24,7 @@ private:
     bool m_running;
 
     const wchar_t* m_windowClassName = L"EditorWindowClass";
-    const wchar_t* m_windowTitle = L"Editor";
+    const wchar_t* m_windowTitle = L"Shinkiro Editor";
     const int m_windowWidth = 1280;
     const int m_windowHeight = 720;
 
