@@ -6,7 +6,7 @@
 #include <stb_image/stb_image.h>
 
 TextureAsset::TextureAsset( const std::string & name )
-    : Asset( name, AssetType::Texture ), m_Width( 0 ), m_Height( 0 ), m_Channels( 0 ), m_Format( TextureFormat::RGBA8 ), m_HasMipmaps( false )
+    : Asset( name, AssetType::Texture ), m_Width( 0 ), m_Height( 0 ), m_Channels( 0 ), m_Format( TextureFormat::RGBA8 ), m_HasMipmaps( false ), m_Path( name )
 {
 }
 

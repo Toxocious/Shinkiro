@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 FontAsset::FontAsset( const std::string & name )
-    : Asset( name, AssetType::Font )
+    : Asset( name, AssetType::Font ), m_Path( name )
 {
 }
 

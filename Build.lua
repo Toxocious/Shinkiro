@@ -15,7 +15,7 @@ local ObjectDir = "Build\\Artifacts\\%{outputdir}\\%{prj.name}"
 local AssetsPath = "Assets"
 
 -- Core DLL Paths
-local CoreAssetPath = "Build\\Binaries\\%{outputdir}\\Core-Audio\\SkinkiroAsset.dll"
+local CoreAssetPath = "Build\\Binaries\\%{outputdir}\\Core-Asset\\SkinkiroAsset.dll"
 local CoreAudioPath = "Build\\Binaries\\%{outputdir}\\Core-Audio\\SkinkiroAudio.dll"
 local CoreInputPath = "Build\\Binaries\\%{outputdir}\\Core-Input\\SkinkiroInput.dll"
 local CoreRendererPath = "Build\\Binaries\\%{outputdir}\\Core-Renderer\\SkinkiroRenderer.dll"
@@ -96,7 +96,13 @@ workspace "Shinkiro"
 
     -- Post build commands for Core projects to copy DLLs to the Editor directory
     postbuildcommands {
+        -- Copy the Assets directory to the AssetPacker executable directory
+        "{COPYDIR} %{wks.location}" .. AssetsPath .. " %{wks.location}" .. AssetPackerBinaryDir .. "\\Assets",
+
+        -- Copy Core-Asset DLL to the AssetPacker executable directory
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetPackerBinaryDir,
+
+        -- Copy all Core-* DLLs to the Editor executable directory
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. EditorBinaryDir,
         "{COPY} %{wks.location}" .. CoreAudioPath .. " %{wks.location}" .. EditorBinaryDir,
         "{COPY} %{wks.location}" .. CoreInputPath .. " %{wks.location}" .. EditorBinaryDir,

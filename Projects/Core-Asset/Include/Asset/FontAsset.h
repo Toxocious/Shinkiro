@@ -30,7 +30,15 @@ public:
 
     const std::vector<uint8_t> & GetFontData() const;
 
+public:
+    const std::string & GetPath() const
+    {
+        return m_Path;
+    }
+
 private:
+    std::string m_Path;
+
     std::vector<uint8_t> m_FontData;
     std::string          m_FontFamily;
     std::string          m_FontStyle;

@@ -41,7 +41,15 @@ public:
     TextureFormat                GetFormat() const;
     const std::vector<uint8_t> & GetPixelData() const;
 
+public:
+    const std::string & GetPath() const
+    {
+        return m_Path;
+    }
+
 private:
+    std::string m_Path;
+
     std::vector<uint8_t> m_PixelData;
     uint32_t             m_Width;
     uint32_t             m_Height;
