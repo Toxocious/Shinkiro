@@ -4,11 +4,14 @@
 
 #include <Asset/AssetBundleManager.h>
 
-AssetBundleManager::AssetBundleManager( const std::string & name )
-    : bundleName( name )
+AssetBundleManager::AssetBundleManager( const std::string & BundleName )
+    : bundleName( BundleName )
 {
-    bundlePath     = GetExecutableDirectory() / bundleName;
-    extractionPath = GetExecutableDirectory() / "extracted_assets";
+    // Use AssetBundles subdirectory for bundle path
+    bundlePath = GetExecutableDirectory() / "AssetBundles" / bundleName;
+
+    // Keep extraction path in root executable directory
+    extractionPath = GetExecutableDirectory() / "UnpackedAssets";
 }
 
 void AssetBundleManager::SetExtractionPath( const fs::path & path )
@@ -34,7 +37,10 @@ bool AssetBundleManager::LoadBundleInfo()
         return false;
     }
 
+    header.DisplayBundleInfo();
+
     assets.clear();
+
     for ( uint32_t i = 0; i < header.getAssetCount(); ++i )
     {
         uint32_t nameLength;
@@ -93,10 +99,6 @@ std::vector<uint8_t> AssetBundleManager::ExtractAssetToMemory( const std::string
     return data;
 }
 
-/**
- * Doesn't properly write the asset's data to the file.
- * It'll create the output directory and subdirectories, but pretty much all extracted files will be empty.
- */
 std::filesystem::path AssetBundleManager::ExtractAssetToFile( const std::string & assetName )
 {
     auto data = ExtractAssetToMemory( assetName );
@@ -151,12 +153,14 @@ std::map<std::string, std::filesystem::path> AssetBundleManager::ExtractAllAsset
 // Create a bundle from assets in a directory
 bool AssetBundleManager::CreateBundle( const fs::path & inputDir, const fs::path & outputPath )
 {
+    // Verifer that the input directory to be bundled actually exists.
     if ( !fs::exists( inputDir ) || !fs::is_directory( inputDir ) )
     {
         std::cerr << "Input directory does not exist: " << inputDir << std::endl;
         return false;
     }
 
+    // Add all files within the input directory and its subdirectories to a vector.
     std::vector<fs::path> files;
     for ( const auto & entry : fs::recursive_directory_iterator( inputDir ) )
     {
@@ -166,77 +170,62 @@ bool AssetBundleManager::CreateBundle( const fs::path & inputDir, const fs::path
         }
     }
 
-    AssetBundleHeader header;
-    header.setAssetCount( static_cast<uint32_t>( files.size() ) );
-
+    // Create the output bundle file.
     std::ofstream bundle( outputPath, std::ios::binary );
     if ( !bundle.is_open() )
     {
-        std::cerr << "Failed to create bundle file: " << outputPath << std::endl;
+        std::cerr << "\t\tFailed to create bundle file: " << outputPath << std::endl;
         return false;
     }
 
-    // Write header placeholder - we'll update it later
+    // Iniitalize the bundle header, set its asset count, and write the header to the bundle output.
+    AssetBundleHeader header;
+    header.setAssetCount( static_cast<uint32_t>( files.size() ) );
     bundle.write( reinterpret_cast<const char *>( &header ), sizeof( header ) );
 
-    // Calculate relative paths for asset names
-    std::vector<AssetEntry> entries;
-    uint64_t                currentOffset = sizeof( header );
-
-    // First write the asset entries table
+    // Calculate where asset data will start after all entries
+    uint64_t dataStart = sizeof( header );
     for ( const auto & file : files )
     {
         std::string relativePath = file.lexically_relative( inputDir ).string();
-        // Normalize path separators to forward slashes
         std::replace( relativePath.begin(), relativePath.end(), '\\', '/' );
+        dataStart += sizeof( uint32_t ) +    // name length
+                     relativePath.length() + // name
+                     sizeof( uint64_t ) +    // offset
+                     sizeof( uint64_t );     // size
+    }
 
+    // Write entries with correct offsets
+    uint64_t currentOffset = dataStart;
+    for ( const auto & file : files )
+    {
+        // Write entry name
+        std::string relativePath = file.lexically_relative( inputDir ).string();
+        std::replace( relativePath.begin(), relativePath.end(), '\\', '/' );
         uint32_t nameLength = static_cast<uint32_t>( relativePath.length() );
+
         bundle.write( reinterpret_cast<const char *>( &nameLength ), sizeof( nameLength ) );
         bundle.write( relativePath.c_str(), nameLength );
 
-        // Placeholder for offset and size - we'll update these later
-        uint64_t placeholderOffset = 0;
-        uint64_t placeholderSize   = 0;
-        bundle.write( reinterpret_cast<const char *>( &placeholderOffset ), sizeof( placeholderOffset ) );
-        bundle.write( reinterpret_cast<const char *>( &placeholderSize ), sizeof( placeholderSize ) );
+        // Write offset and size
+        uint64_t fileSize = fs::file_size( file );
+        bundle.write( reinterpret_cast<const char *>( &currentOffset ), sizeof( currentOffset ) );
+        bundle.write( reinterpret_cast<const char *>( &fileSize ), sizeof( fileSize ) );
 
-        // Update currentOffset for next entry
-        currentOffset += sizeof( nameLength ) + nameLength + sizeof( uint64_t ) * 2;
+        // Update offset for next file
+        currentOffset += fileSize;
     }
 
-    // Now write the actual asset data and update the entries
-    uint64_t dataOffset = bundle.tellp();
-    bundle.seekp( sizeof( header ) );
-
+    // Write actual file data
     for ( const auto & file : files )
     {
-        std::string relativePath = file.lexically_relative( inputDir ).string();
-        std::replace( relativePath.begin(), relativePath.end(), '\\', '/' );
-
-        // Skip the name field and write offset/size
-        uint32_t nameLength = static_cast<uint32_t>( relativePath.length() );
-        bundle.seekp( sizeof( nameLength ) + nameLength, std::ios::cur );
-
-        uint64_t assetOffset = dataOffset;
-        uint64_t assetSize   = fs::file_size( file );
-        bundle.write( reinterpret_cast<const char *>( &assetOffset ), sizeof( assetOffset ) );
-        bundle.write( reinterpret_cast<const char *>( &assetSize ), sizeof( assetSize ) );
-
-        // Move to the end to append the file data
-        bundle.seekp( 0, std::ios::end );
-
-        // Read and write the file data
-        std::ifstream assetFile( file, std::ios::binary );
-        if ( !assetFile.is_open() )
+        std::ifstream input( file, std::ios::binary );
+        if ( !input.is_open() )
         {
-            std::cerr << "Failed to open asset file: " << file << std::endl;
+            std::cerr << "\t\tFailed to open input file: " << file << std::endl;
             return false;
         }
-
-        bundle << assetFile.rdbuf();
-
-        // Update dataOffset for the next asset
-        dataOffset += assetSize;
+        bundle << input.rdbuf();
     }
 
     return true;

@@ -31,7 +31,7 @@ struct AssetEntry
 class ASSET_API AssetBundleManager
 {
 public:
-    AssetBundleManager( const std::string & name );
+    AssetBundleManager( const std::string & BundleName );
 
 public:
     void SetExtractionPath( const std::filesystem::path & path );
@@ -44,6 +44,17 @@ public:
     std::map<std::string, std::filesystem::path> ExtractAllAssets();
 
     static bool CreateBundle( const fs::path & inputDir, const fs::path & outputPath );
+
+public:
+    std::filesystem::path GetBundlePath() const
+    {
+        return bundlePath;
+    }
+
+    std::string GetBundleName() const
+    {
+        return bundleName;
+    }
 
 private:
     std::filesystem::path   bundlePath;

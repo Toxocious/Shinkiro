@@ -12,6 +12,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <stack>
 
 class ASSET_API AssetBundleHeader
@@ -20,6 +21,15 @@ public:
     AssetBundleHeader();
 
 public:
+    void DisplayBundleInfo() const
+    {
+        std::cout << "Bundle Info:" << std::endl;
+        std::cout << "  Magic: 0x" << std::hex << m_Magic << std::dec << std::endl;
+        std::cout << "  Version: " << m_Version << std::endl;
+        std::cout << "  Asset Count: " << m_AssetCount << std::endl;
+        std::cout << "  Header Size: " << m_HeaderSize << " bytes" << std::endl;
+    }
+
     bool isValid() const
     {
         return m_Magic == 0x424E444C && m_Version > 0; // 'BNDL' in hex

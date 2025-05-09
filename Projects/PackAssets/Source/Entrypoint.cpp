@@ -5,115 +5,30 @@
 
 #include <Asset/AssetBundleManager.h>
 
-#include <Asset/FontAsset.h>
-#include <Asset/TextureAsset.h>
-
 #include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
 
-struct AssetPathInfo
+void PackAssets()
 {
-    std::filesystem::path path;
-    AssetType             type;
-};
-
-void OriginalPackAssets()
-{
-    std::cout << "Packing assets";
+    std::cout << "Packing assets" << std::endl;
     {
-        // Get current executable paths.
         std::filesystem::path exePath = GetExecutablePath();
         std::filesystem::path exeDir  = GetExecutableDirectory();
 
-        std::cout << "Executable path: " << exePath << std::endl;
-        std::cout << "Executable directory: " << exeDir << std::endl;
+        std::cout << "\t(Executable path: " << exePath << ")" << std::endl;
+        std::cout << "\t(Executable directory: " << exeDir << ")" << std::endl;
 
-        // Get asset directory.
         const auto assetsDir = exeDir / "Assets";
-        const auto outputDir = exeDir / "PackedAssets";
+        const auto outputDir = exeDir / "AssetBundles";
 
-        // Prep asset directory paths.
-        std::vector<AssetPathInfo> assetPaths {
-            { assetsDir / "Fonts",    AssetType::Font    },
-            { assetsDir / "Textures", AssetType::Texture }
-        };
+        std::filesystem::path bundlePath = outputDir / "assets.bundle";
 
-        // After bundles declaration:
-        for ( const auto & assetInfo : assetPaths )
+        if ( !std::filesystem::exists( outputDir ) )
         {
-            std::string bundleType;
-            switch ( assetInfo.type )
-            {
-                case AssetType::Font:
-                    bundleType = "Fonts";
-                    break;
-                case AssetType::Texture:
-                    bundleType = "Textures";
-                    break;
-                default:
-                    bundleType = "Unknown";
-                    break;
-            }
-            std::cout << "\t [ ~ ] Packing " << bundleType << " assets..." << std::endl;
-
-            AssetBundle assetBundle = AssetBundle( assetInfo.path.stem().string(), assetInfo.type );
-
-            if ( !std::filesystem::exists( assetInfo.path ) )
-            {
-                std::cerr << "\t [ ~ ] Directory not found: " << assetInfo.path << std::endl;
-                continue;
-            }
-
-            for ( const auto & entry : std::filesystem::directory_iterator( assetInfo.path ) )
-            {
-                switch ( assetInfo.type )
-                {
-                    case AssetType::Font:
-                        assetBundle.AddAsset<AssetType::Font>( entry.path() );
-                        break;
-
-                    case AssetType::Texture:
-                        assetBundle.AddAsset<AssetType::Texture>( entry.path() );
-                        break;
-
-                    default:
-                        std::cerr << "\t [ ~ ] Unsupported asset type for: " << entry.path() << std::endl;
-                        break;
-                }
-            }
-
-            std::filesystem::path outputFile = outputDir / ( "Shinkiro" + bundleType + ".assetbundle" );
-            if ( !assetBundle.PackAssets( outputFile ) )
-            {
-                std::cerr << "\t [ ~ ] Failed to pack " << bundleType << " assets!" << std::endl;
-            }
-            else
-            {
-                std::cout << "\t [ ~ ] Packed " << bundleType << " assets to: " << outputFile << std::endl;
-            }
+            std::filesystem::create_directories( outputDir );
         }
-    }
-}
-
-void NewPackAssets()
-{
-    std::cout << "Packing assets";
-    {
-        // Get current executable paths.
-        std::filesystem::path exePath = GetExecutablePath();
-        std::filesystem::path exeDir  = GetExecutableDirectory();
-
-        std::cout << "Executable path: " << exePath << std::endl;
-        std::cout << "Executable directory: " << exeDir << std::endl;
-
-        // Get asset directory.
-        const auto assetsDir = exeDir / "Assets";
-        const auto outputDir = exeDir / "PackedAssets";
-
-        // Example: Create a bundle from the "assets" directory in the executable directory
-        std::filesystem::path bundlePath = exeDir / "assets.bundle";
 
         if ( std::filesystem::exists( assetsDir ) && std::filesystem::is_directory( assetsDir ) )
         {
@@ -130,13 +45,14 @@ void NewPackAssets()
     }
 }
 
-void ShowBundlePackContents( std::filesystem::path & bundlePath )
+void ShowBundlePackContents( const std::string & bundleName )
 {
-    std::cout << "Bundle path: " << bundlePath << std::endl;
+    std::cout << "Bundle name: " << bundleName << std::endl;
     std::cout << "Bundle contents:" << std::endl;
 
     {
-        AssetBundleManager bundleManager( "assets.bundle" );
+        AssetBundleManager bundleManager( bundleName );
+        const auto         bundlePath = bundleManager.GetBundlePath();
         if ( std::filesystem::exists( bundlePath ) )
         {
             if ( bundleManager.LoadBundleInfo() )
@@ -167,32 +83,18 @@ void ShowBundlePackContents( std::filesystem::path & bundlePath )
     }
 }
 
-int main()
+int main( int argc, char * argv[] )
 {
-    /**
-     * Pack assets.
-     */
-    {
-        // Initialize timer.
-        std::chrono::time_point<std::chrono::high_resolution_clock> timer = std::chrono::high_resolution_clock::now();
+    std::chrono::time_point<std::chrono::high_resolution_clock> timer =
+        std::chrono::high_resolution_clock::now();
 
-        {
-            NewPackAssets();
-        }
+    PackAssets();
 
-        auto endTime = ( std::chrono::duration_cast<std::chrono::nanoseconds>( std::chrono::high_resolution_clock::now() - timer ).count() * 0.001f * 0.001f * 0.001f ) * 1000.0f;
+    auto endTime = ( std::chrono::duration_cast<std::chrono::nanoseconds>( std::chrono::high_resolution_clock::now() - timer ).count() * 0.001f * 0.001f * 0.001f ) * 1000.0f;
 
-        std::cout << "Asset packing complete (" << endTime << " ms)\n\n\n";
-    }
+    std::cout << "Asset packing complete (" << endTime << " ms)\n\n\n";
 
-    /**
-     * Display packed asset bundle contents.
-     */
-    {
-        ShowBundlePackContents( GetExecutableDirectory() / "assets.bundle" );
-    }
-
-    MessageBoxA( NULL, "Asset packing complete!", "PackAssets", MB_OK | MB_ICONINFORMATION );
+    ShowBundlePackContents( "assets.bundle" );
 
     return 0;
 }
