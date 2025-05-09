@@ -25,9 +25,6 @@ public:
     ~AssetBundle() = default;
 
 public:
-    // template <AssetType Type>
-    // bool AddAsset( const std::filesystem::path & assetPath );
-
     bool AddAssetPath( const std::filesystem::path & assetPath );
 
     bool PackAssets( const std::filesystem::path & outputPath );
