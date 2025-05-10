@@ -143,7 +143,7 @@ std::map<std::string, std::filesystem::path> AssetBundleManager::ExtractAllAsset
         }
         catch ( const std::exception & e )
         {
-            std::cerr << "Failed to extract " << asset.name << ": " << e.what() << std::endl;
+            std::cerr << "\tFailed to extract " << asset.name << ": " << e.what() << std::endl;
         }
     }
 

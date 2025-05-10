@@ -23,6 +23,7 @@ local CoreRendererPath = "Build\\Binaries\\%{outputdir}\\Core-Renderer\\Skinkiro
 -- Executable Paths
 local EditorBinaryDir = "Build\\Binaries\\%{outputdir}\\Editor"
 local AssetPackerBinaryDir = "Build\\Binaries\\%{outputdir}\\AssetPacker"
+local AssetUnpackerBinaryDir = "Build\\Binaries\\%{outputdir}\\AssetUnpacker"
 
 -- Primary Workspace
 workspace "Shinkiro"
@@ -84,14 +85,16 @@ workspace "Shinkiro"
     include "Projects/Core-Renderer"
 
     -- Include all project executable configurations
-    include "Projects/Editor"
-    include "Projects/PackAssets"
+    include "Projects/App-Editor"
+    include "Projects/App-AssetPacker"
+    include "Projects/App-AssetUnpacker"
 
     -- Pre build commands for Editor project to create the Editor binary directory in case it isn't there
     -- This is necessary for the post build commands to actually copy the DLLs over
     prebuildcommands {
         "{MKDIR} %{wks.location}" .. EditorBinaryDir,
         "{MKDIR} %{wks.location}" .. AssetPackerBinaryDir,
+        "{MKDIR} %{wks.location}" .. AssetUnpackerBinaryDir,
     }
 
     -- Post build commands for Core projects to copy DLLs to the Editor directory
@@ -99,8 +102,9 @@ workspace "Shinkiro"
         -- Copy the Assets directory to the AssetPacker executable directory
         "{COPYDIR} %{wks.location}" .. AssetsPath .. " %{wks.location}" .. AssetPackerBinaryDir .. "\\Assets",
 
-        -- Copy Core-Asset DLL to the AssetPacker executable directory
+        -- Copy Core-Asset DLL to the AssetPacker and AssetUnpacker executable directories
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetPackerBinaryDir,
+        "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetUnpackerBinaryDir,
 
         -- Copy all Core-* DLLs to the Editor executable directory
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. EditorBinaryDir,
