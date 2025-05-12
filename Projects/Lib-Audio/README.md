@@ -7,12 +7,12 @@
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
-- [Shinkiro Core Audio Module](#shinkiro-core-audio-module)
+- [Shinkiro Audio Library](#shinkiro-audio-library)
 - [License](#license)
 
 
 
-# Shinkiro Core Audio Module
+# Shinkiro Audio Library
 This directory contains the source code for Shinkiro's audio module.
 
 All source code included in this directory is necessary to manage any and all audio files that will be played across Shinkiro's applications.

@@ -15,10 +15,11 @@ local ObjectDir = "Build\\Artifacts\\%{outputdir}\\%{prj.name}"
 local AssetsPath = "Assets"
 
 -- Core DLL Paths
-local CoreAssetPath = "Build\\Binaries\\%{outputdir}\\Core-Asset\\SkinkiroAsset.dll"
-local CoreAudioPath = "Build\\Binaries\\%{outputdir}\\Core-Audio\\SkinkiroAudio.dll"
-local CoreInputPath = "Build\\Binaries\\%{outputdir}\\Core-Input\\SkinkiroInput.dll"
-local CoreRendererPath = "Build\\Binaries\\%{outputdir}\\Core-Renderer\\SkinkiroRenderer.dll"
+local CorePath = "Build\\Binaries\\%{outputdir}\\Lib-Core\\ShinkiroCore.dll"
+local CoreAssetPath = "Build\\Binaries\\%{outputdir}\\Lib-Asset\\ShinkiroAsset.dll"
+local CoreAudioPath = "Build\\Binaries\\%{outputdir}\\Lib-Audio\\ShinkiroAudio.dll"
+local CoreInputPath = "Build\\Binaries\\%{outputdir}\\Lib-Input\\ShinkiroInput.dll"
+local CoreRendererPath = "Build\\Binaries\\%{outputdir}\\Lib-Renderer\\ShinkiroRenderer.dll"
 
 -- Executable Paths
 local EditorBinaryDir = "Build\\Binaries\\%{outputdir}\\Editor"
@@ -79,10 +80,11 @@ workspace "Shinkiro"
     filter {}
 
     -- Include all project DLL configurations
-    include "Projects/Core-Asset"
-    include "Projects/Core-Audio"
-    include "Projects/Core-Input"
-    include "Projects/Core-Renderer"
+    include "Projects/Lib-Core"
+    include "Projects/Lib-Asset"
+    include "Projects/Lib-Audio"
+    include "Projects/Lib-Input"
+    include "Projects/Lib-Renderer"
 
     -- Include all project executable configurations
     include "Projects/App-Editor"
@@ -102,11 +104,12 @@ workspace "Shinkiro"
         -- Copy the Assets directory to the AssetPacker executable directory
         "{COPYDIR} %{wks.location}" .. AssetsPath .. " %{wks.location}" .. AssetPackerBinaryDir .. "\\Assets",
 
-        -- Copy Core-Asset DLL to the AssetPacker and AssetUnpacker executable directories
+        -- Copy Lib-Asset DLL to the AssetPacker and AssetUnpacker executable directories
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetPackerBinaryDir,
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetUnpackerBinaryDir,
 
-        -- Copy all Core-* DLLs to the Editor executable directory
+        -- Copy all Lib-* DLLs to the Editor executable directory
+        "{COPY} %{wks.location}" .. CorePath .. " %{wks.location}" .. EditorBinaryDir,
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. EditorBinaryDir,
         "{COPY} %{wks.location}" .. CoreAudioPath .. " %{wks.location}" .. EditorBinaryDir,
         "{COPY} %{wks.location}" .. CoreInputPath .. " %{wks.location}" .. EditorBinaryDir,

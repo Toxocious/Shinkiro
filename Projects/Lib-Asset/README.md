@@ -7,13 +7,13 @@
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
-- [Shinkiro Core Asset Module](#shinkiro-core-asset-module)
+- [Shinkiro Asset Module](#shinkiro-asset-module)
   - [Recommended Usage](#recommended-usage)
 - [License](#license)
 
 
 
-# Shinkiro Core Asset Module
+# Shinkiro Asset Library
 This directory contains the source code for Shinkiro's asset module.
 
 All source code included in this directory is needed in order to pack assets into a bundle and to unpack a bundle into its collective assets.

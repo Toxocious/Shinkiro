@@ -7,12 +7,12 @@
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
-- [Shinkiro Core Renderer Module](#shinkiro-core-renderer-module)
+- [Shinkiro Renderer Library](#shinkiro-renderer-library)
 - [License](#license)
 
 
 
-# Shinkiro Core Renderer Module
+# Shinkiro Renderer Library
 This directory contains the source code for Shinkiro's renderer module.
 
 All source code included in this directory is necessary to handle all rendering done by any Shinkiro application.

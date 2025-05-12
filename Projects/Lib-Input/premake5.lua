@@ -1,9 +1,9 @@
-project "Core-Input"
+project "Lib-Input"
     kind "SharedLib"
     language "C++"
     cppdialect "C++17"
 
-    targetname "SkinkiroInput"
+    targetname "ShinkiroInput"
 
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
@@ -22,7 +22,7 @@ project "Core-Input"
 
     defines
     {
-        "CORE_INPUT_EXPORTS"
+        "SHINKIRO_INPUT_EXPORTS"
     }
 
     filter "system:windows"

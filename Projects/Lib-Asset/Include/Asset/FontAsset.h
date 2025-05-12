@@ -1,5 +1,5 @@
 #ifdef PLATFORM_WINDOWS
-#    ifdef CORE_ASSET_EXPORTS
+#    ifdef SHINKIRO_ASSET_EXPORTS
 #        define ASSET_API __declspec( dllexport )
 #    else
 #        define ASSET_API __declspec( dllimport )

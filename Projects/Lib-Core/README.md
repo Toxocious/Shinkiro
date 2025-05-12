@@ -7,15 +7,16 @@
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
-- [Shinkiro Input Library](#shinkiro-input-library)
+- [Shinkiro Core Library](#shinkiro-core-library)
 - [License](#license)
 
 
 
-# Shinkiro Input Library
-This directory contains the source code for Shinkiro's input module.
+# Shinkiro Core Library
+This directory contains the source code for Shinkiro's core library module.
 
-All source code included in this directory is necessary to detect and manage all user input inside of any Shinkiro application.
+Source code within this directory is intended to be generalized and used across Shinkiro's complete codebase.
+
 
 
 # License

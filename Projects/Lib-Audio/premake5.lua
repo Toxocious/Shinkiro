@@ -1,9 +1,9 @@
-project "Core-Audio"
+project "Lib-Audio"
     kind "SharedLib"
     language "C++"
     cppdialect "C++17"
 
-    targetname "SkinkiroAudio"
+    targetname "ShinkiroAudio"
 
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
@@ -22,7 +22,7 @@ project "Core-Audio"
 
     defines
     {
-        "CORE_AUDIO_EXPORTS"
+        "SHINKIRO_AUDIO_EXPORTS"
     }
 
     filter "system:windows"

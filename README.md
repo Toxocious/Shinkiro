@@ -37,10 +37,11 @@
     - [Asset Unpacker](#asset-unpacker)
     - [Editor](#editor)
   - [Libraries](#libraries)
-    - [Core-Asset](#core-asset)
-    - [Core-Audio](#core-audio)
-    - [Core-Input](#core-input)
-    - [Core-Renderer](#core-renderer)
+    - [Lib-Asset](#lib-asset)
+    - [Lib-Audio](#lib-audio)
+    - [Lib-Core](#lib-core)
+    - [Lib-Input](#lib-input)
+    - [Lib-Renderer](#lib-renderer)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -61,7 +62,7 @@ Shinkiro currently features.. almost nothing.
 
 The build system is set-up to use premake5, and currently generates the necessary Visual Studio files and configurations to build an [Editor](./Projects/Editor/) executable, an asset packer executable, an asset unpacker executable, and a variety of small core shared libraries.
 
-All shared libraries are prefixed with **`Core-*`**, such as "Core-Audio" where all code for audio-related functionality would be.
+All shared libraries are prefixed with **`Lib-*`**, such as "Lib-Audio" where all code for audio-related functionality would be.
 
 All executable applications are prefixed with **`*App-*`**.
 
@@ -80,21 +81,25 @@ Shinkiro's editor is not currently fit for use as it is not functional.
 > Read more about the editor [here](./Projects/App-Editor/README.md)
 
 ## Libraries
-### Core-Asset
+### Lib-Asset
 Shinkiro includes a shared library that specifically handles assets - packing and unpacking, as well as loading an asset into memory.
-> Read more about the asset library [here](./Projects/Core-Asset/README.md)
+> Read more about the asset library [here](./Projects/Lib-Asset/README.md)
 
-### Core-Audio
-Shinkiro's Core-Audio library is not currently functional.
-> Read more about the audio library [here](./Projects/Core-Audio/README.md)
+### Lib-Audio
+Shinkiro's Lib-Audio library is not currently functional.
+> Read more about the audio library [here](./Projects/Lib-Audio/README.md)
 
-### Core-Input
-Shinkiro's Core-Input library is not currently functional.
-> Read more about the input library [here](./Projects/Core-Input/README.md)
+### Lib-Core
+Shinkiro's Lib-Core library contains more generalized features for any Shinkiro application.
+> Read more about the core library [here](./Projects/Lib-Core/README.md)
 
-### Core-Renderer
-Shinkiro's Core-Renderer library is not currently functional.
-> Read more about the renderer library [here](./Projects/Core-Renderer/README.md)
+### Lib-Input
+Shinkiro's Lib-Input library is not currently functional.
+> Read more about the input library [here](./Projects/Lib-Input/README.md)
+
+### Lib-Renderer
+Shinkiro's Lib-Renderer library is not currently functional.
+> Read more about the renderer library [here](./Projects/Lib-Renderer/README.md)
 
 
 

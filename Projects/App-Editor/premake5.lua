@@ -3,7 +3,7 @@ project "Editor"
     language "C++"
     cppdialect "C++17"
 
-    targetname "SkinkiroEditor"
+    targetname "ShinkiroEditor"
 
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
@@ -19,28 +19,28 @@ project "Editor"
 
     includedirs
     {
-        "../Core-Asset/Include",
-        "../Core-Audio/Include",
-        "../Core-Input/Include",
-        "../Core-Renderer/Include",
+        "../Lib-Asset/Include",
+        "../Lib-Audio/Include",
+        "../Lib-Input/Include",
+        "../Lib-Renderer/Include",
 
         "./Include",
     }
 
     links
     {
-        "Core-Asset",
-        "Core-Audio",
-        "Core-Input",
-        "Core-Renderer"
+        "Lib-Asset",
+        "Lib-Audio",
+        "Lib-Input",
+        "Lib-Renderer"
     }
 
     dependson
     {
-        "Core-Asset",
-        "Core-Audio",
-        "Core-Input",
-        "Core-Renderer"
+        "Lib-Asset",
+        "Lib-Audio",
+        "Lib-Input",
+        "Lib-Renderer"
     }
 
     defines

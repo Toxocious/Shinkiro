@@ -1,15 +1,18 @@
-project "Lib-Renderer"
+project "Lib-Core"
     kind "SharedLib"
     language "C++"
     cppdialect "C++17"
 
-    targetname "ShinkiroRenderer"
+    targetname "ShinkiroCore"
 
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
 
     files
     {
+        -- "%{wks.location}/Libraries/stb_image/include/**.h",
+		-- "%{wks.location}/Libraries/stb_image/include/**.cpp",
+
         "**.h",
         "**.hpp",
         "**.cpp"
@@ -17,12 +20,14 @@ project "Lib-Renderer"
 
     includedirs
     {
+        -- "%{wks.location}/Libraries/stb_image/include",
+
         "./Include",
     }
 
     defines
     {
-        "CORE_RENDERER_EXPORTS"
+        "CORE_EXPORTS"
     }
 
     filter "system:windows"

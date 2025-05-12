@@ -1,9 +1,9 @@
-project "Core-Asset"
+project "Lib-Asset"
     kind "SharedLib"
     language "C++"
     cppdialect "C++17"
 
-    targetname "SkinkiroAsset"
+    targetname "ShinkiroAsset"
 
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
@@ -27,7 +27,7 @@ project "Core-Asset"
 
     defines
     {
-        "CORE_ASSET_EXPORTS"
+        "SHINKIRO_ASSET_EXPORTS"
     }
 
     filter "system:windows"

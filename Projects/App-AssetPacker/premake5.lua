@@ -19,19 +19,19 @@ project "AssetPacker"
 
     includedirs
     {
-        "../Core-Asset/Include",
+        "../Lib-Asset/Include",
 
         "./Include",
     }
 
     links
     {
-        "Core-Asset",
+        "Lib-Asset",
     }
 
     dependson
     {
-        "Core-Asset",
+        "Lib-Asset",
     }
 
     includeDependencies();
