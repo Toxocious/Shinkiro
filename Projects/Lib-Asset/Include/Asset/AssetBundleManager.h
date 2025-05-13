@@ -1,64 +1,64 @@
-#ifdef PLATFORM_WINDOWS
-#    ifdef SHINKIRO_ASSET_EXPORTS
-#        define ASSET_API __declspec( dllexport )
-#    else
-#        define ASSET_API __declspec( dllimport )
-#    endif
-#else
-#    define ASSET_API
-#endif
-
 #pragma once
 
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <stack>
+#ifndef SHINKIRO_ASSET_ASSETBUNDLEMANAGER_H
+#    define SHINKIRO_ASSET_ASSETBUNDLEMANAGER_H
 
-struct AssetEntry
+#    include <Asset/_Defs.h>
+
+#    include <filesystem>
+#    include <fstream>
+#    include <iostream>
+#    include <map>
+#    include <stack>
+
+namespace Shinkiro::Asset
 {
-    std::string name;   // Asset filename
-    uint64_t    offset; // Offset in the bundle file
-    uint64_t    size;   // Size of the asset in bytes
-
-    AssetEntry( const std::string & n, uint64_t o, uint64_t s )
-        : name( n ), offset( o ), size( s )
+    struct AssetEntry
     {
-    }
-};
+        std::string name;   // Asset filename
+        uint64_t    offset; // Offset in the bundle file
+        uint64_t    size;   // Size of the asset in bytes
 
-class ASSET_API AssetBundleManager
-{
-public:
-    AssetBundleManager( const std::string & BundleName );
+        AssetEntry( const std::string & n, uint64_t o, uint64_t s )
+            : name( n ), offset( o ), size( s )
+        {
+        }
+    };
 
-public:
-    void SetExtractionPath( const std::filesystem::path & path );
-    bool LoadBundleInfo();
-
-    std::vector<std::string> GetAssetList();
-    std::vector<uint8_t>     ExtractAssetToMemory( const std::string & assetName );
-
-    std::filesystem::path                        ExtractAssetToFile( const std::string & assetName );
-    std::map<std::string, std::filesystem::path> ExtractAllAssets();
-
-    static bool CreateBundle( const fs::path & inputDir, const fs::path & outputPath );
-
-public:
-    std::filesystem::path GetBundlePath() const
+    class ASSET_API AssetBundleManager
     {
-        return bundlePath;
-    }
+    public:
+        AssetBundleManager( const std::string & BundleName );
 
-    std::string GetBundleName() const
-    {
-        return bundleName;
-    }
+    public:
+        void SetExtractionPath( const std::filesystem::path & path );
+        bool LoadBundleInfo();
 
-private:
-    std::filesystem::path   bundlePath;
-    std::string             bundleName;
-    std::vector<AssetEntry> assets;
-    std::filesystem::path   extractionPath;
-};
+        std::vector<std::string> GetAssetList();
+        std::vector<uint8_t>     ExtractAssetToMemory( const std::string & assetName );
+
+        std::filesystem::path                        ExtractAssetToFile( const std::string & assetName );
+        std::map<std::string, std::filesystem::path> ExtractAllAssets();
+
+        static bool CreateBundle( const std::filesystem::path & inputDir, const std::filesystem::path & outputPath );
+
+    public:
+        std::filesystem::path GetBundlePath() const
+        {
+            return bundlePath;
+        }
+
+        std::string GetBundleName() const
+        {
+            return bundleName;
+        }
+
+    private:
+        std::filesystem::path   bundlePath;
+        std::string             bundleName;
+        std::vector<AssetEntry> assets;
+        std::filesystem::path   extractionPath;
+    };
+}
+
+#endif

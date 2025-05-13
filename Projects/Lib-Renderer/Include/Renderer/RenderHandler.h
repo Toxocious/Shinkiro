@@ -1,26 +1,26 @@
 #pragma once
 
-#include <Windows.h>
-#include <unordered_map>
+#ifndef SHINKIRO_RENDERER_RENDERHANDLER_H
+#    define SHINKIRO_RENDERER_RENDERHANDLER_H
 
-#ifdef PLATFORM_WINDOWS
-#    ifdef SHINKIRO_RENDERER_EXPORTS
-#        define RENDER_API __declspec( dllexport )
-#    else
-#        define RENDER_API __declspec( dllimport )
-#    endif
-#else
-#    define RENDER_API
-#endif
+#    include <Renderer/_Defs.h>
 
-class RENDER_API RenderHandler
+#    include <Windows.h>
+#    include <unordered_map>
+
+namespace Shinkiro::Renderer
 {
-public:
-    static RenderHandler & Get();
+    class RENDER_API RenderHandler
+    {
+    public:
+        static RenderHandler & Get();
 
-private:
-    RenderHandler()                                    = default;
-    ~RenderHandler()                                   = default;
-    RenderHandler( const RenderHandler & )             = delete;
-    RenderHandler & operator=( const RenderHandler & ) = delete;
-};
+    private:
+        RenderHandler()                                    = default;
+        ~RenderHandler()                                   = default;
+        RenderHandler( const RenderHandler & )             = delete;
+        RenderHandler & operator=( const RenderHandler & ) = delete;
+    };
+}
+
+#endif

@@ -1,32 +1,32 @@
 #pragma once
 
-#include <Windows.h>
-#include <unordered_map>
+#ifndef SHINKIRO_AUDIO_AUDIOHANDLER_H
+#    define SHINKIRO_AUDIO_AUDIOHANDLER_H
 
-#ifdef PLATFORM_WINDOWS
-#    ifdef SHINKIRO_AUDIO_EXPORTS
-#        define AUDIO_API __declspec( dllexport )
-#    else
-#        define AUDIO_API __declspec( dllimport )
-#    endif
-#else
-#    define AUDIO_API
-#endif
+#    include <Audio/_Defs.h>
 
-class AUDIO_API AudioHandler
+#    include <Windows.h>
+#    include <unordered_map>
+
+namespace Shinkiro::Audio
 {
-public:
-    AudioHandler();
-    ~AudioHandler();
-    AudioHandler( const AudioHandler & )             = delete;
-    AudioHandler & operator=( const AudioHandler & ) = delete;
-
-private:
-    int GetAudioDeviceID() const
+    class AUDIO_API AudioHandler
     {
-        return m_AudioDeviceID;
-    }
+    public:
+        AudioHandler();
+        virtual ~AudioHandler();
+        AudioHandler( const AudioHandler & )             = delete;
+        AudioHandler & operator=( const AudioHandler & ) = delete;
 
-private:
-    int m_AudioDeviceID { 0 };
-};
+    private:
+        int GetAudioDeviceID() const
+        {
+            return m_AudioDeviceID;
+        }
+
+    private:
+        int m_AudioDeviceID { 0 };
+    };
+}
+
+#endif

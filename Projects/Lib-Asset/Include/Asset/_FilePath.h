@@ -1,29 +1,27 @@
-#ifdef PLATFORM_WINDOWS
-#    ifdef SHINKIRO_ASSET_EXPORTS
-#        define ASSET_API __declspec( dllexport )
-#    else
-#        define ASSET_API __declspec( dllimport )
-#    endif
-#else
-#    define ASSET_API
-#endif
-
 #pragma once
 
-#if defined( _WIN32 ) || defined( _WIN64 )
-#    include <windows.h>
-#elif defined( __APPLE__ )
-#    include <limits.h>
-#    include <mach-o/dyld.h>
-#else // Linux and other Unix-like
-#    include <limits.h>
-#    include <unistd.h>
+#ifndef SHINKIRO_ASSET_FILEPATH_H
+#    define SHINKIRO_ASSET_FILEPATH_H
+
+#    include <Asset/_Defs.h>
+
+#    if defined( _WIN32 ) || defined( _WIN64 )
+#        include <windows.h>
+#    elif defined( __APPLE__ )
+#        include <limits.h>
+#        include <mach-o/dyld.h>
+#    else
+#        include <limits.h>
+#        include <unistd.h>
+#    endif
+
+#    include <filesystem>
+#    include <string>
+
+namespace Shinkiro::Asset
+{
+    ASSET_API std::filesystem::path GetExecutablePath();
+    ASSET_API std::filesystem::path GetExecutableDirectory();
+}
+
 #endif
-
-#include <filesystem>
-#include <string>
-
-namespace fs = std::filesystem;
-
-ASSET_API fs::path GetExecutablePath();
-ASSET_API fs::path GetExecutableDirectory();

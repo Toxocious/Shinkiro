@@ -1,45 +1,45 @@
-#ifdef PLATFORM_WINDOWS
-#    ifdef SHINKIRO_ASSET_EXPORTS
-#        define ASSET_API __declspec( dllexport )
-#    else
-#        define ASSET_API __declspec( dllimport )
-#    endif
-#else
-#    define ASSET_API
-#endif
-
 #pragma once
 
-#include <Asset/Asset.h>
+#ifndef SHINKIRO_ASSET_FONTASSET_H
+#    define SHINKIRO_ASSET_FONTASSET_H
 
-#include <string>
-#include <vector>
+#    include <Asset/_Defs.h>
 
-class ASSET_API FontAsset : public Asset
+#    include <Asset/Asset.h>
+
+#    include <string>
+#    include <vector>
+
+namespace Shinkiro::Asset
 {
-public:
-    FontAsset( const std::string & name );
-    ~FontAsset() override = default;
-
-    // Asset interface implementation
-    void Serialize( std::vector<char> & data ) const override;
-    void Deserialize( const std::vector<char> & data ) override;
-
-    // Custom methods
-    bool LoadFromFile( const std::string & filepath );
-
-    const std::vector<uint8_t> & GetFontData() const;
-
-public:
-    const std::string & GetPath() const
+    class ASSET_API FontAsset : public Asset
     {
-        return m_Path;
-    }
+    public:
+        FontAsset( const std::string & name );
+        ~FontAsset() override = default;
 
-private:
-    std::string m_Path;
+        // Asset interface implementation
+        void Serialize( std::vector<char> & data ) const override;
+        void Deserialize( const std::vector<char> & data ) override;
 
-    std::vector<uint8_t> m_FontData;
-    std::string          m_FontFamily;
-    std::string          m_FontStyle;
-};
+        // Custom methods
+        bool LoadFromFile( const std::string & filepath );
+
+        const std::vector<uint8_t> & GetFontData() const;
+
+    public:
+        const std::string & GetPath() const
+        {
+            return m_Path;
+        }
+
+    private:
+        std::string m_Path;
+
+        std::vector<uint8_t> m_FontData;
+        std::string          m_FontFamily;
+        std::string          m_FontStyle;
+    };
+}
+
+#endif

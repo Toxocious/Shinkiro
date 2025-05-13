@@ -16,8 +16,8 @@ void ShowAndUnpackBundlePackContents( const std::string & bundleName )
     std::cout << "Bundle contents:" << std::endl;
 
     {
-        AssetBundleManager bundleManager( bundleName );
-        const auto         bundlePath = bundleManager.GetBundlePath();
+        Shinkiro::Asset::AssetBundleManager bundleManager( bundleName );
+        const auto                          bundlePath = bundleManager.GetBundlePath();
         if ( std::filesystem::exists( bundlePath ) )
         {
             if ( bundleManager.LoadBundleInfo() )
@@ -57,7 +57,9 @@ int main( int argc, char * argv[] )
 
     auto endTime = ( std::chrono::duration_cast<std::chrono::nanoseconds>( std::chrono::high_resolution_clock::now() - timer ).count() * 0.001f * 0.001f * 0.001f ) * 1000.0f;
 
-    std::cout << "Asset packing complete (" << endTime << " ms)\n\n\n";
+    std::cout << "Asset unpacking complete (" << endTime << " ms)\n\n\n";
+
+    MessageBox( NULL, L"Asset unpacking complete", L"Asset Unpacker", MB_OK | MB_ICONINFORMATION );
 
     return 0;
 }

@@ -1,6 +1,14 @@
 #include <Audio/AudioHandler.h>
 
-AudioHandler::AudioHandler()
+namespace Shinkiro::Audio
 {
-    m_AudioDeviceID = 1;
+    AudioHandler::AudioHandler()
+    {
+        m_AudioDeviceID = 1;
+    }
+
+    AudioHandler::~AudioHandler()
+    {
+        // Add cleanup if needed
+    }
 }

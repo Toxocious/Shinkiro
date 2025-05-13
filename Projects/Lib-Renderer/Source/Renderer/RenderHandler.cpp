@@ -1,6 +1,10 @@
 #include <Renderer/RenderHandler.h>
 
-RenderHandler& RenderHandler::Get() {
-    static RenderHandler instance;
-    return instance;
+namespace Shinkiro::Renderer
+{
+    RenderHandler & RenderHandler::Get()
+    {
+        static RenderHandler instance;
+        return instance;
+    }
 }

@@ -1,106 +1,106 @@
-#ifdef PLATFORM_WINDOWS
-#    ifdef SHINKIRO_ASSET_EXPORTS
-#        define ASSET_API __declspec( dllexport )
-#    else
-#        define ASSET_API __declspec( dllimport )
-#    endif
-#else
-#    define ASSET_API
-#endif
-
 #pragma once
 
-#include <Asset/Asset.h>
-#include <Asset/FontAsset.h>
-#include <Asset/TextureAsset.h>
+#ifndef SHINKIRO_ASSET_ASSETBUNDLE_H
+#    define SHINKIRO_ASSET_ASSETBUNDLE_H
 
-#include <filesystem>
-#include <fstream>
-#include <stack>
+#    include <Asset/_Defs.h>
 
-class ASSET_API AssetBundle
+#    include <Asset/Asset.h>
+#    include <Asset/FontAsset.h>
+#    include <Asset/TextureAsset.h>
+
+#    include <filesystem>
+#    include <fstream>
+#    include <stack>
+
+namespace Shinkiro::Asset
 {
-public:
-    AssetBundle( const std::string & name, AssetType type );
-    ~AssetBundle() = default;
-
-public:
-    bool AddAssetPath( const std::filesystem::path & assetPath );
-
-    bool PackAssets( const std::filesystem::path & outputPath );
-
-public:
-    template <AssetType Type>
-    inline bool AddAsset( const std::filesystem::path & assetPath )
+    class ASSET_API AssetBundle
     {
-        static_assert( false, "Unsupported asset type" );
-        return false;
-    }
+    public:
+        AssetBundle( const std::string & name, AssetType type );
+        ~AssetBundle() = default;
 
-    template <>
-    inline bool AddAsset<AssetType::Font>( const std::filesystem::path & assetPath )
-    {
-        if ( !std::filesystem::exists( assetPath ) )
+    public:
+        bool AddAssetPath( const std::filesystem::path & assetPath );
+
+        bool PackAssets( const std::filesystem::path & outputPath );
+
+    public:
+        template <AssetType Type>
+        inline bool AddAsset( const std::filesystem::path & assetPath )
         {
+            static_assert( false, "Unsupported asset type" );
             return false;
         }
 
-        if ( std::filesystem::is_directory( assetPath ) )
+        template <>
+        inline bool AddAsset<AssetType::Font>( const std::filesystem::path & assetPath )
         {
-            for ( const auto & entry : std::filesystem::recursive_directory_iterator( assetPath ) )
+            if ( !std::filesystem::exists( assetPath ) )
             {
-                if ( entry.is_regular_file() && entry.path().extension().string() == ".ttf" )
-                {
-                    m_FontAssets.emplace_back( entry.path().string() );
-                    m_AssetPaths.push_back( entry.path() );
-                }
+                return false;
             }
-            return true;
+
+            if ( std::filesystem::is_directory( assetPath ) )
+            {
+                for ( const auto & entry : std::filesystem::recursive_directory_iterator( assetPath ) )
+                {
+                    if ( entry.is_regular_file() && entry.path().extension().string() == ".ttf" )
+                    {
+                        m_FontAssets.emplace_back( entry.path().string() );
+                        m_AssetPaths.push_back( entry.path() );
+                    }
+                }
+                return true;
+            }
+            else if ( std::filesystem::is_regular_file( assetPath ) )
+            {
+                m_FontAssets.emplace_back( assetPath.string() );
+                m_AssetPaths.push_back( assetPath );
+                return true;
+            }
+
+            return false;
         }
-        else if ( std::filesystem::is_regular_file( assetPath ) )
+
+        template <>
+        inline bool AddAsset<AssetType::Texture>( const std::filesystem::path & assetPath )
         {
-            m_FontAssets.emplace_back( assetPath.string() );
+            if ( !std::filesystem::exists( assetPath ) )
+            {
+                return false;
+            }
+
+            m_TextureAssets.emplace_back( assetPath.string() );
             m_AssetPaths.push_back( assetPath );
             return true;
         }
 
-        return false;
-    }
-
-    template <>
-    inline bool AddAsset<AssetType::Texture>( const std::filesystem::path & assetPath )
-    {
-        if ( !std::filesystem::exists( assetPath ) )
+    public:
+        const std::string & GetName() const
         {
-            return false;
-        }
+            return m_Name;
+        };
 
-        m_TextureAssets.emplace_back( assetPath.string() );
-        m_AssetPaths.push_back( assetPath );
-        return true;
-    }
+        AssetType GetType() const
+        {
+            return m_Type;
+        };
 
-public:
-    const std::string & GetName() const
-    {
-        return m_Name;
+    protected:
+        std::string m_Name;
+        AssetType   m_Type;
+
+        std::filesystem::path m_AssetDirectoryPath;
+
+        //
+        std::vector<std::filesystem::path> m_AssetPaths;
+
+        //
+        std::vector<FontAsset>    m_FontAssets;
+        std::vector<TextureAsset> m_TextureAssets;
     };
+}
 
-    AssetType GetType() const
-    {
-        return m_Type;
-    };
-
-protected:
-    std::string m_Name;
-    AssetType   m_Type;
-
-    std::filesystem::path m_AssetDirectoryPath;
-
-    //
-    std::vector<std::filesystem::path> m_AssetPaths;
-
-    //
-    std::vector<FontAsset>    m_FontAssets;
-    std::vector<TextureAsset> m_TextureAssets;
-};
+#endif

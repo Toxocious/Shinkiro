@@ -14,8 +14,8 @@ void PackAssets()
 {
     std::cout << "Packing assets" << std::endl;
     {
-        std::filesystem::path exePath = GetExecutablePath();
-        std::filesystem::path exeDir  = GetExecutableDirectory();
+        std::filesystem::path exePath = Shinkiro::Asset::GetExecutablePath();
+        std::filesystem::path exeDir  = Shinkiro::Asset::GetExecutableDirectory();
 
         std::cout << "\t(Executable path: " << exePath << ")" << std::endl;
         std::cout << "\t(Executable directory: " << exeDir << ")" << std::endl;
@@ -33,7 +33,7 @@ void PackAssets()
         if ( std::filesystem::exists( assetsDir ) && std::filesystem::is_directory( assetsDir ) )
         {
             std::cout << "Creating bundle from assets directory..." << std::endl;
-            if ( AssetBundleManager::CreateBundle( assetsDir, bundlePath ) )
+            if ( Shinkiro::Asset::AssetBundleManager::CreateBundle( assetsDir, bundlePath ) )
             {
                 std::cout << "Bundle created successfully at: " << bundlePath << std::endl;
             }
@@ -51,8 +51,8 @@ void ShowBundlePackContents( const std::string & bundleName )
     std::cout << "Bundle contents:" << std::endl;
 
     {
-        AssetBundleManager bundleManager( bundleName );
-        const auto         bundlePath = bundleManager.GetBundlePath();
+        Shinkiro::Asset::AssetBundleManager bundleManager( bundleName );
+        const auto                          bundlePath = bundleManager.GetBundlePath();
         if ( std::filesystem::exists( bundlePath ) )
         {
             if ( bundleManager.LoadBundleInfo() )
@@ -65,11 +65,6 @@ void ShowBundlePackContents( const std::string & bundleName )
                 {
                     std::cout << " - " << assetName << std::endl;
                 }
-
-                // Extract all assets
-                // std::cout << "Extracting all assets..." << std::endl;
-                // auto extractedPaths = bundleManager.ExtractAllAssets();
-                // std::cout << "Extracted " << extractedPaths.size() << " assets" << std::endl;
             }
             else
             {
@@ -95,6 +90,8 @@ int main( int argc, char * argv[] )
     std::cout << "Asset packing complete (" << endTime << " ms)\n\n\n";
 
     ShowBundlePackContents( "assets.bundle" );
+
+    MessageBox( NULL, L"Asset packing complete", L"Asset Packer", MB_OK | MB_ICONINFORMATION );
 
     return 0;
 }

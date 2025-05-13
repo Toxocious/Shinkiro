@@ -1,59 +1,59 @@
-#ifdef PLATFORM_WINDOWS
-#    ifdef SHINKIRO_ASSET_EXPORTS
-#        define ASSET_API __declspec( dllexport )
-#    else
-#        define ASSET_API __declspec( dllimport )
-#    endif
-#else
-#    define ASSET_API
-#endif
-
 #pragma once
 
-#include <Asset/Asset.h>
+#ifndef SHINKIRO_ASSET_TEXTUREASSET_H
+#    define SHINKIRO_ASSET_TEXTUREASSET_H
 
-#include <vector>
+#    include <Asset/_Defs.h>
 
-enum class TextureFormat
+#    include <Asset/Asset.h>
+
+#    include <vector>
+
+namespace Shinkiro::Asset
 {
-    RGB8,
-    RGBA8,
-    BGR8,
-    BGRA8
-};
-
-class ASSET_API TextureAsset : public Asset
-{
-public:
-    TextureAsset( const std::string & name );
-    ~TextureAsset() override = default;
-
-    // Asset interface implementation
-    void Serialize( std::vector<char> & data ) const override;
-    void Deserialize( const std::vector<char> & data ) override;
-
-    // Custom methods
-    bool LoadFromFile( const std::string & filepath );
-
-    uint32_t                     GetWidth() const;
-    uint32_t                     GetHeight() const;
-    uint32_t                     GetChannels() const;
-    TextureFormat                GetFormat() const;
-    const std::vector<uint8_t> & GetPixelData() const;
-
-public:
-    const std::string & GetPath() const
+    enum class TextureFormat
     {
-        return m_Path;
-    }
+        RGB8,
+        RGBA8,
+        BGR8,
+        BGRA8
+    };
 
-private:
-    std::string m_Path;
+    class ASSET_API TextureAsset : public Asset
+    {
+    public:
+        TextureAsset( const std::string & name );
+        ~TextureAsset() override = default;
 
-    std::vector<uint8_t> m_PixelData;
-    uint32_t             m_Width;
-    uint32_t             m_Height;
-    uint32_t             m_Channels;
-    TextureFormat        m_Format;
-    bool                 m_HasMipmaps;
-};
+        // Asset interface implementation
+        void Serialize( std::vector<char> & data ) const override;
+        void Deserialize( const std::vector<char> & data ) override;
+
+        // Custom methods
+        bool LoadFromFile( const std::string & filepath );
+
+        uint32_t                     GetWidth() const;
+        uint32_t                     GetHeight() const;
+        uint32_t                     GetChannels() const;
+        TextureFormat                GetFormat() const;
+        const std::vector<uint8_t> & GetPixelData() const;
+
+    public:
+        const std::string & GetPath() const
+        {
+            return m_Path;
+        }
+
+    private:
+        std::string m_Path;
+
+        std::vector<uint8_t> m_PixelData;
+        uint32_t             m_Width;
+        uint32_t             m_Height;
+        uint32_t             m_Channels;
+        TextureFormat        m_Format;
+        bool                 m_HasMipmaps;
+    };
+}
+
+#endif

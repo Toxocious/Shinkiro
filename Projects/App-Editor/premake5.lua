@@ -20,6 +20,7 @@ project "Editor"
     includedirs
     {
         "../Lib-Asset/Include",
+        "../Lib-Core/Include",
         "../Lib-Audio/Include",
         "../Lib-Input/Include",
         "../Lib-Renderer/Include",
@@ -30,6 +31,7 @@ project "Editor"
     links
     {
         "Lib-Asset",
+        "Lib-Core",
         "Lib-Audio",
         "Lib-Input",
         "Lib-Renderer"
@@ -38,6 +40,7 @@ project "Editor"
     dependson
     {
         "Lib-Asset",
+        "Lib-Core",
         "Lib-Audio",
         "Lib-Input",
         "Lib-Renderer"

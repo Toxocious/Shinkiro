@@ -30,5 +30,5 @@ private:
     const int       m_windowHeight    = 720;
 
     // Audio Manager
-    AudioHandler * m_AudioHandler;
+    Shinkiro::Audio::AudioHandler * m_AudioHandler;
 };

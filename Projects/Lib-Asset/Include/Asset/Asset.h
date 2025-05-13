@@ -1,39 +1,39 @@
-#ifdef PLATFORM_WINDOWS
-#    ifdef SHINKIRO_ASSET_EXPORTS
-#        define ASSET_API __declspec( dllexport )
-#    else
-#        define ASSET_API __declspec( dllimport )
-#    endif
-#else
-#    define ASSET_API
-#endif
-
 #pragma once
 
-#include <string>
-#include <vector>
+#ifndef SHINKIRO_ASSET_ASSET_H
+#    define SHINKIRO_ASSET_ASSET_H
 
-enum class AssetType
+#    include <Asset/_Defs.h>
+
+#    include <string>
+#    include <vector>
+
+namespace Shinkiro::Asset
 {
-    Font,
-    Audio,
-    Model,
-    Texture
-};
+    enum class ASSET_API AssetType
+    {
+        Font,
+        Audio,
+        Model,
+        Texture
+    };
 
-class ASSET_API Asset
-{
-public:
-    Asset( const std::string & name, AssetType type );
-    virtual ~Asset();
+    class ASSET_API Asset
+    {
+    public:
+        Asset( const std::string & name, AssetType type );
+        virtual ~Asset();
 
-    const std::string & GetName() const;
-    AssetType           GetType() const;
+        const std::string & GetName() const;
+        AssetType           GetType() const;
 
-    virtual void Serialize( std::vector<char> & data ) const   = 0;
-    virtual void Deserialize( const std::vector<char> & data ) = 0;
+        virtual void Serialize( std::vector<char> & data ) const   = 0;
+        virtual void Deserialize( const std::vector<char> & data ) = 0;
 
-protected:
-    std::string m_Name;
-    AssetType   m_Type;
-};
+    protected:
+        std::string m_Name;
+        AssetType   m_Type;
+    };
+}
+
+#endif
