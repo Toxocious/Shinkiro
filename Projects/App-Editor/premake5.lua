@@ -19,31 +19,19 @@ project "Editor"
 
     includedirs
     {
-        "../Lib-Asset/Include",
         "../Lib-Core/Include",
-        "../Lib-Audio/Include",
-        "../Lib-Input/Include",
-        "../Lib-Renderer/Include",
 
         "./Include",
     }
 
     links
     {
-        "Lib-Asset",
         "Lib-Core",
-        "Lib-Audio",
-        "Lib-Input",
-        "Lib-Renderer"
     }
 
     dependson
     {
-        "Lib-Asset",
         "Lib-Core",
-        "Lib-Audio",
-        "Lib-Input",
-        "Lib-Renderer"
     }
 
     defines

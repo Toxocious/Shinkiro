@@ -2,7 +2,8 @@
 
 namespace Shinkiro::Core
 {
-    Application::Application()
+    Application::Application( std::string name, std::string version, int height, int width )
+        : m_Name( name ), m_Version( version ), m_Height( height ), m_Width( width )
     {
     }
 
@@ -13,13 +14,8 @@ namespace Shinkiro::Core
     /**
      * Initialize a new application.
      */
-    bool Application::Initialize( std::string name, std::string version, int height, int width )
+    bool Application::Initialize()
     {
-        m_Name    = name;
-        m_Version = version;
-        m_Height  = height;
-        m_Width   = width;
-
         return true;
     }
 

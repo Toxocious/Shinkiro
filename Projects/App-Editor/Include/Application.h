@@ -4,9 +4,6 @@
 #include <Windows.h>
 
 // Projects/Lib-* Headers
-#include <Audio/AudioHandler.h>
-#include <Input/InputHandler.h>
-#include <Renderer/RenderHandler.h>
 
 class Application
 {
@@ -28,7 +25,4 @@ private:
     const wchar_t * m_windowTitle     = L"Shinkiro Editor";
     const int       m_windowWidth     = 1280;
     const int       m_windowHeight    = 720;
-
-    // Audio Manager
-    Shinkiro::Audio::AudioHandler * m_AudioHandler;
 };

@@ -10,14 +10,26 @@
 
 namespace Shinkiro::Core
 {
+    enum class CORE_API ApplicationState
+    {
+        EXIT_ERROR = -1,
+        EXIT       = 0,
+
+        CREATION,
+        INIT,
+        START,
+        UPDATE,
+        FINISH
+    };
+
     class CORE_API Application
     {
     public:
-        Application();
+        Application( std::string name, std::string version, int height, int width );
         ~Application();
 
     public:
-        bool Initialize( std::string name, std::string version, int height, int width );
+        bool Initialize();
         bool Start();
         bool CleanUp();
 
@@ -34,5 +46,7 @@ namespace Shinkiro::Core
 
     extern Application * App;
 }
+
+// extern Shinkiro::Core::Application * App;
 
 #endif

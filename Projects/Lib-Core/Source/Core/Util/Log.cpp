@@ -5,7 +5,17 @@
 namespace Shinkiro::Core
 {
     Ref<spdlog::logger> Log::s_CoreLogger;
-    Ref<spdlog::logger> Log::s_EditorLogger;
+    Ref<spdlog::logger> Log::s_ApplicationLogger;
+
+    Ref<spdlog::logger> & Log::GetCoreLogger()
+    {
+        return s_CoreLogger;
+    }
+
+    Ref<spdlog::logger> & Log::GetApplicationLogger()
+    {
+        return s_ApplicationLogger;
+    }
 
     void Log::Init()
     {
@@ -23,9 +33,9 @@ namespace Shinkiro::Core
         s_CoreLogger->set_level( spdlog::level::trace );
         s_CoreLogger->flush_on( spdlog::level::trace );
 
-        s_EditorLogger = std::make_shared<spdlog::logger>( "EDITOR", begin( logSinks ), end( logSinks ) );
-        spdlog::register_logger( s_EditorLogger );
-        s_EditorLogger->set_level( spdlog::level::trace );
-        s_EditorLogger->flush_on( spdlog::level::trace );
+        s_ApplicationLogger = std::make_shared<spdlog::logger>( "APPLICATION", begin( logSinks ), end( logSinks ) );
+        spdlog::register_logger( s_ApplicationLogger );
+        s_ApplicationLogger->set_level( spdlog::level::trace );
+        s_ApplicationLogger->flush_on( spdlog::level::trace );
     }
 }

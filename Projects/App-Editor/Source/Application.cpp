@@ -58,9 +58,6 @@ bool Application::Initialize()
         return false;
     }
 
-    // setup audio handler
-    m_AudioHandler = new Shinkiro::Audio::AudioHandler();
-
     ShowWindow( m_hwnd, SW_SHOW );
     m_running = true;
     return true;

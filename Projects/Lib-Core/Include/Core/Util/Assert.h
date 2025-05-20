@@ -3,8 +3,9 @@
 #ifndef SHINKIRO_CORE_ASSERT_H
 #    define SHINKIRO_CORE_ASSERT_H
 
-#    include <Core/_Common.h>
 #    include <Core/_Defs.h>
+
+#    include <Core/_Common.h>
 
 #    include <Core/Util/Log.h>
 #    include <Core/Util/Macro.h>

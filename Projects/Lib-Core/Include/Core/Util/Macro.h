@@ -3,8 +3,9 @@
 #ifndef SHINKIRO_CORE_MACRO_H
 #    define SHINKIRO_CORE_MACRO_H
 
-#    include <Core/_Common.h>
 #    include <Core/_Defs.h>
+
+#    include <Core/_Common.h>
 
 #    ifdef SHINKIRO_DEBUG
 #        if defined( SHINKIRO_PLATFORM_WINDOWS )

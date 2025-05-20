@@ -10,7 +10,7 @@ project "Lib-Core"
 
     defines
     {
-        "CORE_EXPORTS"
+        "SHINKIRO_CORE_EXPORTS"
     }
 
     includedirs
@@ -26,7 +26,7 @@ project "Lib-Core"
         -- "%{wks.location}/Libraries/stb_image/include/**.h",
 		-- "%{wks.location}/Libraries/stb_image/include/**.cpp",
         "%{wks.location}/Libraries/spdlog/include/**.h",
-		-- "%{wks.location}/Libraries/spdlog/include/**.cpp",
+		"%{wks.location}/Libraries/spdlog/include/**.cpp",
 
         "**.h",
         "**.hpp",
