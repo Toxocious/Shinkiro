@@ -1,11 +1,14 @@
 .vs/
 .vscode/
 
-Build/
+[Bb]uild/
 Generated/
+Logs/
 
 *.vcxproj
 *.vcxproj.user
 *.vcxproj.filters
 *.sln
 *.log
+
+Makefile

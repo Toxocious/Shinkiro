@@ -115,17 +115,24 @@ git clone --recursive https://github.com/Toxocious/Shinkiro.git
 ```
 
 ## Project Setup
-Generate the Visual Studio files with premake; there's a script included with the repository to handle this for you.
+The build and compilation process is automated for your operating system (not you, Mac users, sorry) with the included [Compile.sh](./Compile.sh) script.
 
+The available arguments for the script are as follows:
 ```sh
+# Normal build (libraries + project)
 ./Compile.sh
-```
 
-## Cleaning Up
-Included with this repository is a script to remove all generated files along with all build files; you can run the script like so.
+# Cleans build files (Makefiles, *.make files, VS solutions and artifacts, and build logs)
+./Compile.sh --clean
 
-```sh
-./Clean.sh
+# Build only libraries
+./Compile.sh --libs-only
+
+# Build only main project (assumes libraries are built)
+./Compile.sh --project-only
+
+# Show help
+./Compile.sh --help
 ```
 
 
