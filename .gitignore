@@ -11,6 +11,3 @@ node_modules/
 *.vcxproj.filters
 *.sln
 *.log
-
-Assets/Textures/Pokemon
-Assets/Textures/Sprites
