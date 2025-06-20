@@ -1,5 +1,5 @@
 <div align="center">
-  <!-- <img src="./app/images/Assets/banner.png" title="Pokemon Absolute Logo" alt="Pokemon Absolute Logo" /> -->
+  <!-- <img src="..." title="Shinkiro Logo" alt="Shinkiro Logo" /> -->
   <h1 align="center">Shinkiro</h1>
 
   **Shinkiro** is a C++ project that currently compiles into a single executable alongside multiple shared libraries.
@@ -42,6 +42,8 @@
     - [Lib-Core](#lib-core)
     - [Lib-Input](#lib-input)
     - [Lib-Renderer](#lib-renderer)
+  - [Tools](#tools)
+    - [Sprite Downloader](#sprite-downloader)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -100,6 +102,11 @@ Shinkiro's Lib-Input library is not currently functional.
 ### Lib-Renderer
 Shinkiro's Lib-Renderer library is not currently functional.
 > Read more about the renderer library [here](./Projects/Lib-Renderer/README.md)
+
+## Tools
+### Sprite Downloader
+Shinkiro includes a custom tool that fetches and downloads sprites from Pokemon Showdown.
+> Read more about the sprite downloader [here](./Tools/Sprite_Downloader/README.md)
 
 
 

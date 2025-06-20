@@ -4,8 +4,13 @@
 Build/
 Generated/
 
+node_modules/
+
 *.vcxproj
 *.vcxproj.user
 *.vcxproj.filters
 *.sln
 *.log
+
+Assets/Textures/Pokemon
+Assets/Textures/Sprites
