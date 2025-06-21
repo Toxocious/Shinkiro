@@ -2,9 +2,11 @@
 
 #include <Asset/Asset.h>
 #include <Asset/AssetBundle.h>
+#include <Asset/Log.h>
 
 #include <Asset/AssetBundleManager.h>
 
+#include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -14,22 +16,17 @@ void ShowAndUnpackBundlePackContents( const std::string & bundleName )
 {
     std::cout << "Bundle name: " << bundleName << std::endl;
     std::cout << "Bundle contents:" << std::endl;
-
     {
         Shinkiro::Asset::AssetBundleManager bundleManager( bundleName );
         const auto                          bundlePath = bundleManager.GetBundlePath();
+
         if ( std::filesystem::exists( bundlePath ) )
         {
             if ( bundleManager.LoadBundleInfo() )
             {
                 std::cout << "Bundle loaded successfully" << std::endl;
-
-                // List all assets
-                std::cout << "Assets in bundle:" << std::endl;
-                for ( const auto & assetName : bundleManager.GetAssetList() )
-                {
-                    std::cout << " - " << assetName << std::endl;
-                }
+                auto assetList = bundleManager.GetAssetList();
+                std::cout << "Found " << assetList.size() << " assets in bundle" << std::endl;
 
                 // Extract all assets
                 std::cout << "\nExtracting all assets..." << std::endl;
@@ -50,6 +47,8 @@ void ShowAndUnpackBundlePackContents( const std::string & bundleName )
 
 int main( int argc, char * argv[] )
 {
+    Shinkiro::Asset::Log::Init( "AssetUnpacker.log" );
+
     std::chrono::time_point<std::chrono::high_resolution_clock> timer =
         std::chrono::high_resolution_clock::now();
 
@@ -59,7 +58,7 @@ int main( int argc, char * argv[] )
 
     std::cout << "Asset unpacking complete (" << endTime << " ms)\n\n\n";
 
-    MessageBox( NULL, L"Asset unpacking complete", L"Asset Unpacker", MB_OK | MB_ICONINFORMATION );
+    Shinkiro::Asset::Log::Shutdown();
 
     return 0;
 }

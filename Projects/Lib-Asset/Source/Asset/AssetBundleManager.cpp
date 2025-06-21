@@ -1,8 +1,17 @@
 #include <Asset/_FilePath.h>
 
 #include <Asset/AssetBundleHeader.h>
+#include <Asset/Log.h>
 
 #include <Asset/AssetBundleManager.h>
+
+#include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
+#include <vector>
 
 namespace Shinkiro::Asset
 {
@@ -26,21 +35,35 @@ namespace Shinkiro::Asset
         std::ifstream file( bundlePath, std::ios::binary );
         if ( !file.is_open() )
         {
-            std::cerr << "Failed to open bundle: " << bundlePath << std::endl;
+            std::string msg = "Failed to open bundle: " + bundlePath.string();
+            Log::Write( msg );
+            std::cerr << msg << std::endl;
             return false;
         }
 
         AssetBundleHeader header;
         file.read( reinterpret_cast<char *>( &header ), sizeof( header ) );
-
         if ( !header.isValid() )
         {
-            std::cerr << "Invalid bundle format" << std::endl;
+            std::string msg = "Invalid bundle format: " + bundlePath.string();
+            Log::Write( msg );
+            std::cerr << msg << std::endl;
+
             return false;
         }
 
-        header.DisplayBundleInfo();
+        std::stringstream ss;
+        ss << "--- Bundle Information ---" << std::endl;
+        ss << "  Name: " << bundleName << std::endl;
+        ss << "  Magic: 0x" << std::hex << header.getMagic() << std::dec << std::endl;
+        ss << "  Version: " << header.getVersion() << std::endl;
+        ss << "  Asset Count: " << header.getAssetCount() << std::endl;
+        ss << "  Header Size: " << header.getHeaderSize() << " bytes" << std::endl;
+        ss << "--------------------------";
+        Log::Write( ss.str() );
+        Log::Write( "" );
 
+        header.DisplayBundleInfo();
         assets.clear();
 
         for ( uint32_t i = 0; i < header.getAssetCount(); ++i )
@@ -68,15 +91,20 @@ namespace Shinkiro::Asset
         {
             names.push_back( asset.name );
         }
+
         return names;
     }
 
     std::vector<uint8_t> AssetBundleManager::ExtractAssetToMemory( const std::string & assetName )
     {
-        auto it = std::find_if( assets.begin(), assets.end(), [&]( const AssetEntry & entry )
-                                {
-                                    return entry.name == assetName;
-                                } );
+        auto it = std::find_if(
+            assets.begin(),
+            assets.end(),
+            [&]( const AssetEntry & entry )
+            {
+                return entry.name == assetName;
+            }
+        );
 
         if ( it == assets.end() )
         {
@@ -86,31 +114,19 @@ namespace Shinkiro::Asset
         std::ifstream file( bundlePath, std::ios::binary );
         if ( !file.is_open() )
         {
-            throw std::runtime_error( "Failed to open bundle file" );
+            throw std::runtime_error( "Failed to open bundle: " + bundlePath.string() );
         }
 
-        std::vector<uint8_t> data( it->size );
         file.seekg( it->offset );
+        std::vector<uint8_t> data( it->size );
         file.read( reinterpret_cast<char *>( data.data() ), it->size );
-
-        if ( file.fail() )
-        {
-            throw std::runtime_error( "Failed to read asset data" );
-        }
 
         return data;
     }
 
     std::filesystem::path AssetBundleManager::ExtractAssetToFile( const std::string & assetName )
     {
-        auto data = ExtractAssetToMemory( assetName );
-
-        // Ensure extraction directory exists
-        if ( !std::filesystem::exists( extractionPath ) )
-        {
-            std::filesystem::create_directories( extractionPath );
-        }
-
+        std::vector<uint8_t>  data    = ExtractAssetToMemory( assetName );
         std::filesystem::path outPath = extractionPath / assetName;
 
         // Create subdirectories if needed
@@ -134,31 +150,44 @@ namespace Shinkiro::Asset
     // Extract all assets
     std::map<std::string, std::filesystem::path> AssetBundleManager::ExtractAllAssets()
     {
-        std::map<std::string, std::filesystem::path> extractedPaths;
+        Log::Write( "Unpacking All Assets" );
+        Log::Write( "" );
 
+        Log::Write( "~ Found " + std::to_string( assets.size() ) + " assets in the bundle" );
+        Log::Write( "" );
+
+        std::map<std::string, std::filesystem::path> extractedPaths;
         for ( const auto & asset : assets )
         {
             try
             {
                 std::filesystem::path path = ExtractAssetToFile( asset.name );
                 extractedPaths[asset.name] = path;
+                Log::Write( "Unpacked asset: " + asset.name );
             }
             catch ( const std::exception & e )
             {
-                std::cerr << "\tFailed to extract " << asset.name << ": " << e.what() << std::endl;
+                std::string msg = "Failed to extract asset " + asset.name + ": " + e.what();
+                Log::Write( msg );
+                std::cerr << msg << std::endl;
             }
         }
-
         return extractedPaths;
     }
 
     // Create a bundle from assets in a directory
     bool AssetBundleManager::CreateBundle( const std::filesystem::path & inputDir, const std::filesystem::path & outputPath )
     {
+        Log::Write( "Creating asset bundle: " + outputPath.string() );
+        Log::Write( "" );
+
         // Verifer that the input directory to be bundled actually exists.
         if ( !std::filesystem::exists( inputDir ) || !std::filesystem::is_directory( inputDir ) )
         {
-            std::cerr << "Input directory does not exist: " << inputDir << std::endl;
+            std::string msg = "Input directory does not exist: " + inputDir.string();
+            Log::Write( msg );
+            std::cerr << msg << std::endl;
+
             return false;
         }
 
@@ -176,7 +205,10 @@ namespace Shinkiro::Asset
         std::ofstream bundle( outputPath, std::ios::binary );
         if ( !bundle.is_open() )
         {
-            std::cerr << "\t\tFailed to create bundle file: " << outputPath << std::endl;
+            std::string msg = "\t\tFailed to create bundle file: " + outputPath.string();
+            Log::Write( msg );
+            std::cerr << msg << std::endl;
+
             return false;
         }
 
@@ -204,8 +236,8 @@ namespace Shinkiro::Asset
             // Write entry name
             std::string relativePath = file.lexically_relative( inputDir ).string();
             std::replace( relativePath.begin(), relativePath.end(), '\\', '/' );
+            Log::Write( "Packed Asset: " + relativePath );
             uint32_t nameLength = static_cast<uint32_t>( relativePath.length() );
-
             bundle.write( reinterpret_cast<const char *>( &nameLength ), sizeof( nameLength ) );
             bundle.write( relativePath.c_str(), nameLength );
 
@@ -224,12 +256,14 @@ namespace Shinkiro::Asset
             std::ifstream input( file, std::ios::binary );
             if ( !input.is_open() )
             {
-                std::cerr << "\t\tFailed to open input file: " << file << std::endl;
+                std::string msg = "\t\tFailed to open input file: " + file.string();
+                Log::Write( msg );
+                std::cerr << msg << std::endl;
+
                 return false;
             }
             bundle << input.rdbuf();
         }
-
         return true;
     }
 }

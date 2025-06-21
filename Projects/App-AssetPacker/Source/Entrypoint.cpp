@@ -2,9 +2,11 @@
 
 #include <Asset/Asset.h>
 #include <Asset/AssetBundle.h>
+#include <Asset/Log.h>
 
 #include <Asset/AssetBundleManager.h>
 
+#include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -17,14 +19,10 @@ void PackAssets()
         std::filesystem::path exePath = Shinkiro::Asset::GetExecutablePath();
         std::filesystem::path exeDir  = Shinkiro::Asset::GetExecutableDirectory();
 
-        std::cout << "\t(Executable path: " << exePath << ")" << std::endl;
-        std::cout << "\t(Executable directory: " << exeDir << ")" << std::endl;
-
         const auto assetsDir = exeDir / "Assets";
         const auto outputDir = exeDir / "AssetBundles";
 
         std::filesystem::path bundlePath = outputDir / "assets.bundle";
-
         if ( !std::filesystem::exists( outputDir ) )
         {
             std::filesystem::create_directories( outputDir );
@@ -53,13 +51,13 @@ void ShowBundlePackContents( const std::string & bundleName )
     {
         Shinkiro::Asset::AssetBundleManager bundleManager( bundleName );
         const auto                          bundlePath = bundleManager.GetBundlePath();
+
         if ( std::filesystem::exists( bundlePath ) )
         {
             if ( bundleManager.LoadBundleInfo() )
             {
                 std::cout << "Bundle loaded successfully" << std::endl;
 
-                // List all assets
                 std::cout << "Assets in bundle:" << std::endl;
                 for ( const auto & assetName : bundleManager.GetAssetList() )
                 {
@@ -80,6 +78,8 @@ void ShowBundlePackContents( const std::string & bundleName )
 
 int main( int argc, char * argv[] )
 {
+    Shinkiro::Asset::Log::Init( "AssetPacker.log" );
+
     std::chrono::time_point<std::chrono::high_resolution_clock> timer =
         std::chrono::high_resolution_clock::now();
 
@@ -91,7 +91,7 @@ int main( int argc, char * argv[] )
 
     ShowBundlePackContents( "assets.bundle" );
 
-    MessageBox( NULL, L"Asset packing complete", L"Asset Packer", MB_OK | MB_ICONINFORMATION );
+    Shinkiro::Asset::Log::Shutdown();
 
     return 0;
 }
