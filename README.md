@@ -31,6 +31,11 @@
 - [About The Project](#about-the-project)
   - [Shinkiro's Origins](#shinkiros-origins)
   - [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Project Setup](#project-setup)
+  - [Cleaning Up](#cleaning-up)
 - [Project Modules](#project-modules)
   - [Executables](#executables)
     - [Asset Packer](#asset-packer)
@@ -44,11 +49,6 @@
     - [Lib-Renderer](#lib-renderer)
   - [Tools](#tools)
     - [Sprite Downloader](#sprite-downloader)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Project Setup](#project-setup)
-  - [Cleaning Up](#cleaning-up)
 - [License](#license)
 
 
@@ -68,7 +68,40 @@ All shared libraries are prefixed with **`Lib-*`**, such as "Lib-Audio" where al
 
 All executable applications are prefixed with **`*App-*`**.
 
+Any external tools that are not directly used by any part of an application or its modules should remain inside of the `./Tools` directory.
+
+
+
+# Getting Started
+## Prerequisites
+You'll need [Premake](https://premake.github.io/download) and [Visual Studio](https://visualstudio.microsoft.com/vs/community/).
+
+> Support for non-Windows operating systems does not currently exist.
+
+## Installation
+Clone the repository.
+
+```bash
+git clone --recursive https://github.com/Toxocious/Shinkiro.git
+```
+
+## Project Setup
+Generate the Visual Studio files with premake; there's a script included with the repository to handle this for you.
+
+```sh
+./Compile.sh
+```
+
+## Cleaning Up
+Included with this repository is a script to remove all generated files along with all build files; you can run the script like so.
+
+```sh
+./Clean.sh
+```
+
+
 # Project Modules
+
 ## Executables
 ### Asset Packer
 Shinkiro features a basic but usable asset packer, serving the purpose of bundling assets for any Shinkiro application to use during runtime.
@@ -107,33 +140,6 @@ Shinkiro's Lib-Renderer library is not currently functional.
 ### Sprite Downloader
 Shinkiro includes a custom tool that fetches and downloads sprites from Pokemon Showdown.
 > Read more about the sprite downloader [here](./Tools/Sprite_Downloader/README.md)
-
-
-
-# Getting Started
-## Prerequisites
-You'll need [Premake](https://premake.github.io/download) and [Visual Studio](https://visualstudio.microsoft.com/vs/community/).
-
-## Installation
-Clone the repository.
-
-```bash
-git clone --recursive https://github.com/Toxocious/Shinkiro.git
-```
-
-## Project Setup
-Generate the Visual Studio files with premake; there's a script included with the repository to handle this for you.
-
-```sh
-./Compile.sh
-```
-
-## Cleaning Up
-Included with this repository is a script to remove all generated files along with all build files; you can run the script like so.
-
-```sh
-./Clean.sh
-```
 
 
 

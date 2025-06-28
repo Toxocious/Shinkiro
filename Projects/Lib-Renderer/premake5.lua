@@ -1,7 +1,7 @@
 project "Lib-Renderer"
     kind "SharedLib"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++20"
 
     targetname "ShinkiroRenderer"
 

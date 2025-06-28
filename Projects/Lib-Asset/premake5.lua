@@ -1,7 +1,7 @@
 project "Lib-Asset"
     kind "SharedLib"
     language "C++"
-    cppdialect "C++17"
+    cppdialect "C++20"
 
     targetname "ShinkiroAsset"
 
