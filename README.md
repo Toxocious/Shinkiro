@@ -48,7 +48,7 @@
     - [Lib-Input](#lib-input)
     - [Lib-Renderer](#lib-renderer)
   - [Tools](#tools)
-    - [Sprite Downloader](#sprite-downloader)
+    - [Asset Downloader](#asset-downloader)
 - [License](#license)
 
 
@@ -137,9 +137,9 @@ Shinkiro's Lib-Renderer library is not currently functional.
 > Read more about the renderer library [here](./Projects/Lib-Renderer/README.md)
 
 ## Tools
-### Sprite Downloader
-Shinkiro includes a custom tool that fetches and downloads sprites from Pokemon Showdown.
-> Read more about the sprite downloader [here](./Tools/Sprite_Downloader/README.md)
+### Asset Downloader
+Shinkiro includes a custom tool that fetches and downloads assets from Pokemon Showdown, namely Pokemon sprites and icons, item icons, and Pokemon cries.
+> Read more about the asset downloader [here](./Tools/Sprite_Downloader/README.md)
 
 
 
