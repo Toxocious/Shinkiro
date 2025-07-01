@@ -2,8 +2,7 @@
 
 namespace Shinkiro::Core
 {
-    Application::Application( std::string name, std::string version, int height, int width )
-        : m_Name( name ), m_Version( version ), m_Height( height ), m_Width( width )
+    Application::Application()
     {
     }
 
@@ -14,8 +13,30 @@ namespace Shinkiro::Core
     /**
      * Initialize a new application.
      */
-    bool Application::Initialize()
+    bool Application::Initialize( std::string name, std::string version, int height, int width )
     {
+        // Create instances of required modules.
+        m_Window = new Shinkiro::Core::Window();
+
+        // Assign order of execution to modules.
+        m_Modules.push_back( m_Window );
+
+        // Initialize all of our modules.
+        for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+        {
+            auto p_Module = ( *module );
+            SHNK_CORE_TRACE( "Initializing module '{0}'", p_Module->m_Name.c_str() );
+
+            if ( p_Module->m_Name == "Window" )
+            {
+                p_Module->Initialize( name.c_str(), height, width );
+            }
+            else
+            {
+                p_Module->Initialize();
+            }
+        }
+
         return true;
     }
 
@@ -24,6 +45,13 @@ namespace Shinkiro::Core
      */
     bool Application::Start()
     {
+        for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+        {
+            auto p_Module = ( *module );
+            SHNK_CORE_TRACE( "Starting module '{0}'", p_Module->m_Name.c_str() );
+            p_Module->Start();
+        }
+
         return true;
     }
 
@@ -32,6 +60,16 @@ namespace Shinkiro::Core
      */
     bool Application::CleanUp()
     {
+        SHNK_CORE_TRACE( "Cleaning up the application and its modules" );
+        {
+            for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+            {
+                auto p_Module = ( *module );
+                SHNK_CORE_TRACE( "Cleaning module '{0}'", p_Module->m_Name.c_str() );
+                p_Module->CleanUp();
+            }
+        }
+
         return true;
     }
 
@@ -40,15 +78,76 @@ namespace Shinkiro::Core
      */
     bool Application::PreUpdate()
     {
+        // {
+        //     for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+        //     {
+        //         auto p_Module = ( *module );
+        //         SHNK_CORE_TRACE( "Module '{0}' pre-update", p_Module->m_Name.c_str() );
+        //         p_Module->PreUpdate();
+        //     }
+        // }
+
         return true;
     }
 
     /**
      * Update loop.
      */
-    bool Application::Update()
+    Shinkiro::Core::UpdateStatus Application::Update()
     {
-        return true;
+        Shinkiro::Core::UpdateStatus status = Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
+
+        // Pre-Update
+        {
+            for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+            {
+                auto p_Module = ( *module );
+
+                status = p_Module->PreUpdate();
+                if ( status != Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE )
+                {
+                    SHNK_CORE_ERROR( "Module '{0}' failed on PreUpdate() -> '{1}'", p_Module->m_Name, p_Module->UpdateStatusToString( status ).c_str() );
+
+                    return status;
+                }
+            }
+        }
+
+        // Update
+        {
+            for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+            {
+                auto p_Module = ( *module );
+
+                status = p_Module->Update();
+                if ( status != Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE )
+                {
+                    SHNK_CORE_ERROR( "Module '{0}' failed on Update() -> '{1}'", p_Module->m_Name, p_Module->UpdateStatusToString( status ).c_str() );
+
+                    return status;
+                }
+            }
+        }
+
+        // Post-Update
+        {
+            for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+            {
+                auto p_Module = ( *module );
+
+                status = p_Module->PostUpdate();
+                if ( status != Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE )
+                {
+                    SHNK_CORE_ERROR( "Module '{0}' failed on PostUpdate() -> '{1}'", p_Module->m_Name, p_Module->UpdateStatusToString( status ).c_str() );
+
+                    return status;
+                }
+            }
+        }
+
+        PostUpdate();
+
+        return status;
     }
 
     /**
@@ -56,6 +155,15 @@ namespace Shinkiro::Core
      */
     bool Application::PostUpdate()
     {
+        // {
+        //     for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+        //     {
+        //         auto p_Module = ( *module );
+        //         SHNK_CORE_TRACE( "Module '{0}' post-update", p_Module->m_Name.c_str() );
+        //         p_Module->PostUpdate();
+        //     }
+        // }
+
         return true;
     }
 }

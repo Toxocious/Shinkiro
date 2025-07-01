@@ -7,7 +7,7 @@ function linkDependencies()
 		"%{wks.location}/Libraries/glm/include",
 		"%{wks.location}/Libraries/imgui/include",
 		"%{wks.location}/Libraries/spdlog/include",
-		-- "%{wks.location}/Libraries/stb_image/include",
+		"%{wks.location}/Libraries/stb_image/include",
 	}
 
 	libdirs {
@@ -61,7 +61,7 @@ function includeDependencies()
 		"%{wks.location}/Libraries/glm/include",
 		"%{wks.location}/Libraries/imgui/include",
 		"%{wks.location}/Libraries/spdlog/include",
-		-- "%{wks.location}/Libraries/stb_image/include",
+		"%{wks.location}/Libraries/stb_image/include",
 	}
 
 	files {
@@ -82,7 +82,7 @@ function includeDependencies()
 
 		"%{wks.location}/Libraries/spdlog/include/**.h",
 
-		-- "%{wks.location}/Libraries/stb_image/include/**.h",
-		-- "%{wks.location}/Libraries/stb_image/include/**.cpp",
+		"%{wks.location}/Libraries/stb_image/include/**.h",
+		"%{wks.location}/Libraries/stb_image/include/**.cpp",
 	}
 end

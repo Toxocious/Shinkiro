@@ -28,6 +28,8 @@ project "Lib-Audio"
     filter "system:windows"
         systemversion "latest"
 
+        buildoptions { "/FS" }
+
         defines
         {
             "PLATFORM_WINDOWS"

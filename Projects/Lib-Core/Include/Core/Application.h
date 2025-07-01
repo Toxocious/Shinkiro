@@ -5,6 +5,10 @@
 
 #    include <Core/_Defs.h>
 
+#    include <Core/Modules/_Module.h>
+
+#    include <Core/Modules/Window.h>
+
 #    include <string>
 #    include <vector>
 
@@ -25,17 +29,23 @@ namespace Shinkiro::Core
     class CORE_API Application
     {
     public:
-        Application( std::string name, std::string version, int height, int width );
+        Application();
         ~Application();
 
     public:
-        bool Initialize();
+        bool Initialize( std::string name, std::string version, int height, int width );
         bool Start();
         bool CleanUp();
 
-        bool PreUpdate();
-        bool Update();
-        bool PostUpdate();
+        bool                         PreUpdate();
+        Shinkiro::Core::UpdateStatus Update();
+        bool                         PostUpdate();
+
+    public:
+        Shinkiro::Core::Window * m_Window = nullptr;
+
+    private:
+        std::vector<Module *> m_Modules;
 
     private:
         std::string m_Name;
@@ -46,7 +56,5 @@ namespace Shinkiro::Core
 
     extern Application * App;
 }
-
-// extern Shinkiro::Core::Application * App;
 
 #endif

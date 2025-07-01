@@ -3,21 +3,7 @@
 
 #include <Core/Application.h>
 
-// Editor Headers
-#include "Application.h"
-
-// int main()
-// {
-//     Application app;
-
-//     if (!app.Initialize()) {
-//         return 1;
-//     }
-
-//     app.Run();
-
-//     return 0;
-// }
+#include <Core/Util/UpdateStatus.h>
 
 Shinkiro::Core::Application * App = nullptr;
 
@@ -25,8 +11,8 @@ int main()
 {
     using namespace Shinkiro;
 
-    const int    WIDTH = 1366, HEIGHT = 768;
-    const char * APPLICATION_TITLE   = "Ephemeral Map Editor";
+    const GLuint WIDTH = 1366, HEIGHT = 768;
+    const char * APPLICATION_TITLE   = "Shinkiro Map Editor";
     const char * APPLICATION_VERSION = "v0.1";
 
     Shinkiro::Core::Log::Init();
@@ -42,7 +28,7 @@ int main()
                 case Core::ApplicationState::CREATION:
                     SHNK_INFO( "Creating application" );
                     {
-                        App          = new Core::Application( APPLICATION_TITLE, APPLICATION_VERSION, HEIGHT, WIDTH );
+                        App          = new Core::Application();
                         currentState = Core::ApplicationState::INIT;
                     }
                     SHNK_INFO( "Application successfully created" );
@@ -51,7 +37,7 @@ int main()
                 case Core::ApplicationState::INIT:
                     SHNK_INFO( "Initializing application and modules" );
                     {
-                        if ( App->Initialize() )
+                        if ( App->Initialize( APPLICATION_TITLE, APPLICATION_VERSION, HEIGHT, WIDTH ) )
                         {
                             currentState = Core::ApplicationState::START;
                         }
@@ -83,16 +69,17 @@ int main()
                     break;
 
                 case Core::ApplicationState::UPDATE:
+
                     App->Update();
-                    // switch ( App->Update() )
-                    // {
-                    //     case Ephemeral::UpdateStatus::UPDATE_STOP:
-                    //         currentState = Core::ApplicationState::FINISH;
-                    //         break;
-                    //     case Ephemeral::UpdateStatus::UPDATE_ERROR:
-                    //         currentState = Core::ApplicationState::EXIT_ERROR;
-                    //         break;
-                    // }
+                    switch ( App->Update() )
+                    {
+                        case Shinkiro::Core::UpdateStatus::UPDATE_STOP:
+                            currentState = Core::ApplicationState::FINISH;
+                            break;
+                        case Shinkiro::Core::UpdateStatus::UPDATE_ERROR:
+                            currentState = Core::ApplicationState::EXIT_ERROR;
+                            break;
+                    }
                     break;
 
                 case Core::ApplicationState::FINISH:

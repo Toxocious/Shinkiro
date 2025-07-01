@@ -33,6 +33,8 @@ project "Lib-Asset"
     filter "system:windows"
         systemversion "latest"
 
+        buildoptions { "/FS" }
+
         defines
         {
             "PLATFORM_WINDOWS"

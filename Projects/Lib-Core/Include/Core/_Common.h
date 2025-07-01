@@ -20,6 +20,18 @@
 #    endif
 #endif
 
+#ifndef SHINKIRO_IMPL_GLAD
+#    define SHINKIRO_IMPL_GLAD
+#    include <glad/glad.h>
+#endif
+
+#ifndef SHINKIRO_IMPL_GLFW
+#    define SHINKIRO_IMPL_GLFW
+#    include <glfw/glfw3.h>
+
+#    include <gl/GL.h>
+#endif
+
 #ifndef SHINKIRO_IMPL_SPDLOG
 #    define SHINKIRO_IMPL_SPDLOG
 #    pragma warning( push, 0 )
