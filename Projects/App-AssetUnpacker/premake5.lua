@@ -34,8 +34,5 @@ project "AssetUnpacker"
         "Lib-Asset",
     }
 
-    includeDependencies();
-    linkDependencies();
-
     filter { "system:windows" }
         systemversion "latest"
