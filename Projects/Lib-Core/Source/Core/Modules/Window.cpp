@@ -1,5 +1,7 @@
 #include <Core/Modules/Window.h>
 
+#include <Core/Util/FileSystem.h>
+
 void SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods )
 {
     if ( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
@@ -46,16 +48,16 @@ namespace Shinkiro::Core
             return false;
         }
 
-        // int  iconWidth, iconHeight, channels;
-        // auto iconFilePath = ( FileSystem::GetCoreAssetPath() / "Ephemeral.png" ).string();
-        // m_WindowIcon      = stbi_load( iconFilePath.c_str(), &iconWidth, &iconHeight, &channels, 0 );
+        int  iconWidth, iconHeight, channels;
+        auto iconFilePath = ( FileSystem::GetCoreAssetPath() / "ShinkiroWindowIcon.png" ).string();
+        m_WindowIcon      = stbi_load( iconFilePath.c_str(), &iconWidth, &iconHeight, &channels, 0 );
 
-        // if ( m_WindowIcon != nullptr )
-        // {
-        //     GLFWimage images[1];
-        //     images[0].pixels = stbi_load( iconFilePath.c_str(), &images[0].width, &images[0].height, 0, 4 );
-        //     glfwSetWindowIcon( GetGLFWWindow(), 1, images );
-        // }
+        if ( m_WindowIcon != nullptr )
+        {
+            GLFWimage images[1];
+            images[0].pixels = stbi_load( iconFilePath.c_str(), &images[0].width, &images[0].height, 0, 4 );
+            glfwSetWindowIcon( GetGLFWWindow(), 1, images );
+        }
 
         glfwSetKeyCallback( GetGLFWWindow(), SetKeyCallbacks );
         glfwSetCursorPosCallback( GetGLFWWindow(), SetMouseCallbacks );

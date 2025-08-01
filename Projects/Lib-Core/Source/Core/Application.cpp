@@ -29,6 +29,16 @@ namespace Shinkiro::Core
 
             if ( p_Module->m_Name == "Window" )
             {
+#if defined( SHINKIRO_DEBUG )
+                name += " [DEBUG]";
+#elif defined( SHINKIRO_RELEASE )
+                name += " [RELEASE]";
+#elif defined( SHINKIRO_DIST )
+                name += " [DIST]";
+#else
+                name += " [UNKNOWN]";
+#endif
+
                 p_Module->Initialize( name.c_str(), height, width );
             }
             else
