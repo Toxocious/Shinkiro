@@ -97,11 +97,6 @@ namespace Shinkiro::Core
         float m_DeltaTime  = 0;
         float m_LastTime   = 0;
         int   m_FrameCount = 0;
-
-    private:
-        Shinkiro::Asset::AssetBundleManager m_BundleManager;
-
-        std::unordered_map<std::string, std::vector<uint8_t>> m_Assets;
     };
 }
 

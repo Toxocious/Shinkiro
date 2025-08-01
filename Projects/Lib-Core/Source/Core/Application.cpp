@@ -1,13 +1,20 @@
 #include <Core/Application.h>
 
+Shinkiro::Core::Application * App = nullptr;
+
 namespace Shinkiro::Core
 {
     Application::Application()
+        : m_BundleManager( "assets.bundle" )
     {
+        App = this;
+
+        m_BundleManager.LoadAssetsIntoMemory();
     }
 
     Application::~Application()
     {
+        App = nullptr;
     }
 
     /**
@@ -30,6 +37,7 @@ namespace Shinkiro::Core
             if ( p_Module->m_Name == "Window" )
             {
                 name += " " + version;
+
 #if defined( SHINKIRO_DEBUG )
                 name += " [DEBUG]";
 #elif defined( SHINKIRO_RELEASE )

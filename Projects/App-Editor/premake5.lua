@@ -25,6 +25,11 @@ project "Editor"
         "./Include",
     }
 
+    files
+    {
+        "%{wks.location}/Projects/Lib-Core/Include/**.h",
+    }
+
     links
     {
         "Lib-Core",

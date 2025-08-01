@@ -1,3 +1,5 @@
+#include <Core/Application.h>
+
 #include <Core/Modules/Window.h>
 
 #include <Core/Util/FileSystem.h>
@@ -5,7 +7,7 @@
 namespace Shinkiro::Core
 {
     Window::Window( bool enabled )
-        : Module( "Window", enabled ), m_Window( nullptr, &glfwDestroyWindow ), m_BundleManager( "assets.bundle" )
+        : Module( "Window", enabled ), m_Window( nullptr, &glfwDestroyWindow )
     {
     }
 
@@ -41,9 +43,7 @@ namespace Shinkiro::Core
         }
 
         {
-            m_BundleManager.LoadAssetsIntoMemory();
-
-            const auto ShinkiroWindowIcon = m_BundleManager.GetAssetData( "ShinkiroWindowIcon.png" );
+            const auto ShinkiroWindowIcon = App->m_BundleManager.GetAssetData( "ShinkiroWindowIcon.png" );
 
             int iconWidth, iconHeight, channels;
 
@@ -71,17 +71,6 @@ namespace Shinkiro::Core
             {
                 SHNK_CORE_ERROR( "Failed to load icon from memory: {0}", stbi_failure_reason() );
             }
-
-            // int  iconWidth, iconHeight, channels;
-            // auto iconFilePath = ( FileSystem::GetCoreAssetPath() / "ShinkiroWindowIcon.png" ).string();
-            // m_WindowIcon      = stbi_load( iconFilePath.c_str(), &iconWidth, &iconHeight, &channels, 0 );
-
-            // if ( m_WindowIcon != nullptr )
-            // {
-            //     GLFWimage images[1];
-            //     images[0].pixels = stbi_load( iconFilePath.c_str(), &images[0].width, &images[0].height, 0, 4 );
-            //     glfwSetWindowIcon( GetGLFWWindow(), 1, images );
-            // }
         }
 
         glfwSetKeyCallback( GetGLFWWindow(), SetKeyCallbacks );
@@ -97,8 +86,6 @@ namespace Shinkiro::Core
 
     bool Window::CleanUp()
     {
-        // stbi_image_free( m_WindowIcon );
-
         glfwDestroyWindow( GetGLFWWindow() );
         glfwTerminate();
 
@@ -216,7 +203,6 @@ namespace Shinkiro::Core
             return;
         }
 
-        // Pick the primary monitor or do your monitor detection logic here
         GLFWmonitor * monitor = glfwGetPrimaryMonitor();
         if ( !monitor )
         {

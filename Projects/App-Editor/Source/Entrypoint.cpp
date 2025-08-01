@@ -1,11 +1,8 @@
-// Core-Lib Headers
 #include <Core/Util/Log.h>
 
 #include <Core/Application.h>
 
 #include <Core/Util/UpdateStatus.h>
-
-Shinkiro::Core::Application * App = nullptr;
 
 int main()
 {

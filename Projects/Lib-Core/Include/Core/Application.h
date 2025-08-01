@@ -9,6 +9,8 @@
 
 #    include <Core/Modules/Window.h>
 
+#    include <Asset/AssetBundleManager.h>
+
 #    include <string>
 #    include <vector>
 
@@ -40,6 +42,9 @@ namespace Shinkiro::Core
         Shinkiro::Core::UpdateStatus Update();
 
     public:
+        Shinkiro::Asset::AssetBundleManager m_BundleManager;
+
+    public:
         Shinkiro::Core::Window * m_Window = nullptr;
 
     private:
@@ -51,8 +56,8 @@ namespace Shinkiro::Core
         int         m_Height;
         int         m_Width;
     };
-
-    extern Application * App;
 }
+
+extern CORE_API Shinkiro::Core::Application * App;
 
 #endif
