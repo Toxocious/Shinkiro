@@ -62,13 +62,13 @@ Initially I wanted to set up the architecture for a game engine, where I could h
 ## Features
 Shinkiro currently features.. almost nothing.
 
-The build system is set-up to use premake5, and currently generates the necessary Visual Studio files and configurations to build an [Editor](./Projects/Editor/) executable, an asset packer executable, an asset unpacker executable, and a variety of small core shared libraries.
+The build system is set-up to use premake5, and currently generates the necessary Visual Studio files and configurations to build an [Editor](./Projects/App-Editor/) executable, an [Asset Packer](./Projects/App-AssetPacker/) executable, an [Asset Unpacker](./Projects/App-AssetUnpacker/) executable, and a variety of small core shared libraries.
 
 All shared libraries are prefixed with **`Lib-*`**, such as "Lib-Audio" where all code for audio-related functionality would be.
 
 All executable applications are prefixed with **`*App-*`**.
 
-Any external tools that are not directly used by any part of an application or its modules should remain inside of the `./Tools` directory.
+Any external tools that are not directly used by any part of an application or its modules should reside inside of the [Tools](./Tools) directory.
 
 
 
@@ -139,7 +139,7 @@ Shinkiro's Lib-Renderer library is not currently functional.
 ## Tools
 ### Asset Downloader
 Shinkiro includes a custom tool that fetches and downloads assets from Pokemon Showdown, namely Pokemon sprites and icons, item icons, and Pokemon cries.
-> Read more about the asset downloader [here](./Tools/Sprite_Downloader/README.md)
+> Read more about the asset downloader [here](./Tools/Asset_Downloader/README.md)
 
 
 

@@ -37,9 +37,7 @@ namespace Shinkiro::Core
         bool Start();
         bool CleanUp();
 
-        bool                         PreUpdate();
         Shinkiro::Core::UpdateStatus Update();
-        bool                         PostUpdate();
 
     public:
         Shinkiro::Core::Window * m_Window = nullptr;

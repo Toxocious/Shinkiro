@@ -10,6 +10,7 @@
 #    include <iostream>
 #    include <map>
 #    include <stack>
+#    include <unordered_map>
 
 namespace Shinkiro::Asset
 {
@@ -34,11 +35,15 @@ namespace Shinkiro::Asset
         void SetExtractionPath( const std::filesystem::path & path );
         bool LoadBundleInfo();
 
-        std::vector<std::string> GetAssetList();
-        std::vector<uint8_t>     ExtractAssetToMemory( const std::string & assetName );
+        std::vector<std::string>     GetAssetList();
+        const std::vector<uint8_t> & GetAssetData( const std::string & assetName );
+
+        std::vector<uint8_t> ExtractAssetToMemory( const std::string & assetName );
 
         std::filesystem::path                        ExtractAssetToFile( const std::string & assetName );
         std::map<std::string, std::filesystem::path> ExtractAllAssets();
+
+        void LoadAssetsIntoMemory();
 
         static bool CreateBundle( const std::filesystem::path & inputDir, const std::filesystem::path & outputPath );
 
@@ -58,6 +63,8 @@ namespace Shinkiro::Asset
         std::string             bundleName;
         std::vector<AssetEntry> assets;
         std::filesystem::path   extractionPath;
+
+        std::unordered_map<std::string, std::vector<uint8_t>> assetCache;
     };
 }
 

@@ -20,6 +20,7 @@ project "Editor"
     includedirs
     {
         "../Lib-Core/Include",
+        "../Lib-Asset/Include",
 
         "./Include",
     }
@@ -27,11 +28,13 @@ project "Editor"
     links
     {
         "Lib-Core",
+        "Lib-Asset",
     }
 
     dependson
     {
         "Lib-Core",
+        "Lib-Asset",
     }
 
     defines

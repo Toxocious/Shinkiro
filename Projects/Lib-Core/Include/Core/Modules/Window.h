@@ -9,6 +9,9 @@
 
 #    include <Core/Modules/_Module.h>
 
+#    include <Asset/AssetBundleManager.h>
+
+#    include <chrono>
 #    include <string>
 
 #    include <glm/glm.hpp>
@@ -32,10 +35,10 @@ namespace Shinkiro::Core
         Shinkiro::Core::UpdateStatus Update() override;
         Shinkiro::Core::UpdateStatus PostUpdate() override;
 
+        // Window utilities
         void SetTitle( const char * title );
         void SetSize( int width, int height );
         void SetPosition( int x, int y );
-
         void CenterWindow();
 
         // GLFW
@@ -46,6 +49,7 @@ namespace Shinkiro::Core
         // Callbacks
         static void SetMouseCallbacks( GLFWwindow * window, double xposIn, double yposIn );
         static void SetMouseWheelCallbacks( GLFWwindow * window, double xOffset, double yOffset );
+        static void SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods );
 
         // Getters
         GLFWwindow * GetGLFWWindow()
@@ -93,6 +97,11 @@ namespace Shinkiro::Core
         float m_DeltaTime  = 0;
         float m_LastTime   = 0;
         int   m_FrameCount = 0;
+
+    private:
+        Shinkiro::Asset::AssetBundleManager m_BundleManager;
+
+        std::unordered_map<std::string, std::vector<uint8_t>> m_Assets;
     };
 }
 

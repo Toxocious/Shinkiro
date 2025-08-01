@@ -2,18 +2,10 @@
 
 #include <Core/Util/FileSystem.h>
 
-void SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods )
-{
-    if ( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
-    {
-        glfwSetWindowShouldClose( window, GLFW_TRUE );
-    }
-}
-
 namespace Shinkiro::Core
 {
     Window::Window( bool enabled )
-        : Module( "Window", enabled ), m_Window( nullptr, &glfwDestroyWindow )
+        : Module( "Window", enabled ), m_Window( nullptr, &glfwDestroyWindow ), m_BundleManager( "assets.bundle" )
     {
     }
 
@@ -48,15 +40,48 @@ namespace Shinkiro::Core
             return false;
         }
 
-        int  iconWidth, iconHeight, channels;
-        auto iconFilePath = ( FileSystem::GetCoreAssetPath() / "ShinkiroWindowIcon.png" ).string();
-        m_WindowIcon      = stbi_load( iconFilePath.c_str(), &iconWidth, &iconHeight, &channels, 0 );
-
-        if ( m_WindowIcon != nullptr )
         {
-            GLFWimage images[1];
-            images[0].pixels = stbi_load( iconFilePath.c_str(), &images[0].width, &images[0].height, 0, 4 );
-            glfwSetWindowIcon( GetGLFWWindow(), 1, images );
+            m_BundleManager.LoadAssetsIntoMemory();
+
+            const auto ShinkiroWindowIcon = m_BundleManager.GetAssetData( "ShinkiroWindowIcon.png" );
+
+            int iconWidth, iconHeight, channels;
+
+            unsigned char * m_WindowIcon = stbi_load_from_memory(
+                ShinkiroWindowIcon.data(),
+                static_cast<int>( ShinkiroWindowIcon.size() ),
+                &iconWidth,
+                &iconHeight,
+                &channels,
+                4
+            );
+
+            if ( m_WindowIcon != nullptr )
+            {
+                GLFWimage images[1];
+                images[0].width  = iconWidth;
+                images[0].height = iconHeight;
+                images[0].pixels = m_WindowIcon;
+
+                glfwSetWindowIcon( GetGLFWWindow(), 1, images );
+
+                stbi_image_free( m_WindowIcon );
+            }
+            else
+            {
+                SHNK_CORE_ERROR( "Failed to load icon from memory: {0}", stbi_failure_reason() );
+            }
+
+            // int  iconWidth, iconHeight, channels;
+            // auto iconFilePath = ( FileSystem::GetCoreAssetPath() / "ShinkiroWindowIcon.png" ).string();
+            // m_WindowIcon      = stbi_load( iconFilePath.c_str(), &iconWidth, &iconHeight, &channels, 0 );
+
+            // if ( m_WindowIcon != nullptr )
+            // {
+            //     GLFWimage images[1];
+            //     images[0].pixels = stbi_load( iconFilePath.c_str(), &images[0].width, &images[0].height, 0, 4 );
+            //     glfwSetWindowIcon( GetGLFWWindow(), 1, images );
+            // }
         }
 
         glfwSetKeyCallback( GetGLFWWindow(), SetKeyCallbacks );
@@ -168,6 +193,14 @@ namespace Shinkiro::Core
 
     void Window::SetMouseCallbacks( GLFWwindow * window, double xposIn, double yposIn )
     {
+    }
+
+    void Window::SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods )
+    {
+        if ( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
+        {
+            glfwSetWindowShouldClose( window, GLFW_TRUE );
+        }
     }
 
     // Center the window

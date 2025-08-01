@@ -84,6 +84,33 @@ namespace Shinkiro::Asset
         return true;
     }
 
+    void AssetBundleManager::LoadAssetsIntoMemory()
+    {
+        const auto bundlePath = GetBundlePath();
+
+        if ( std::filesystem::exists( bundlePath ) )
+        {
+            if ( LoadBundleInfo() )
+            {
+                auto extractedPaths = GetAssetList();
+                if ( extractedPaths.size() > 0 )
+                {
+                    for ( const auto & assetName : extractedPaths )
+                    {
+                        try
+                        {
+                            const std::vector<uint8_t> & assetData = ExtractAssetToMemory( assetName );
+                            assetCache.emplace( assetName, std::move( assetData ) );
+                        }
+                        catch ( const std::exception & e )
+                        {
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     std::vector<std::string> AssetBundleManager::GetAssetList()
     {
         std::vector<std::string> names;
@@ -93,6 +120,20 @@ namespace Shinkiro::Asset
         }
 
         return names;
+    }
+
+    const std::vector<uint8_t> & AssetBundleManager::GetAssetData( const std::string & assetName )
+    {
+        auto cacheIt = assetCache.find( assetName );
+        if ( cacheIt != assetCache.end() )
+        {
+            return cacheIt->second;
+        }
+
+        std::vector<uint8_t> data = ExtractAssetToMemory( assetName );
+        auto                 it   = assetCache.emplace( assetName, std::move( data ) );
+
+        return it.first->second;
     }
 
     std::vector<uint8_t> AssetBundleManager::ExtractAssetToMemory( const std::string & assetName )
@@ -120,6 +161,8 @@ namespace Shinkiro::Asset
         file.seekg( it->offset );
         std::vector<uint8_t> data( it->size );
         file.read( reinterpret_cast<char *>( data.data() ), it->size );
+
+        assetCache.emplace( assetName, std::move( data ) );
 
         return data;
     }

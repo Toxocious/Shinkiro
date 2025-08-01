@@ -29,6 +29,7 @@ namespace Shinkiro::Core
 
             if ( p_Module->m_Name == "Window" )
             {
+                name += " " + version;
 #if defined( SHINKIRO_DEBUG )
                 name += " [DEBUG]";
 #elif defined( SHINKIRO_RELEASE )
@@ -79,23 +80,6 @@ namespace Shinkiro::Core
                 p_Module->CleanUp();
             }
         }
-
-        return true;
-    }
-
-    /**
-     * Pre-update loop.
-     */
-    bool Application::PreUpdate()
-    {
-        // {
-        //     for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
-        //     {
-        //         auto p_Module = ( *module );
-        //         SHNK_CORE_TRACE( "Module '{0}' pre-update", p_Module->m_Name.c_str() );
-        //         p_Module->PreUpdate();
-        //     }
-        // }
 
         return true;
     }
@@ -155,25 +139,6 @@ namespace Shinkiro::Core
             }
         }
 
-        PostUpdate();
-
         return status;
-    }
-
-    /**
-     * Post-update loop.
-     */
-    bool Application::PostUpdate()
-    {
-        // {
-        //     for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
-        //     {
-        //         auto p_Module = ( *module );
-        //         SHNK_CORE_TRACE( "Module '{0}' post-update", p_Module->m_Name.c_str() );
-        //         p_Module->PostUpdate();
-        //     }
-        // }
-
-        return true;
     }
 }
