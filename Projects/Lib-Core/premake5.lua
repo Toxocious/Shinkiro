@@ -19,11 +19,14 @@ project "Lib-Core"
         "%{wks.location}/Libraries/glfw/include",
 		"%{wks.location}/Libraries/glm/include",
 
+        "%{wks.location}/Libraries/miniaudio/include",
+
         "%{wks.location}/Libraries/stb_image/include",
 
         "%{wks.location}/Libraries/spdlog/include",
 
         "%{wks.location}/Projects/Lib-Asset/Include",
+        "%{wks.location}/Projects/Lib-Audio/Include",
 
         "./Include",
     }
@@ -38,6 +41,9 @@ project "Lib-Core"
         "%{wks.location}/Libraries/glm/include/**.hpp",
 		"%{wks.location}/Libraries/glm/include/**.inl",
 
+        "%{wks.location}/Libraries/miniaudio/include/**.h",
+        "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
+
         "%{wks.location}/Libraries/stb_image/include/**.h",
 		"%{wks.location}/Libraries/stb_image/include/**.cpp",
 
@@ -45,6 +51,7 @@ project "Lib-Core"
 		"%{wks.location}/Libraries/spdlog/include/**.cpp",
 
         "%{wks.location}/Projects/Lib-Asset/Include/**.h",
+        "%{wks.location}/Projects/Lib-Audio/Include/**.h",
 
         "**.h",
         "**.hpp",
@@ -63,11 +70,13 @@ project "Lib-Core"
     links
     {
         "Lib-Asset",
+        "Lib-Audio",
     }
 
     dependson
     {
         "Lib-Asset",
+        "Lib-Audio",
     }
 
     filter { "configurations:Debug" }

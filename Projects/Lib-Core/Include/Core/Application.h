@@ -11,6 +11,8 @@
 
 #    include <Asset/AssetBundleManager.h>
 
+#    include <Audio/AudioManager.h>
+
 #    include <string>
 #    include <vector>
 
@@ -43,6 +45,7 @@ namespace Shinkiro::Core
 
     public:
         Shinkiro::Asset::AssetBundleManager m_BundleManager;
+        Audio::AudioManager                 m_AudioManager;
 
     public:
         Shinkiro::Core::Window * m_Window = nullptr;

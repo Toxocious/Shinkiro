@@ -71,6 +71,65 @@ namespace Shinkiro::Core
             p_Module->Start();
         }
 
+        {
+            const auto AbsolCry = App->m_BundleManager.GetAssetData( "Audio/Cries/absol.wav" );
+            m_AudioManager.PlaySoundAsync( AbsolCry );
+
+            // ma_result  result;
+            // ma_engine  engine;
+            // ma_decoder decoder;
+            // ma_sound   sound;
+
+            // // Initialize audio engine
+            // result = ma_engine_init( NULL, &engine );
+            // if ( result != MA_SUCCESS || engine.pDevice == nullptr || engine.pDevice->pContext == nullptr )
+            // {
+            //     std::cerr << "Failed to initialize audio engine or device.\n";
+            //     return -1;
+            // }
+
+            // // Initialize decoder from memory
+            // result = ma_decoder_init_memory(
+            //     AbsolCry.data(), // pointer to memory
+            //     AbsolCry.size(), // size of memory in bytes
+            //     NULL,            // use default config (auto-detect format)
+            //     &decoder
+            // );
+            // if ( result != MA_SUCCESS )
+            // {
+            //     std::cerr << "Failed to initialize decoder from memory.\n";
+            //     ma_engine_uninit( &engine );
+            //     return -1;
+            // }
+
+            // // Initialize sound from decoder
+            // result = ma_sound_init_from_data_source(
+            //     &engine,
+            //     &decoder,
+            //     MA_SOUND_FLAG_ASYNC,
+            //     NULL,
+            //     &sound
+            // );
+            // if ( result != MA_SUCCESS )
+            // {
+            //     std::cerr << "Failed to initialize sound from decoder.\n";
+            //     ma_decoder_uninit( &decoder );
+            //     ma_engine_uninit( &engine );
+            //     return -1;
+            // }
+
+            // // Play the sound
+            // ma_sound_start( &sound );
+
+            // // Optional: block to let it play
+            // std::this_thread::sleep_for( std::chrono::milliseconds( 1500 ) );
+
+            // // Cleanup
+            // ma_sound_uninit( &sound );
+            // ma_decoder_uninit( &decoder );
+            // ma_engine_uninit( &engine );
+        }
+
         return true;
     }
 

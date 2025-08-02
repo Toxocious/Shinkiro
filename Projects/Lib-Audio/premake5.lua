@@ -8,16 +8,21 @@ project "Lib-Audio"
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
 
-    files
-    {
-        "**.h",
-        "**.hpp",
-        "**.cpp"
-    }
-
     includedirs
     {
+        "%{wks.location}/Libraries/miniaudio/include",
+
         "./Include",
+    }
+
+    files
+    {
+        "%{wks.location}/Libraries/miniaudio/include/**.h",
+        "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
+
+        "**.h",
+        "**.hpp",
+        "**.cpp",
     }
 
     defines
