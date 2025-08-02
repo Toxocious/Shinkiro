@@ -42,43 +42,13 @@ namespace Shinkiro::Core
             return false;
         }
 
-        {
-            const auto ShinkiroWindowIcon = App->m_BundleManager.GetAssetData( "ShinkiroWindowIcon.png" );
-
-            int iconWidth, iconHeight, channels;
-
-            unsigned char * m_WindowIcon = stbi_load_from_memory(
-                ShinkiroWindowIcon.data(),
-                static_cast<int>( ShinkiroWindowIcon.size() ),
-                &iconWidth,
-                &iconHeight,
-                &channels,
-                4
-            );
-
-            if ( m_WindowIcon != nullptr )
-            {
-                GLFWimage images[1];
-                images[0].width  = iconWidth;
-                images[0].height = iconHeight;
-                images[0].pixels = m_WindowIcon;
-
-                glfwSetWindowIcon( GetGLFWWindow(), 1, images );
-
-                stbi_image_free( m_WindowIcon );
-            }
-            else
-            {
-                SHNK_CORE_ERROR( "Failed to load icon from memory: {0}", stbi_failure_reason() );
-            }
-        }
-
         glfwSetKeyCallback( GetGLFWWindow(), SetKeyCallbacks );
         glfwSetCursorPosCallback( GetGLFWWindow(), SetMouseCallbacks );
         glfwSetScrollCallback( GetGLFWWindow(), SetMouseWheelCallbacks );
 
         glfwSetInputMode( GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL );
 
+        SetWindowIcon();
         CenterWindow();
 
         return true;
@@ -187,6 +157,39 @@ namespace Shinkiro::Core
         if ( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
         {
             glfwSetWindowShouldClose( window, GLFW_TRUE );
+        }
+    }
+
+    // Set the window icon
+    void Window::SetWindowIcon()
+    {
+        const auto ShinkiroWindowIcon = App->m_BundleManager.GetAssetData( "ShinkiroWindowIcon.png" );
+
+        int iconWidth, iconHeight, channels;
+
+        unsigned char * m_WindowIcon = stbi_load_from_memory(
+            ShinkiroWindowIcon.data(),
+            static_cast<int>( ShinkiroWindowIcon.size() ),
+            &iconWidth,
+            &iconHeight,
+            &channels,
+            4
+        );
+
+        if ( m_WindowIcon != nullptr )
+        {
+            GLFWimage images[1];
+            images[0].width  = iconWidth;
+            images[0].height = iconHeight;
+            images[0].pixels = m_WindowIcon;
+
+            glfwSetWindowIcon( GetGLFWWindow(), 1, images );
+
+            stbi_image_free( m_WindowIcon );
+        }
+        else
+        {
+            SHNK_CORE_ERROR( "Failed to load icon from memory: {0}", stbi_failure_reason() );
         }
     }
 

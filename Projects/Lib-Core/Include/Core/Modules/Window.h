@@ -39,6 +39,7 @@ namespace Shinkiro::Core
         void SetTitle( const char * title );
         void SetSize( int width, int height );
         void SetPosition( int x, int y );
+        void SetWindowIcon();
         void CenterWindow();
 
         // GLFW
