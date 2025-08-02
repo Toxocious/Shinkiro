@@ -13,7 +13,6 @@
 #    include <iostream>
 #    include <mutex>
 #    include <queue>
-#    include <span>
 #    include <thread>
 #    include <vector>
 
@@ -23,6 +22,7 @@ namespace Shinkiro::Audio
     {
         std::vector<uint8_t> buffer;
         int                  durationMs = 1500;
+        bool                 loop       = false;
     };
 
     class AUDIO_API AudioManager
@@ -31,14 +31,19 @@ namespace Shinkiro::Audio
         AudioManager();
         ~AudioManager();
 
-        // Thread-safe sound enqueue
-        void PlaySoundAsync( std::vector<uint8_t> soundData, int durationMs = 1500 );
+        void PlaySoundAsync( std::vector<uint8_t> data, int durationMs = 1500, bool loop = false );
+        void PlayOST( std::vector<uint8_t> data );
 
-        // Explicit shutdown (optional if you let it auto-cleanup)
+        void StopOST();
+        void StopAll();
+
         void Shutdown();
 
     private:
         void WorkerLoop();
+
+    private:
+        ma_engine m_Engine;
 
         std::thread             m_Thread;
         std::mutex              m_QueueMutex;
@@ -46,9 +51,11 @@ namespace Shinkiro::Audio
         std::queue<SoundData>   m_Queue;
         std::atomic<bool>       m_Running = false;
 
-        ma_engine m_Engine;
+        std::vector<uint8_t> m_OSTData;
+        ma_sound             m_OSTSound {};
+        ma_decoder           m_OSTDecoder {};
+        bool                 m_OSTPlaying = false;
     };
-
-} // namespace Audio
+}
 
 #endif

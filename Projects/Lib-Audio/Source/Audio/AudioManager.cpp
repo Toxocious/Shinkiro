@@ -7,7 +7,7 @@ namespace Shinkiro::Audio
         if ( ma_engine_init( NULL, &m_Engine ) != MA_SUCCESS ||
              m_Engine.pDevice == nullptr || m_Engine.pDevice->pContext == nullptr )
         {
-            std::cerr << "[AudioManager] Failed to initialize audio engine.\n";
+            std::cerr << "[AudioManager] Failed to initialize audio engine or device.\n";
             return;
         }
 
@@ -35,25 +35,78 @@ namespace Shinkiro::Audio
             m_Thread.join();
         }
 
+        StopOST();
+
         ma_engine_uninit( &m_Engine );
     }
 
-    void AudioManager::PlaySoundAsync( std::vector<uint8_t> soundData, int durationMs )
+    void AudioManager::PlaySoundAsync( std::vector<uint8_t> data, int durationMs, bool loop )
     {
-        if ( !m_Running || soundData.empty() )
+        if ( !m_Running || data.empty() )
         {
             return;
         }
 
         SoundData sound;
-        sound.buffer.assign( soundData.begin(), soundData.end() );
+        sound.buffer.assign( data.begin(), data.end() );
         sound.durationMs = durationMs;
+        sound.loop       = loop;
 
         {
             std::lock_guard<std::mutex> lock( m_QueueMutex );
             m_Queue.push( std::move( sound ) );
         }
+
         m_CV.notify_one();
+    }
+
+    void AudioManager::PlayOST( std::vector<uint8_t> data )
+    {
+        if ( m_OSTPlaying )
+        {
+            StopOST();
+        }
+
+        m_OSTData = std::move( data );
+
+        if ( ma_decoder_init_memory( m_OSTData.data(), m_OSTData.size(), NULL, &m_OSTDecoder ) != MA_SUCCESS )
+        {
+            std::cerr << "[AudioManager] Failed to init OST decoder.\n";
+            return;
+        }
+
+        if ( ma_sound_init_from_data_source( &m_Engine, &m_OSTDecoder, MA_SOUND_FLAG_ASYNC, NULL, &m_OSTSound ) != MA_SUCCESS )
+        {
+            std::cerr << "[AudioManager] Failed to init OST sound.\n";
+            ma_decoder_uninit( &m_OSTDecoder );
+            return;
+        }
+
+        ma_sound_set_looping( &m_OSTSound, MA_TRUE );
+        ma_sound_start( &m_OSTSound );
+        m_OSTPlaying = true;
+    }
+
+    void AudioManager::StopOST()
+    {
+        if ( !m_OSTPlaying )
+        {
+            return;
+        }
+
+        ma_sound_stop( &m_OSTSound );
+        ma_sound_uninit( &m_OSTSound );
+        ma_decoder_uninit( &m_OSTDecoder );
+        m_OSTPlaying = false;
+    }
+
+    void AudioManager::StopAll()
+    {
+        if ( m_Engine.pDevice )
+        {
+            ma_engine_stop( &m_Engine ); // Stops all active sounds
+        }
+        StopOST();
     }
 
     void AudioManager::WorkerLoop()
@@ -92,9 +145,26 @@ namespace Shinkiro::Audio
                 continue;
             }
 
-            ma_sound_start( &maSound );
-            std::this_thread::sleep_for( std::chrono::milliseconds( sound.durationMs ) );
+            if ( sound.loop )
+            {
+                ma_sound_set_looping( &maSound, MA_TRUE );
+            }
 
+            ma_sound_start( &maSound );
+
+            if ( sound.loop )
+            {
+                while ( m_Running && ma_sound_is_playing( &maSound ) )
+                {
+                    std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+                }
+            }
+            else
+            {
+                std::this_thread::sleep_for( std::chrono::milliseconds( sound.durationMs ) );
+            }
+
+            ma_sound_stop( &maSound );
             ma_sound_uninit( &maSound );
             ma_decoder_uninit( &decoder );
         }
