@@ -49,6 +49,7 @@
     - [Lib-Renderer](#lib-renderer)
   - [Tools](#tools)
     - [Asset Downloader](#asset-downloader)
+    - [Audio Converter](#audio-converter)
 - [License](#license)
 
 
@@ -121,7 +122,7 @@ Shinkiro includes a shared library that specifically handles assets - packing an
 > Read more about the asset library [here](./Projects/Lib-Asset/README.md)
 
 ### Lib-Audio
-Shinkiro's Lib-Audio library is not currently functional.
+Shinkiro's Lib-Audio library contains the necessary logic to create an AudioManager which handles the playing of all audio used any Shinkiro application.
 > Read more about the audio library [here](./Projects/Lib-Audio/README.md)
 
 ### Lib-Core
@@ -140,6 +141,11 @@ Shinkiro's Lib-Renderer library is not currently functional.
 ### Asset Downloader
 Shinkiro includes a custom tool that fetches and downloads assets from Pokemon Showdown, namely Pokemon sprites and icons, item icons, and Pokemon cries.
 > Read more about the asset downloader [here](./Tools/Asset_Downloader/README.md)
+
+### Audio Converter
+Shinkiro includes a versatile bash script that is used to convert audio files from one format to another.
+> Read more about the audio converter [here](./Tools/Audio_Converter/README.md)
+
 
 
 
