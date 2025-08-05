@@ -32,6 +32,10 @@
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
+  - [CLI Flags](#cli-flags)
+    - [Download All Assets](#download-all-assets)
+    - [Download Only Audio Assets](#download-only-audio-assets)
+    - [Download Only Audio and Model Assets](#download-only-audio-and-model-assets)
 - [Configuration](#configuration)
 - [Output Structure](#output-structure)
 - [License](#license)
@@ -66,14 +70,30 @@ npm install
 # Usage
 Run the tool with:
 
-```bash
-npm start
+```typescript
+npx ts-node Asset_Downloader.ts [--options]
 ```
 
-or
+## CLI Flags
+Some of the assets that the script can download are either quite bulky in file size or are large in number.
 
-```typescript
+You may pass in some flags if you wish to explicitly download certain types of assets.
+
+Omitting all flags will cause the script to download all assets of all types.
+
+### Download All Assets
+```sh
 npx ts-node Asset_Downloader.ts
+```
+
+### Download Only Audio Assets
+```sh
+npx ts-node Asset_Downloader.ts --audio
+```
+
+### Download Only Audio and Model Assets
+```sh
+npx ts-node Asset_Downloader.ts --audio --models
 ```
 
 
@@ -83,15 +103,29 @@ The tool downloads sprites from configurable source directories. Edit the `sourc
 
 ```typescript
 const sourceDirectories = [
-    {
-        url: 'https://play.pokemonshowdown.com/sprites/gen5/',
-        outputDir: './Sprites/Normal',
-    },
-    {
-        url: 'https://play.pokemonshowdown.com/sprites/types/',
-        outputDir: './Sprites/Types',
-    },
-    // Add more directories as needed
+    const sourceDirectories: SourceDirectoryMap = {
+        // 3D Pokemon Models -- This gets automatically populated on script execution
+        models: [],
+
+        // Pokemon Cries
+        audio: [
+            {
+                url: 'https://play.pokemonshowdown.com/audio/cries/src/',
+                outputDir: './Audio/Cries',
+                fileType: '.wav',
+            },
+        ],
+
+        // Pokemon Sprites, Icons, and Item Images
+        sprites: [
+            {
+                url: 'https://play.pokemonshowdown.com/sprites/gen5/',
+                outputDir: './Sprites/Normal',
+                fileType: '.png',
+            },
+            // Other sprite directories
+        ],
+    };
 ];
 ```
 
@@ -101,6 +135,9 @@ const sourceDirectories = [
 Downloaded assets are organized into the following directory structure:
 
 ```
+./Models/           - .fbx Pokemon Models
+./Audio/
+  └── Cries/        - Pokemon cries
 ./Sprites/
   ├── Normal/       - Regular Pokémon sprites
   ├── Normal-Backs/ - Back-facing regular sprites
@@ -109,8 +146,8 @@ Downloaded assets are organized into the following directory structure:
   ├── Items/        - Item icons
   ├── Categories/   - Move category icons
   └── Types/        - Type icons
-
 ```
+
 
 
 # License

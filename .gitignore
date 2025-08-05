@@ -11,3 +11,12 @@ node_modules/
 *.vcxproj.filters
 *.sln
 *.log
+
+# Tools
+Tools/Asset_Downloader/Audio
+Tools/Asset_Downloader/Models
+Tools/Asset_Downloader/Sprites
+
+Tools/Audio_Converter/Output
+
+

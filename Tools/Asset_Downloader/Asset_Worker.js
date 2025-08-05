@@ -10,18 +10,19 @@ async function downloadSprites() {
 
     try {
         for (const spriteUrl of spriteUrls) {
-            const fullUrl = baseUrl + spriteUrl;
-            const outputPath = path.join(outputDir, spriteUrl);
-
             try {
-                const imageResponse = await axios.get(fullUrl, {
+                const url = new URL(spriteUrl); // full URL
+                const fileName = path.basename(url.pathname); // strips query string
+                const outputPath = path.join(outputDir, fileName);
+
+                const response = await axios.get(spriteUrl, {
                     responseType: 'arraybuffer',
+                    headers: workerData.headers,
                 });
-                await fs.writeFile(outputPath, Buffer.from(imageResponse.data));
+
+                await fs.writeFile(outputPath, Buffer.from(response.data));
 
                 completed++;
-
-                // Report progress every few downloads
                 if (completed % 5 === 0 || completed === total) {
                     parentPort.postMessage({
                         type: 'progress',
@@ -32,7 +33,6 @@ async function downloadSprites() {
                     });
                 }
 
-                // Small delay to be nice to the server
                 await new Promise((resolve) => setTimeout(resolve, 50));
             } catch (error) {
                 console.error(

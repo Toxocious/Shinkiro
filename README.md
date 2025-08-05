@@ -67,7 +67,7 @@ The build system is set-up to use premake5, and currently generates the necessar
 
 All shared libraries are prefixed with **`Lib-*`**, such as "Lib-Audio" where all code for audio-related functionality would be.
 
-All executable applications are prefixed with **`*App-*`**.
+All executable applications are prefixed with **`App-*`**.
 
 Any external tools that are not directly used by any part of an application or its modules should reside inside of the [Tools](./Tools) directory.
 
@@ -80,10 +80,10 @@ You'll need [Premake](https://premake.github.io/download) and [Visual Studio](ht
 > Support for non-Windows operating systems does not currently exist.
 
 ## Installation
-Clone the repository.
+All required third-party libraries is included, so all you have to do is clone the repository.
 
 ```bash
-git clone --recursive https://github.com/Toxocious/Shinkiro.git
+git clone https://github.com/Toxocious/Shinkiro.git
 ```
 
 ## Project Setup
@@ -140,6 +140,9 @@ Shinkiro's Lib-Renderer library is not currently functional.
 ## Tools
 ### Asset Downloader
 Shinkiro includes a custom tool that fetches and downloads assets from Pokemon Showdown, namely Pokemon sprites and icons, item icons, and Pokemon cries.
+
+It also downloads 3D Pokemon .fbx Models from Models Resource.
+
 > Read more about the asset downloader [here](./Tools/Asset_Downloader/README.md)
 
 ### Audio Converter
