@@ -73,8 +73,8 @@ namespace Shinkiro::Core
 
         {
             const auto AtmosphereBGM = App->m_BundleManager.GetAssetData( "Audio/BGM/Atmosphere-Crystal.wav" );
-            // m_AudioManager.PlaySoundAsync( AtmosphereBGM );
             m_AudioManager.PlayOST( AtmosphereBGM );
+            m_AudioManager.SetOSTVolume( 0.1f );
 
             const auto AbsolCry = App->m_BundleManager.GetAssetData( "Audio/Cries/absol.wav" );
             m_AudioManager.PlaySoundAsync( AbsolCry );

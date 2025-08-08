@@ -87,6 +87,20 @@ namespace Shinkiro::Audio
         m_OSTPlaying = true;
     }
 
+    void AudioManager::SetOSTVolume( float volume )
+    {
+        if ( !m_OSTPlaying )
+        {
+            return;
+        }
+        if ( volume < 0.0f )
+        {
+            volume = 0.0f;
+        }
+
+        ma_sound_set_volume( &m_OSTSound, volume );
+    }
+
     void AudioManager::StopOST()
     {
         if ( !m_OSTPlaying )

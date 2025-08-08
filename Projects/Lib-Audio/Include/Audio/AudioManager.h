@@ -33,6 +33,7 @@ namespace Shinkiro::Audio
 
         void PlaySoundAsync( std::vector<uint8_t> data, int durationMs = 1500, bool loop = false );
         void PlayOST( std::vector<uint8_t> data );
+        void SetOSTVolume( float volume );
 
         void StopOST();
         void StopAll();
