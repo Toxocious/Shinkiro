@@ -3,7 +3,9 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Worker } from 'worker_threads';
 import * as os from 'os';
+
 import axios from 'axios';
+import AdmZip from 'adm-zip';
 
 import { PopulateModelSourceDirectoryArray } from './PopulateModelSources';
 import { PrefetchAssetUrls } from './PrefetchAssetUrls';
@@ -14,12 +16,19 @@ const shouldDownload = {
     models: args.includes('--models'),
     audio: args.includes('--audio'),
     sprites: args.includes('--sprites'),
+    extract: args.includes('--extract'),
 };
 
 if (!shouldDownload.models && !shouldDownload.audio && !shouldDownload.sprites) {
     shouldDownload.models = true;
     shouldDownload.audio = true;
     shouldDownload.sprites = true;
+    shouldDownload.extract = false;
+}
+
+interface WorkerResult {
+    completedCount: number;
+    downloadedFiles: string[];
 }
 
 type AssetSource = {
@@ -37,6 +46,27 @@ export type SourceDirectoryMap = {
 export function getErrorMessage(error: unknown): string {
     if (error instanceof Error) return error.message;
     return String(error);
+}
+
+async function findDirRecursive(startPath: string, dirName: string): Promise<string | null> {
+    try {
+        const items = await fs.readdir(startPath, { withFileTypes: true });
+        for (const item of items) {
+            const currentPath = path.join(startPath, item.name);
+            if (item.isDirectory()) {
+                if (item.name.toLowerCase() === dirName.toLowerCase()) {
+                    return currentPath;
+                }
+                const result = await findDirRecursive(currentPath, dirName);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+    } catch (e) {
+        // Ignore errors like permission denied and continue search
+    }
+    return null;
 }
 
 async function downloadAssets() {
@@ -220,7 +250,10 @@ async function downloadAssets() {
                         if (workersCompleted === NUM_WORKERS) {
                             process.stdout.write('\n');
                         }
-                        resolve(msg.completedCount);
+                        resolve({
+                            completedCount: msg.completedCount,
+                            downloadedFiles: msg.downloadedFiles,
+                        });
                     } else if (msg.type === 'error') {
                         console.error(`\nWorker ${msg.workerId} error: ${msg.error}`);
                         reject(new Error(msg.error));
@@ -238,12 +271,73 @@ async function downloadAssets() {
             workerPromises.push(workerPromise);
         }
 
-        const results = await Promise.all(workerPromises);
-        const totalDownloaded = results.reduce((acc: number, count: any) => acc + count, 0);
+        const results = (await Promise.all(workerPromises)) as WorkerResult[];
+        console.log(results);
+        const totalDownloaded = results.reduce((acc, result) => acc + result.completedCount, 0);
 
         console.log(
             `Finished downloading ${totalDownloaded} files for ${sourceType} into ${sources[0].outputDir}`
         );
+
+        // extracting models
+        // --- Extraction Logic ---
+        if (sourceType === 'models' && shouldDownload.extract) {
+            console.log('Extracting model archives...');
+            console.log('Extracting and processing model archives...');
+            const finalOutputDir = './Models_Extracted';
+            await fs.mkdir(finalOutputDir, { recursive: true });
+
+            let extractedCount = 0;
+
+            for (const result of results) {
+                for (const filePath of result.downloadedFiles) {
+                    if (filePath.endsWith('.zip')) {
+                        const parentDir = path.dirname(filePath);
+                        const zipFileName = path.basename(filePath, '.zip');
+                        const tempExtractDir = path.join(parentDir, zipFileName);
+
+                        try {
+                            await fs.mkdir(tempExtractDir, { recursive: true });
+                            const zip = new AdmZip(filePath);
+                            zip.extractAllTo(tempExtractDir, true);
+
+                            const imagesDirPath = await findDirRecursive(tempExtractDir, 'images');
+
+                            if (imagesDirPath) {
+                                const targetDir = path.dirname(imagesDirPath);
+                                const targetDirName = path.basename(targetDir);
+                                const finalDestinationPath = path.join(
+                                    finalOutputDir,
+                                    targetDirName
+                                );
+
+                                await fs.rename(targetDir, finalDestinationPath);
+                                extractedCount++;
+                            } else {
+                                console.warn(
+                                    `\nWarning: 'images' directory not found in ${zipFileName}.`
+                                );
+                            }
+
+                            // Cleanup
+                            // await fs.unlink(filePath);
+                            // await fs.rm(tempExtractDir, { recursive: true, force: true });
+                        } catch (err) {
+                            console.error(
+                                `\nFailed to process ${zipFileName}:`,
+                                getErrorMessage(err)
+                            );
+                            try {
+                                await fs.rm(tempExtractDir, { recursive: true, force: true });
+                            } catch (cleanupErr) {
+                                // Ignore cleanup error
+                            }
+                        }
+                    }
+                }
+            }
+            console.log(`Extraction complete. ${extractedCount} archives extracted.`);
+        }
     }
 
     return;

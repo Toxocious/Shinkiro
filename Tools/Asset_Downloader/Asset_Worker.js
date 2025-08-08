@@ -4,6 +4,8 @@ const fs = require('fs/promises');
 const path = require('path');
 
 async function downloadSprites() {
+    const downloadedFiles = [];
+
     const { spriteUrls, baseUrl, outputDir, workerId, sourceDir } = workerData;
     let completed = 0;
     const total = spriteUrls.length;
@@ -14,6 +16,7 @@ async function downloadSprites() {
                 const url = new URL(spriteUrl); // full URL
                 const fileName = path.basename(url.pathname); // strips query string
                 const outputPath = path.join(outputDir, fileName);
+                downloadedFiles.push(outputPath);
 
                 const response = await axios.get(spriteUrl, {
                     responseType: 'arraybuffer',
@@ -47,6 +50,7 @@ async function downloadSprites() {
             workerId,
             completedCount: completed,
             sourceDir,
+            downloadedFiles: downloadedFiles,
         });
     } catch (error) {
         console.error(`Worker ${workerId} error: ${error.message}`);
