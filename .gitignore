@@ -15,8 +15,12 @@ node_modules/
 # Tools
 Tools/Asset_Downloader/Audio
 Tools/Asset_Downloader/Models
+Tools/Asset_Downloader/Models_Extracted
 Tools/Asset_Downloader/Sprites
 
 Tools/Audio_Converter/Output
 
+Tools/Fbx_Version_Updater/Input_Backup
+Tools/Fbx_Version_Updater/Input/*
+!Tools/Fbx_Version_Updater/Input/.gitkeep
 
