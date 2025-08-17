@@ -36,6 +36,7 @@
   - [Installation](#installation)
   - [Project Setup](#project-setup)
   - [Cleaning Up](#cleaning-up)
+  - [Branch Paradigm](#branch-paradigm)
 - [Project Modules](#project-modules)
   - [Executables](#executables)
     - [Asset Packer](#asset-packer)
@@ -100,6 +101,12 @@ Included with this repository is a script to remove all generated files along wi
 ./Clean.sh
 ```
 
+## Branch Paradigm
+To maintain a clear development workflow, Shinkiro follows a structured branching strategy:
+
+- `main` – Stable release builds. Only thoroughly tested code is merged here.
+- `dev` – Beta builds. New features and fixes are first merged into this branch before promotion to main.
+- `dev-<FEATURE>` – Feature-specific branches. Each new feature should be developed in its own branch, following this naming convention, and then submitted as a Pull Request into dev.
 
 # Project Modules
 

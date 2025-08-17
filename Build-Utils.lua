@@ -1,3 +1,16 @@
+-- Helper function to get current git branch
+function getCurrentGitBranch()
+    local pipe = io.popen("git rev-parse --abbrev-ref HEAD")
+    if pipe then
+        local branch = pipe:read("*l")
+        pipe:close()
+
+        return branch
+    end
+
+    return "unknown"
+end
+
 -- Link our dependencies.
 function linkDependencies()
 	includedirs {

@@ -36,17 +36,22 @@ namespace Shinkiro::Core
 
             if ( p_Module->m_Name == "Window" )
             {
-                name += " " + version;
-
-#if defined( SHINKIRO_DEBUG )
-                name += " [DEBUG]";
-#elif defined( SHINKIRO_RELEASE )
-                name += " [RELEASE]";
-#elif defined( SHINKIRO_DIST )
-                name += " [DIST]";
-#else
-                name += " [UNKNOWN]";
+#ifdef BUILD_TYPE
+                if ( std::string( BUILD_TYPE ) != "Release" )
+                {
+                    name += " [" + std::string( BUILD_TYPE ) + "]";
+                }
 #endif
+
+                // #if defined( SHINKIRO_DEBUG )
+                //                 name += " [DEBUG]";
+                // #elif defined( SHINKIRO_RELEASE )
+                //                 name += " [RELEASE]";
+                // #elif defined( SHINKIRO_DIST )
+                //                 name += " [DIST]";
+                // #else
+                //                 name += " [UNKNOWN]";
+                // #endif
 
                 p_Module->Initialize( name.c_str(), height, width );
             }

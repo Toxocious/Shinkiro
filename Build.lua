@@ -4,6 +4,9 @@ require "Clean"
 -- Build Utility Functions
 include "./Build-Utils.lua"
 
+-- Current Git branch
+local gitBranch = getCurrentGitBranch()
+
 -- Output Directory Name
 outputdir = "%{cfg.buildcfg}-%{string.gsub(cfg.system, '^%l', string.upper)}-%{cfg.architecture}"
 
@@ -48,6 +51,7 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "DSPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
+            "BUILD_TYPE=\"" .. gitBranch .. "\""
         }
         runtime "Debug"
         optimize "Debug"
@@ -60,6 +64,7 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "SPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
+            "BUILD_TYPE=\"Beta\""
         }
         runtime "Release"
         optimize "On"
@@ -72,6 +77,7 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "SPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
+            "BUILD_TYPE=\"Release\""
         }
         runtime "Release"
         optimize "On"
