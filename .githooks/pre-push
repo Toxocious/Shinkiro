@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Get current branch name
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+
+# Allowed branches: main, dev, or dev-<anything>
+if [[ "$branch_name" == dev-* ]]; then
+    exit 0
+else
+    echo "============================================================"
+    echo "ERROR: Branch '$branch_name' is not allowed to be pushed to!"
+    echo "Branch names start with 'dev-' (e.g., dev-cool-new-feature)"
+    echo "Push aborted."
+    echo "============================================================"
+    exit 1
+fi

@@ -1,5 +1,8 @@
 #/bin/bash
 
+# Install git hooks.
+./Install-Hooks.sh
+
 # Generate necessary project files using Premake5
 case "$(uname -s)" in
     Linux*)

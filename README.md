@@ -105,8 +105,14 @@ Included with this repository is a script to remove all generated files along wi
 To maintain a clear development workflow, Shinkiro follows a structured branching strategy:
 
 - `main` – Stable release builds. Only thoroughly tested code is merged here.
-- `dev` – Beta builds. New features and fixes are first merged into this branch before promotion to main.
+- `beta` – Beta builds. New features and fixes are first merged into this branch before promotion to main.
 - `dev-<FEATURE>` – Feature-specific branches. Each new feature should be developed in its own branch, following this naming convention, and then submitted as a Pull Request into dev.
+
+To enforce our branch paradigm, two Git hooks are included: [pre-commit](.githooks/pre-commit) and [pre-push](.githooks/pre-push) which only allow commits and pushes to branches beginning with `dev-`.
+
+Those hooks are further enforced by our repository settings which only allow code to be merged into the `main` and `beta` branches by way of a pull request.
+
+
 
 # Project Modules
 
