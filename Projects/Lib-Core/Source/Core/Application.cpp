@@ -37,7 +37,7 @@ namespace Shinkiro::Core
             if ( p_Module->m_Name == "Window" )
             {
 #ifdef BUILD_TYPE
-                if ( std::string( BUILD_TYPE ) != "Release" )
+                if ( std::string( BUILD_TYPE ) != "Dist" )
                 {
                     name += " [" + std::string( BUILD_TYPE ) + "]";
                 }

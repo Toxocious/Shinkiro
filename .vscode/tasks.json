@@ -31,13 +31,69 @@
             "problemMatcher": "$msCompile"
         },
 
+        {
+            "label": "Build (Beta)",
+            "type": "shell",
+            "command": "msbuild.exe",
+            "args": [
+                "\"./Shinkiro.sln\"",
+                "-p:Configuration=Release",
+                "-p:Platform=x64",
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": ["Generate Solution"],
+            "problemMatcher": "$msCompile"
+        },
+
+        {
+            "label": "Build (Dist)",
+            "type": "shell",
+            "command": "msbuild.exe",
+            "args": [
+                "\"./Shinkiro.sln\"",
+                "-p:Configuration=Dist",
+                "-p:Platform=x64",
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "dependsOn": ["Generate Solution"],
+            "problemMatcher": "$msCompile"
+        },
+
         // Run
         {
             "label": "Run (Debug)",
             "type": "shell",
             "command": "./Build/Binaries/Editor/Debug-Windows-x86_64/Editor/'ShinkiroEditor.exe'",
             "group": "test",
-            "dependsOn": ["Build"],
+            "dependsOn": ["Build (Debug)"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+
+        {
+            "label": "Run (Beta)",
+            "type": "shell",
+            "command": "./Build/Binaries/Editor/Release-Windows-x86_64/Editor/'ShinkiroEditor.exe'",
+            "group": "test",
+            "dependsOn": ["Build (Beta)"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+
+        {
+            "label": "Run (Dist)",
+            "type": "shell",
+            "command": "./Build/Binaries/Editor/Dist-Windows-x86_64/Editor/'ShinkiroEditor.exe'",
+            "group": "test",
+            "dependsOn": ["Build (Dist)"],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -51,6 +107,34 @@
                 "Generate Solution",
                 "Build (Debug)",
                 "Run (Debug)"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+
+        {
+            "label": "Build and Run (Beta)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Generate Solution",
+                "Build (Beta)",
+                "Run (Beta)"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+
+        {
+            "label": "Build and Run (Dist)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Generate Solution",
+                "Build (Dist)",
+                "Run (Dist)"
             ],
             "group": {
                 "kind": "test",

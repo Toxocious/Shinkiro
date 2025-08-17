@@ -36,6 +36,8 @@
   - [Installation](#installation)
   - [Project Setup](#project-setup)
   - [Cleaning Up](#cleaning-up)
+  - [Building AssetBundles](#building-assetbundles)
+  - [Building \& Running via VS Code](#building--running-via-vs-code)
   - [Branch Paradigm](#branch-paradigm)
 - [Project Modules](#project-modules)
   - [Executables](#executables)
@@ -100,6 +102,22 @@ Included with this repository is a script to remove all generated files along wi
 ```sh
 ./Clean.sh
 ```
+
+## Building AssetBundles
+In order for Shinkiro's map editor to work, it expects an `AssetBundle` in the directory of its executable.
+
+We handle copying it over to the executable directory via a postbuild hook in our premake configuration, but do not provide the AssetBundle for you directly due to its large file size.
+
+You'll need to run the [AssetPacker](./Projects/App-AssetPacker) to create an AssetBundle and then place the AssetBundle folder in the root repository directory before attempting to run the map editor. Failure to do so will result in the map editor not starting.
+
+## Building & Running via VS Code
+We have a number of tasks and launch configurations for building and running Shinkiro inside of VS Code.
+
+By default, you can expect VS Code to always launch the debug configuration of Shinkiro's map editor.
+
+You may change this at any time via the dropdown under the `Run And Debug` panel.
+
+> This is optional - Shinkiro is fully supported through Visual Studio if you opt for that instead.
 
 ## Branch Paradigm
 To maintain a clear development workflow, Shinkiro follows a structured branching strategy:

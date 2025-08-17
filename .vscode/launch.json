@@ -17,6 +17,42 @@
                 "trace": true
             },
             "visualizerFile": "${workspaceFolder}/.vscode/custom.natvis",
+        },
+
+        {
+            "name": "Beta Editor",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Build/Binaries/Release-Windows-x86_64/Editor/ShinkiroEditor.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "internalConsole",
+            "preLaunchTask": "Build (Beta)",
+            "logging": {
+                "moduleLoad": false,
+                "trace": true
+            },
+            "visualizerFile": "${workspaceFolder}/.vscode/custom.natvis",
+        },
+
+        {
+            "name": "Dist Editor",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Build/Binaries/Dist-Windows-x86_64/Editor/ShinkiroEditor.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "console": "internalConsole",
+            "preLaunchTask": "Build (Dist)",
+            "logging": {
+                "moduleLoad": false,
+                "trace": true
+            },
+            "visualizerFile": "${workspaceFolder}/.vscode/custom.natvis",
         }
-    ]
+    ],
 }

@@ -11,6 +11,9 @@ node_modules/
 *.sln
 *.log
 
+# Asset Bundles
+AssetBundles/
+
 # Tools
 Tools/Asset_Downloader/Audio
 Tools/Asset_Downloader/Models

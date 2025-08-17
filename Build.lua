@@ -16,6 +16,7 @@ local ObjectDir = "Build\\Artifacts\\%{outputdir}\\%{prj.name}"
 
 -- Assets Path
 local AssetsPath = "Assets"
+local AssetBundlesPath = "AssetBundles"
 
 -- Core DLL Paths
 local CorePath = "Build\\Binaries\\%{outputdir}\\Lib-Core\\ShinkiroCore.dll"
@@ -77,7 +78,7 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "SPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
-            "BUILD_TYPE=\"Release\""
+            "BUILD_TYPE=\"Dist\""
         }
         runtime "Release"
         optimize "On"
@@ -109,6 +110,9 @@ workspace "Shinkiro"
     postbuildcommands {
         -- Copy the Assets directory to the AssetPacker executable directory
         "{COPYDIR} %{wks.location}" .. AssetsPath .. " %{wks.location}" .. AssetPackerBinaryDir .. "\\Assets",
+
+        -- Copy AssetBundles to the Editor executable directory
+        "{COPYDIR} %{wks.location}" .. AssetBundlesPath .. " %{wks.location}" .. EditorBinaryDir .. "\\AssetBundles",
 
         -- Copy Lib-Asset DLL to the AssetPacker and AssetUnpacker executable directories
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetPackerBinaryDir,
