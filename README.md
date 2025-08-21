@@ -1,6 +1,6 @@
 <div align="center">
-  <!-- <img src="..." title="Shinkiro Logo" alt="Shinkiro Logo" /> -->
-  <h1 align="center">Shinkiro</h1>
+  <img src="Assets/Textures/Shinkiro/LogoTest.png" title="Shinkiro Logo" alt="Shinkiro Logo" />
+  <!-- <h1 align="center">Shinkiro</h1> -->
 
   **Shinkiro** is a C++ project that currently compiles into a single executable alongside multiple shared libraries.
 
@@ -53,6 +53,7 @@
   - [Tools](#tools)
     - [Asset Downloader](#asset-downloader)
     - [Audio Converter](#audio-converter)
+    - [FBX Version Updater](#fbx-version-updater)
 - [License](#license)
 
 
@@ -68,7 +69,7 @@ Shinkiro currently features.. almost nothing.
 
 The build system is set-up to use premake5, and currently generates the necessary Visual Studio files and configurations to build an [Editor](./Projects/App-Editor/) executable, an [Asset Packer](./Projects/App-AssetPacker/) executable, an [Asset Unpacker](./Projects/App-AssetUnpacker/) executable, and a variety of small core shared libraries.
 
-All shared libraries are prefixed with **`Lib-*`**, such as "Lib-Audio" where all code for audio-related functionality would be.
+All shared libraries are prefixed with **`Lib-*`**, such as `Lib-Audio` where all code for audio-related functionality would be.
 
 All executable applications are prefixed with **`App-*`**.
 
@@ -180,6 +181,9 @@ It also downloads 3D Pokemon .fbx Models from Models Resource.
 Shinkiro includes a versatile bash script that is used to convert audio files from one format to another.
 > Read more about the audio converter [here](./Tools/Audio_Converter/README.md)
 
+### FBX Version Updater
+Shinkiro includes a TypeScript script that upgrades .fbx files to a more recent version to maintain loading capabilities with the current engine.
+> Read more about the FBX version updater [here](./Tools/FBX_Version_Updater/README.md)
 
 
 
