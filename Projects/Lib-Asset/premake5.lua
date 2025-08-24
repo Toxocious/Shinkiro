@@ -13,6 +13,8 @@ project "Lib-Asset"
         "%{wks.location}/Libraries/stb_image/include/**.h",
 		"%{wks.location}/Libraries/stb_image/include/**.cpp",
 
+		"%{wks.location}/Libraries/zstd/include/**.h",
+
         "**.h",
         "**.hpp",
         "**.cpp"
@@ -22,13 +24,35 @@ project "Lib-Asset"
     {
         "%{wks.location}/Libraries/stb_image/include",
 
+		"%{wks.location}/Libraries/zstd/include",
+
         "./Include",
+    }
+
+    libdirs
+    {
+        "%{wks.location}/Libraries/zstd/lib",
     }
 
     defines
     {
         "SHINKIRO_ASSET_EXPORTS"
     }
+
+    filter { "configurations:Debug" }
+		links {
+			"zstd_static_debug",
+		}
+
+	filter { "configurations:Dist" }
+		links {
+			"zstd_static_release",
+		}
+
+	filter { "configurations:Release" }
+		links {
+			"zstd_static_release",
+		}
 
     filter "system:windows"
         systemversion "latest"
