@@ -13,8 +13,18 @@
 #include <stdexcept>
 #include <vector>
 
+#include <zstd/zstd.h>
+
+/**
+ * @file AssetBundleManager.cpp
+ * @brief Implementation of the AssetBundleManager class for managing asset bundles.
+ */
 namespace Shinkiro::Asset
 {
+    /**
+     * @brief Constructor for AssetBundleManager.
+     * @param BundleName The name of the asset bundle to manage.
+     */
     AssetBundleManager::AssetBundleManager( const std::string & BundleName )
         : bundleName( BundleName )
     {
@@ -25,11 +35,18 @@ namespace Shinkiro::Asset
         extractionPath = GetExecutableDirectory() / "UnpackedAssets";
     }
 
+    /**
+     * @brief Set the extraction path for unpacked assets.
+     * @param path The directory where assets will be extracted.
+     */
     void AssetBundleManager::SetExtractionPath( const std::filesystem::path & path )
     {
         extractionPath = path;
     }
 
+    /**
+     * @brief Load the asset bundle header and asset entries from the bundle file.
+     */
     bool AssetBundleManager::LoadBundleInfo()
     {
         std::ifstream file( bundlePath, std::ios::binary );
@@ -45,7 +62,8 @@ namespace Shinkiro::Asset
         file.read( reinterpret_cast<char *>( &header ), sizeof( header ) );
         if ( !header.isValid() )
         {
-            std::string msg = "Invalid bundle format: " + bundlePath.string();
+            std::string msg = "Invalid bundle format: " + bundlePath.string() + " (magic: 0x" + std::to_string( header.getMagic() ) + ")" +
+                              " (version: " + std::to_string( header.getVersion() ) + ")";
             Log::Write( msg );
             std::cerr << msg << std::endl;
 
@@ -74,16 +92,21 @@ namespace Shinkiro::Asset
             std::string name( nameLength, '\0' );
             file.read( &name[0], nameLength );
 
-            uint64_t offset, size;
+            uint64_t offset, compressedSize, uncompressedSize;
             file.read( reinterpret_cast<char *>( &offset ), sizeof( offset ) );
-            file.read( reinterpret_cast<char *>( &size ), sizeof( size ) );
+            file.read( reinterpret_cast<char *>( &compressedSize ), sizeof( compressedSize ) );
+            file.read( reinterpret_cast<char *>( &uncompressedSize ), sizeof( uncompressedSize ) );
 
-            assets.emplace_back( name, offset, size );
+            assets.emplace_back( name, offset, compressedSize, uncompressedSize );
         }
 
         return true;
     }
 
+    /**
+     * @brief Load all assets from the asset bundle into memory.
+     * @throws std::runtime_error if any asset is not found or the bundle cannot be opened.
+     */
     void AssetBundleManager::LoadAssetsIntoMemory()
     {
         const auto bundlePath = GetBundlePath();
@@ -92,25 +115,42 @@ namespace Shinkiro::Asset
         {
             if ( LoadBundleInfo() )
             {
-                auto extractedPaths = GetAssetList();
-                if ( extractedPaths.size() > 0 )
+                auto assetList = GetAssetList();
+                if ( !assetList.empty() )
                 {
-                    for ( const auto & assetName : extractedPaths )
+                    for ( const auto & assetName : assetList )
                     {
                         try
                         {
-                            const std::vector<uint8_t> & assetData = ExtractAssetToMemory( assetName );
-                            assetCache.emplace( assetName, std::move( assetData ) );
+                            // ExtractAssetToMemory will place the data in the cache
+                            ExtractAssetToMemory( assetName );
                         }
                         catch ( const std::exception & e )
                         {
+                            std::string msg = "Failed to load asset " + assetName + ": " + e.what();
+                            Log::Write( msg );
+                            std::cerr << msg << std::endl;
+
+                            throw std::runtime_error( msg );
                         }
                     }
                 }
             }
         }
+        else
+        {
+            std::string msg = "Asset bundle does not exist: " + bundlePath.string();
+            Log::Write( msg );
+            std::cerr << msg << std::endl;
+
+            throw std::runtime_error( msg );
+        }
     }
 
+    /**
+     * @brief Get a list of all asset names in the bundle.
+     * @return A vector of asset names.
+     */
     std::vector<std::string> AssetBundleManager::GetAssetList()
     {
         std::vector<std::string> names;
@@ -122,6 +162,11 @@ namespace Shinkiro::Asset
         return names;
     }
 
+    /**
+     * @brief Get the data for a specific asset by name.
+     * @param assetName The name of the asset to retrieve.
+     * @return A reference to the vector containing the asset data.
+     */
     const std::vector<uint8_t> & AssetBundleManager::GetAssetData( const std::string & assetName )
     {
         auto cacheIt = assetCache.find( assetName );
@@ -130,14 +175,28 @@ namespace Shinkiro::Asset
             return cacheIt->second;
         }
 
-        std::vector<uint8_t> data = ExtractAssetToMemory( assetName );
-        auto                 it   = assetCache.emplace( assetName, std::move( data ) );
+        // Data is not in cache, so extract it. It will be cached by ExtractAssetToMemory.
+        ExtractAssetToMemory( assetName );
 
-        return it.first->second;
+        // Return the newly cached data.
+        return assetCache.at( assetName );
     }
 
+    /**
+     * @brief Extract a specific asset to memory.
+     * @param assetName The name of the asset to extract.
+     * @return A vector containing the asset data.
+     * @throws std::runtime_error if the asset is not found or the bundle cannot be opened.
+     */
     std::vector<uint8_t> AssetBundleManager::ExtractAssetToMemory( const std::string & assetName )
     {
+        // If it's already cached, just return it.
+        auto cacheIt = assetCache.find( assetName );
+        if ( cacheIt != assetCache.end() )
+        {
+            return cacheIt->second;
+        }
+
         auto it = std::find_if(
             assets.begin(),
             assets.end(),
@@ -159,14 +218,46 @@ namespace Shinkiro::Asset
         }
 
         file.seekg( it->offset );
-        std::vector<uint8_t> data( it->size );
-        file.read( reinterpret_cast<char *>( data.data() ), it->size );
+        std::vector<uint8_t> fileData( it->compressedSize );
+        file.read( reinterpret_cast<char *>( fileData.data() ), it->compressedSize );
 
-        assetCache.emplace( assetName, std::move( data ) );
+        // Check if the data is actually compressed
+        if ( it->compressedSize < it->uncompressedSize )
+        {
+            std::vector<uint8_t> decompressedData( it->uncompressedSize );
+            size_t const         decompressedSize = ZSTD_decompress(
+                decompressedData.data(),
+                decompressedData.size(),
+                fileData.data(),
+                fileData.size()
+            );
 
-        return data;
+            if ( ZSTD_isError( decompressedSize ) )
+            {
+                throw std::runtime_error(
+                    "Failed to decompress asset " + assetName + ": " + ZSTD_getErrorName( decompressedSize )
+                );
+            }
+            decompressedData.resize( decompressedSize );
+
+            // Emplace the data into the cache and return it.
+            auto [emplacedIt, success] = assetCache.emplace( assetName, std::move( decompressedData ) );
+            return emplacedIt->second;
+        }
+        else
+        {
+            // Data is not compressed, just move it to the cache
+            auto [emplacedIt, success] = assetCache.emplace( assetName, std::move( fileData ) );
+            return emplacedIt->second;
+        }
     }
 
+    /**
+     * @brief Extract a specific asset to a file.
+     * @param assetName The name of the asset to extract.
+     * @return The path to the extracted file.
+     * @throws std::runtime_error if the asset is not found or the output file cannot be created.
+     */
     std::filesystem::path AssetBundleManager::ExtractAssetToFile( const std::string & assetName )
     {
         std::vector<uint8_t>  data    = ExtractAssetToMemory( assetName );
@@ -190,7 +281,10 @@ namespace Shinkiro::Asset
         return outPath;
     }
 
-    // Extract all assets
+    /**
+     * @brief Extract all assets in the bundle to files.
+     * @return A map of asset names to their extracted file paths.
+     */
     std::map<std::string, std::filesystem::path> AssetBundleManager::ExtractAllAssets()
     {
         Log::Write( "Unpacking All Assets" );
@@ -200,6 +294,7 @@ namespace Shinkiro::Asset
         Log::Write( "" );
 
         std::map<std::string, std::filesystem::path> extractedPaths;
+
         for ( const auto & asset : assets )
         {
             try
@@ -215,26 +310,28 @@ namespace Shinkiro::Asset
                 std::cerr << msg << std::endl;
             }
         }
+
         return extractedPaths;
     }
 
-    // Create a bundle from assets in a directory
+    /**
+     * @brief Create an asset bundle from a directory of files.
+     * @param inputDir The directory containing files to bundle.
+     * @param outputPath The path where the bundle will be created.
+     * @return True if the bundle was created successfully, false otherwise.
+     */
     bool AssetBundleManager::CreateBundle( const std::filesystem::path & inputDir, const std::filesystem::path & outputPath )
     {
         Log::Write( "Creating asset bundle: " + outputPath.string() );
         Log::Write( "" );
-
-        // Verifer that the input directory to be bundled actually exists.
         if ( !std::filesystem::exists( inputDir ) || !std::filesystem::is_directory( inputDir ) )
         {
             std::string msg = "Input directory does not exist: " + inputDir.string();
             Log::Write( msg );
             std::cerr << msg << std::endl;
-
             return false;
         }
 
-        // Add all files within the input directory and its subdirectories to a vector.
         std::vector<std::filesystem::path> files;
         for ( const auto & entry : std::filesystem::recursive_directory_iterator( inputDir ) )
         {
@@ -244,69 +341,92 @@ namespace Shinkiro::Asset
             }
         }
 
-        // Create the output bundle file.
-        std::ofstream bundle( outputPath, std::ios::binary );
-        if ( !bundle.is_open() )
+        if ( files.empty() )
         {
-            std::string msg = "\t\tFailed to create bundle file: " + outputPath.string();
-            Log::Write( msg );
-            std::cerr << msg << std::endl;
-
+            Log::Write( "No files found in input directory." );
             return false;
         }
 
-        // Iniitalize the bundle header, set its asset count, and write the header to the bundle output.
+        std::ofstream bundle( outputPath, std::ios::binary );
+        if ( !bundle.is_open() )
+        {
+            std::string msg = "Failed to create bundle file: " + outputPath.string();
+            Log::Write( msg );
+            std::cerr << msg << std::endl;
+            return false;
+        }
+
         AssetBundleHeader header;
         header.setAssetCount( static_cast<uint32_t>( files.size() ) );
+
+        // Leave space for the header
+        bundle.seekp( sizeof( header ), std::ios::beg );
+
+        std::vector<AssetEntry>           assetEntries;
+        std::vector<std::vector<uint8_t>> compressedAssetData;
+        uint64_t                          metadataSize = 0;
+
+        for ( const auto & file : files )
+        {
+            std::string relativePath = file.lexically_relative( inputDir ).string();
+            std::replace( relativePath.begin(), relativePath.end(), '\\', '/' );
+
+            std::ifstream inputFile( file, std::ios::binary | std::ios::ate );
+            size_t        uncompressedSize = inputFile.tellg();
+            inputFile.seekg( 0, std::ios::beg );
+            std::vector<uint8_t> srcBuffer( uncompressedSize );
+            inputFile.read( reinterpret_cast<char *>( srcBuffer.data() ), uncompressedSize );
+
+            size_t const         compressedBound = ZSTD_compressBound( uncompressedSize );
+            std::vector<uint8_t> compressedBuffer( compressedBound );
+            size_t const         compressedResult = ZSTD_compress( compressedBuffer.data(), compressedBound, srcBuffer.data(), uncompressedSize, ZSTD_CLEVEL_DEFAULT );
+
+            if ( ZSTD_isError( compressedResult ) || compressedResult >= uncompressedSize )
+            {
+                // Store uncompressed if compression fails or makes it larger
+                assetEntries.emplace_back( relativePath, 0, uncompressedSize, uncompressedSize );
+                compressedAssetData.push_back( std::move( srcBuffer ) );
+                metadataSize += sizeof( uint32_t ) + relativePath.length() + sizeof( uint64_t ) * 3;
+            }
+            else
+            {
+                // Store compressed
+                compressedBuffer.resize( compressedResult );
+                assetEntries.emplace_back( relativePath, 0, compressedResult, uncompressedSize );
+                compressedAssetData.push_back( std::move( compressedBuffer ) );
+                metadataSize += sizeof( uint32_t ) + relativePath.length() + sizeof( uint64_t ) * 3;
+            }
+        }
+
+        uint64_t currentOffset = sizeof( header ) + metadataSize;
+        for ( size_t i = 0; i < assetEntries.size(); ++i )
+        {
+            assetEntries[i].offset  = currentOffset;
+            currentOffset          += assetEntries[i].compressedSize;
+        }
+
+        // Write metadata
+        bundle.seekp( sizeof( header ), std::ios::beg );
+        for ( const auto & entry : assetEntries )
+        {
+            uint32_t nameLength = static_cast<uint32_t>( entry.name.length() );
+            bundle.write( reinterpret_cast<const char *>( &nameLength ), sizeof( nameLength ) );
+            bundle.write( entry.name.c_str(), nameLength );
+            bundle.write( reinterpret_cast<const char *>( &entry.offset ), sizeof( entry.offset ) );
+            bundle.write( reinterpret_cast<const char *>( &entry.compressedSize ), sizeof( entry.compressedSize ) );
+            bundle.write( reinterpret_cast<const char *>( &entry.uncompressedSize ), sizeof( entry.uncompressedSize ) );
+        }
+
+        // Write data
+        for ( const auto & data : compressedAssetData )
+        {
+            bundle.write( reinterpret_cast<const char *>( data.data() ), data.size() );
+        }
+
+        // Write header at the beginning
+        bundle.seekp( 0, std::ios::beg );
         bundle.write( reinterpret_cast<const char *>( &header ), sizeof( header ) );
 
-        // Calculate where asset data will start after all entries
-        uint64_t dataStart = sizeof( header );
-        for ( const auto & file : files )
-        {
-            std::string relativePath = file.lexically_relative( inputDir ).string();
-            std::replace( relativePath.begin(), relativePath.end(), '\\', '/' );
-            dataStart += sizeof( uint32_t ) +    // name length
-                         relativePath.length() + // name
-                         sizeof( uint64_t ) +    // offset
-                         sizeof( uint64_t );     // size
-        }
-
-        // Write entries with correct offsets
-        uint64_t currentOffset = dataStart;
-        for ( const auto & file : files )
-        {
-            // Write entry name
-            std::string relativePath = file.lexically_relative( inputDir ).string();
-            std::replace( relativePath.begin(), relativePath.end(), '\\', '/' );
-            Log::Write( "Packed Asset: " + relativePath );
-            uint32_t nameLength = static_cast<uint32_t>( relativePath.length() );
-            bundle.write( reinterpret_cast<const char *>( &nameLength ), sizeof( nameLength ) );
-            bundle.write( relativePath.c_str(), nameLength );
-
-            // Write offset and size
-            uint64_t fileSize = std::filesystem::file_size( file );
-            bundle.write( reinterpret_cast<const char *>( &currentOffset ), sizeof( currentOffset ) );
-            bundle.write( reinterpret_cast<const char *>( &fileSize ), sizeof( fileSize ) );
-
-            // Update offset for next file
-            currentOffset += fileSize;
-        }
-
-        // Write actual file data
-        for ( const auto & file : files )
-        {
-            std::ifstream input( file, std::ios::binary );
-            if ( !input.is_open() )
-            {
-                std::string msg = "\t\tFailed to open input file: " + file.string();
-                Log::Write( msg );
-                std::cerr << msg << std::endl;
-
-                return false;
-            }
-            bundle << input.rdbuf();
-        }
         return true;
     }
 }

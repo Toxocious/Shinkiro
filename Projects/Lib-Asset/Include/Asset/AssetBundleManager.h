@@ -10,18 +10,21 @@
 #    include <iostream>
 #    include <map>
 #    include <stack>
+#    include <string>
 #    include <unordered_map>
+#    include <vector>
 
 namespace Shinkiro::Asset
 {
     struct AssetEntry
     {
-        std::string name;   // Asset filename
-        uint64_t    offset; // Offset in the bundle file
-        uint64_t    size;   // Size of the asset in bytes
+        std::string name;             // Asset filename
+        uint64_t    offset;           // Offset in the bundle file
+        uint64_t    compressedSize;   // Size of the compressed asset in bytes
+        uint64_t    uncompressedSize; // Size of the original asset in bytes
 
-        AssetEntry( const std::string & n, uint64_t o, uint64_t s )
-            : name( n ), offset( o ), size( s )
+        AssetEntry( const std::string & assetName, uint64_t assetOffset, uint64_t assetCompressedSize, uint64_t assetUncompressedSize )
+            : name( assetName ), offset( assetOffset ), compressedSize( assetCompressedSize ), uncompressedSize( assetUncompressedSize )
         {
         }
     };

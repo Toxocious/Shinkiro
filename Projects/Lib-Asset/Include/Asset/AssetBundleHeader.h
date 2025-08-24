@@ -29,7 +29,7 @@ namespace Shinkiro::Asset
 
         bool isValid() const
         {
-            return m_Magic == 0x424E444C && m_Version > 0; // 'BNDL' in hex
+            return m_Magic == 0x53484E4B && m_Version > 0;
         }
 
         uint32_t getMagic() const

@@ -21,6 +21,7 @@ function linkDependencies()
 		"%{wks.location}/Libraries/imgui/include",
 		"%{wks.location}/Libraries/spdlog/include",
 		"%{wks.location}/Libraries/stb_image/include",
+		"%{wks.location}/Libraries/zstd/include",
 	}
 
 	libdirs {
@@ -30,6 +31,7 @@ function linkDependencies()
 		"%{wks.location}/Libraries/glm/lib",
 		"%{wks.location}/Libraries/imgui/lib",
 		"%{wks.location}/Libraries/spdlog/lib",
+		"%{wks.location}/Libraries/zstd/lib",
 	}
 
 	-- Our static lib should not link against our dependencies
@@ -41,6 +43,7 @@ function linkDependencies()
 			"glfw3",
 			"imgui_debug",
 			"spdlogd",
+            "zstd_static_debug",
 		}
 
 	filter { "kind:not SharedLib", "configurations:Dist" }
@@ -51,6 +54,7 @@ function linkDependencies()
 			"glfw3",
 			"imgui_dist",
 			"spdlog",
+            "zstd_static_release",
 		}
 
 	filter { "kind:not SharedLib", "configurations:Release" }
@@ -61,6 +65,7 @@ function linkDependencies()
 			"glfw3",
 			"imgui_release",
 			"spdlog",
+            "zstd_static_release",
 		}
 
 end
@@ -75,6 +80,7 @@ function includeDependencies()
 		"%{wks.location}/Libraries/imgui/include",
 		"%{wks.location}/Libraries/spdlog/include",
 		"%{wks.location}/Libraries/stb_image/include",
+		"%{wks.location}/Libraries/zstd/include",
 	}
 
 	files {
@@ -97,5 +103,7 @@ function includeDependencies()
 
 		"%{wks.location}/Libraries/stb_image/include/**.h",
 		"%{wks.location}/Libraries/stb_image/include/**.cpp",
+
+		"%{wks.location}/Libraries/zstd/include/**.h",
 	}
 end
