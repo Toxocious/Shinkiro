@@ -5,6 +5,8 @@
 
 #include <Asset/AssetBundleManager.h>
 
+#include <Log/Log.h>
+
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
@@ -197,6 +199,17 @@ namespace Shinkiro::Asset
             return cacheIt->second;
         }
 
+        // If the asset metadata hasn't been loaded yet, load it now.
+        if ( assets.empty() )
+        {
+            SHNK_CORE_TRACE( "Asset metadata not loaded. Loading bundle info for {}.", bundlePath.string() );
+            if ( !LoadBundleInfo() )
+            {
+                // LoadBundleInfo failed, throw an error.
+                throw std::runtime_error( "Failed to load bundle info for: " + bundlePath.string() );
+            }
+        }
+
         auto it = std::find_if(
             assets.begin(),
             assets.end(),
@@ -208,18 +221,24 @@ namespace Shinkiro::Asset
 
         if ( it == assets.end() )
         {
+            SHNK_CORE_ERROR( "Asset not found in bundle: {}", assetName );
             throw std::runtime_error( "Asset not found: " + assetName );
         }
 
         std::ifstream file( bundlePath, std::ios::binary );
         if ( !file.is_open() )
         {
+            SHNK_CORE_ERROR( "Failed to open bundle: {}", bundlePath.string() );
             throw std::runtime_error( "Failed to open bundle: " + bundlePath.string() );
         }
+
+        SHNK_CORE_TRACE( "Loaded bundle {}", bundlePath.string() );
 
         file.seekg( it->offset );
         std::vector<uint8_t> fileData( it->compressedSize );
         file.read( reinterpret_cast<char *>( fileData.data() ), it->compressedSize );
+
+        SHNK_CORE_TRACE( "Found asset." );
 
         // Check if the data is actually compressed
         if ( it->compressedSize < it->uncompressedSize )
@@ -242,12 +261,14 @@ namespace Shinkiro::Asset
 
             // Emplace the data into the cache and return it.
             auto [emplacedIt, success] = assetCache.emplace( assetName, std::move( decompressedData ) );
+
             return emplacedIt->second;
         }
         else
         {
             // Data is not compressed, just move it to the cache
             auto [emplacedIt, success] = assetCache.emplace( assetName, std::move( fileData ) );
+
             return emplacedIt->second;
         }
     }

@@ -1,5 +1,7 @@
 #include <Platform/Application.h>
 
+#include <chrono>
+
 Shinkiro::Platform::Application * App = nullptr;
 
 namespace Shinkiro::Platform
@@ -8,8 +10,6 @@ namespace Shinkiro::Platform
         : m_BundleManager( "assets.bundle" )
     {
         App = this;
-
-        m_BundleManager.LoadAssetsIntoMemory();
     }
 
     Application::~Application()

@@ -15,6 +15,8 @@ project "Lib-Asset"
 
 		"%{wks.location}/Libraries/zstd/include/**.h",
 
+        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
+
         "**.h",
         "**.hpp",
         "**.cpp"
@@ -23,15 +25,29 @@ project "Lib-Asset"
     includedirs
     {
         "%{wks.location}/Libraries/stb_image/include",
+        "%{wks.location}/Libraries/spdlog/include",
 
 		"%{wks.location}/Libraries/zstd/include",
+
+        "%{wks.location}/Projects/Lib-Logger/Include",
 
         "./Include",
     }
 
     libdirs
     {
+		"%{wks.location}/Libraries/spdlog/lib",
         "%{wks.location}/Libraries/zstd/lib",
+    }
+
+    links
+    {
+        "Lib-Logger",
+    }
+
+    dependson
+    {
+        "Lib-Logger",
     }
 
     defines
