@@ -1,37 +1,12 @@
-project "Lib-Core"
+project "Lib-Platform"
     kind "SharedLib"
     language "C++"
     cppdialect "C++20"
 
-    targetname "ShinkiroCore"
+    targetname "ShinkiroPlatform"
 
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
-
-    defines
-    {
-        "SHINKIRO_CORE_EXPORTS"
-    }
-
-    includedirs
-    {
-        "%{wks.location}/Libraries/glad/include",
-        "%{wks.location}/Libraries/glfw/include",
-		"%{wks.location}/Libraries/glm/include",
-
-        "%{wks.location}/Libraries/miniaudio/include",
-
-        "%{wks.location}/Libraries/stb_image/include",
-
-        "%{wks.location}/Libraries/spdlog/include",
-
-        -- "%{wks.location}/Projects/Lib-Asset/Include",
-        -- "%{wks.location}/Projects/Lib-Audio/Include",
-        "%{wks.location}/Projects/Lib-Logger/Include",
-        -- "%{wks.location}/Projects/Lib-Platform/Include",
-
-        "./Include",
-    }
 
     files
     {
@@ -49,19 +24,31 @@ project "Lib-Core"
         "%{wks.location}/Libraries/stb_image/include/**.h",
 		"%{wks.location}/Libraries/stb_image/include/**.cpp",
 
-        "%{wks.location}/Libraries/spdlog/include/**.h",
-		"%{wks.location}/Libraries/spdlog/include/**.cpp",
-
-        -- "%{wks.location}/Projects/Lib-Asset/Include/**.h",
-        -- "%{wks.location}/Projects/Lib-Audio/Include/**.h",
+        "%{wks.location}/Projects/Lib-Asset/Include/**.h",
+        "%{wks.location}/Projects/Lib-Audio/Include/**.h",
+        "%{wks.location}/Projects/Lib-Core/Include/**.h",
         "%{wks.location}/Projects/Lib-Logger/Include/**.h",
-        "%{wks.location}/Projects/Lib-Logger/Include/**.cpp",
-        -- "%{wks.location}/Projects/Lib-Platform/Include/**.h",
-        -- "%{wks.location}/Projects/Lib-Platform/Include/**.cpp",
 
         "**.h",
         "**.hpp",
         "**.cpp"
+    }
+
+    includedirs
+    {
+        "%{wks.location}/Libraries/glad/include",
+        "%{wks.location}/Libraries/glfw/include",
+		"%{wks.location}/Libraries/glm/include",
+        "%{wks.location}/Libraries/miniaudio/include",
+        "%{wks.location}/Libraries/stb_image/include",
+        "%{wks.location}/Libraries/spdlog/include",
+
+        "%{wks.location}/Projects/Lib-Asset/Include",
+        "%{wks.location}/Projects/Lib-Audio/Include",
+        "%{wks.location}/Projects/Lib-Core/Include",
+        "%{wks.location}/Projects/Lib-Logger/Include",
+
+        "./Include",
     }
 
     libdirs
@@ -69,41 +56,47 @@ project "Lib-Core"
         "%{wks.location}/Libraries/glad/lib",
 		"%{wks.location}/Libraries/glfw/lib",
 		"%{wks.location}/Libraries/glm/lib",
-        "%{wks.location}/Libraries/spdlog/lib"
+		"%{wks.location}/Libraries/spdlog/lib",
     }
 
     links
     {
+        "Lib-Audio",
+        "Lib-Asset",
         "Lib-Logger",
     }
 
     dependson
     {
+        "Lib-Audio",
+        "Lib-Asset",
         "Lib-Logger",
+    }
+
+    defines
+    {
+        "SHINKIRO_PLATFORM_EXPORTS"
     }
 
     filter { "configurations:Debug" }
 		links {
 			"glad_debug",
-			"glm_debug",
 			"glfw3",
-			"spdlogd",
+			"glm_debug",
 		}
 
 	filter { "configurations:Dist" }
 		links {
 			"glad_dist",
-			"glm_dist",
 			"glfw3",
-			"spdlog",
+			"glm_dist",
 		}
 
 	filter { "configurations:Release" }
 		links {
 			"glad_release",
-			"glm_release",
 			"glfw3",
-			"spdlog",
+			"glm_release",
 		}
 
     filter "system:windows"

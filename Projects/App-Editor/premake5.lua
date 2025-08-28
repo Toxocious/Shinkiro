@@ -21,9 +21,11 @@ project "Editor"
     {
         "%{wks.location}/Libraries/miniaudio/include",
 
-        "../Lib-Core/Include",
         "../Lib-Asset/Include",
         "../Lib-Audio/Include",
+        "../Lib-Core/Include",
+        "../Lib-Logger/Include",
+        "../Lib-Platform/Include",
 
         "./Include",
     }
@@ -36,6 +38,8 @@ project "Editor"
         "%{wks.location}/Projects/Lib-Core/Include/**.h",
         "%{wks.location}/Projects/Lib-Asset/Include/**.h",
         "%{wks.location}/Projects/Lib-Audio/Include/**.h",
+        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
+        "%{wks.location}/Projects/Lib-Platform/Include/**.h",
     }
 
     links
@@ -43,6 +47,8 @@ project "Editor"
         "Lib-Core",
         "Lib-Asset",
         "Lib-Audio",
+        "Lib-Logger",
+        "Lib-Platform",
     }
 
     dependson
@@ -50,6 +56,8 @@ project "Editor"
         "Lib-Core",
         "Lib-Asset",
         "Lib-Audio",
+        "Lib-Logger",
+        "Lib-Platform",
     }
 
     defines

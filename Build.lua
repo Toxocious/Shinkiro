@@ -22,7 +22,8 @@ local AssetBundlesPath = "AssetBundles"
 local CorePath = "Build\\Binaries\\%{outputdir}\\Lib-Core\\ShinkiroCore.dll"
 local CoreAssetPath = "Build\\Binaries\\%{outputdir}\\Lib-Asset\\ShinkiroAsset.dll"
 local CoreAudioPath = "Build\\Binaries\\%{outputdir}\\Lib-Audio\\ShinkiroAudio.dll"
-local CoreInputPath = "Build\\Binaries\\%{outputdir}\\Lib-Input\\ShinkiroInput.dll"
+local CoreLoggerPath = "Build\\Binaries\\%{outputdir}\\Lib-Logger\\ShinkiroLogger.dll"
+local CorePlatformPath = "Build\\Binaries\\%{outputdir}\\Lib-Platform\\ShinkiroPlatform.dll"
 local CoreRendererPath = "Build\\Binaries\\%{outputdir}\\Lib-Renderer\\ShinkiroRenderer.dll"
 
 -- Executable Paths
@@ -90,7 +91,8 @@ workspace "Shinkiro"
     include "Projects/Lib-Core"
     include "Projects/Lib-Asset"
     include "Projects/Lib-Audio"
-    include "Projects/Lib-Input"
+    include "Projects/Lib-Logger"
+    include "Projects/Lib-Platform"
     include "Projects/Lib-Renderer"
 
     -- Include all project executable configurations
@@ -122,6 +124,7 @@ workspace "Shinkiro"
         "{COPY} %{wks.location}" .. CorePath .. " %{wks.location}" .. EditorBinaryDir,
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. EditorBinaryDir,
         "{COPY} %{wks.location}" .. CoreAudioPath .. " %{wks.location}" .. EditorBinaryDir,
-        "{COPY} %{wks.location}" .. CoreInputPath .. " %{wks.location}" .. EditorBinaryDir,
+        "{COPY} %{wks.location}" .. CoreLoggerPath .. " %{wks.location}" .. EditorBinaryDir,
         "{COPY} %{wks.location}" .. CoreRendererPath .. " %{wks.location}" .. EditorBinaryDir,
+        "{COPY} %{wks.location}" .. CorePlatformPath .. " %{wks.location}" .. EditorBinaryDir,
     }

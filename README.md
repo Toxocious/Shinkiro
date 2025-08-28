@@ -48,7 +48,7 @@
     - [Lib-Asset](#lib-asset)
     - [Lib-Audio](#lib-audio)
     - [Lib-Core](#lib-core)
-    - [Lib-Input](#lib-input)
+    - [Lib-Platform](#lib-platform)
     - [Lib-Renderer](#lib-renderer)
   - [Tools](#tools)
     - [Asset Downloader](#asset-downloader)
@@ -161,9 +161,9 @@ Shinkiro's Lib-Audio library contains the necessary logic to create an AudioMana
 Shinkiro's Lib-Core library contains more generalized features for any Shinkiro application.
 > Read more about the core library [here](./Projects/Lib-Core/README.md)
 
-### Lib-Input
-Shinkiro's Lib-Input library is not currently functional.
-> Read more about the input library [here](./Projects/Lib-Input/README.md)
+### Lib-Platform
+Shinkiro's Lib-Platform library handles window creation and user input.
+> Read more about the platform library [here](./Projects/Lib-Platform/README.md)
 
 ### Lib-Renderer
 Shinkiro's Lib-Renderer library is not currently functional.

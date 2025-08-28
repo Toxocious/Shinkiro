@@ -78,6 +78,15 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "codecvt": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "memory_resource": "cpp",
+        "string_view": "cpp",
+        "*.tcc": "cpp",
+        "cwctype": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "cinttypes": "cpp"
     }
 }
