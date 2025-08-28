@@ -191,8 +191,6 @@ namespace Shinkiro::Platform
         {
             SHNK_CORE_ERROR( "Failed to load icon from memory: {0}", stbi_failure_reason() );
         }
-
-        SHNK_CORE_WARN( "Unable to set the application's window icon." );
     }
 
     // Center the window

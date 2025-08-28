@@ -14,6 +14,10 @@ case "$(uname -s)" in
 
     CYGWIN*|MINGW*|MSYS*)
         echo "[Windows]"
+
+        echo "Generating Application Resource Files"
+        premake5 --file=Build.lua genresources
+
         echo "Generating Visual Studio solution(s)"
         premake5 --file=Build.lua vs2022
         ;;

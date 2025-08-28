@@ -1,6 +1,18 @@
 {
     "version": "2.0.0",
     "tasks": [
+        // Generate Application Resource File
+        {
+            "label": "Generate Application Resource File",
+            "type": "shell",
+            "command": "premake5",
+            "args": [
+                "--file=Build.lua",
+                "genresources",
+            ],
+            "group": "build",
+        },
+
         // Generate VS2022 solution
         {
             "label": "Generate Solution",
@@ -10,7 +22,8 @@
                 "--file=Build.lua",
                 "vs2022"
             ],
-            "group": "build"
+            "group": "build",
+            "dependsOn": ["Generate Application Resource File"],
         },
 
         // Build

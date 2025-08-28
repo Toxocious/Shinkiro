@@ -8,7 +8,7 @@ int main()
 {
     const GLuint WIDTH = 1366, HEIGHT = 768;
     const char * APPLICATION_TITLE   = "Shinkiro Map Editor";
-    const char * APPLICATION_VERSION = "v0.1";
+    const char * APPLICATION_VERSION = SHINKIRO_VERSION;
 
     Shinkiro::Logger::Log::Init();
     {

@@ -1,5 +1,6 @@
 -- Custom Actions
 require "Clean"
+require "Build-Resource-File"
 
 -- Build Utility Functions
 include "./Build-Utils.lua"
@@ -45,6 +46,13 @@ workspace "Shinkiro"
         "Dist",
     }
 
+    _G.appMetadata = {
+        version = "0.1.0",
+        company = "Shinkiro Studios",
+        product = "Shinkiro Engine",
+        exe     = "ShinkiroEditor.exe"
+    }
+
     -- Configurations for Debug, Release, an Distribution
     filter "configurations:Debug"
         defines {
@@ -53,7 +61,8 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "DSPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
-            "BUILD_TYPE=\"" .. gitBranch .. "\""
+            "BUILD_TYPE=\"" .. gitBranch .. "\"",
+            'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
         runtime "Debug"
         optimize "Debug"
@@ -66,7 +75,8 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "SPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
-            "BUILD_TYPE=\"Beta\""
+            "BUILD_TYPE=\"Beta\"",
+            'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
         runtime "Release"
         optimize "On"
@@ -79,7 +89,8 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "SPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
-            "BUILD_TYPE=\"Dist\""
+            "BUILD_TYPE=\"Dist\"",
+            'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
         runtime "Release"
         optimize "On"

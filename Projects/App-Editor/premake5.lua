@@ -10,6 +10,11 @@ project "Editor"
 
     entrypoint "mainCRTStartup"
 
+    -- Set the program icon
+    filter { "system:windows" }
+        files { '%{wks.location}/Assets/Resources.rc', '**.ico' }
+        vpaths { [ '%{wks.location}/Assets/*' ] = { '**.ico' } }
+
     files
     {
         "**.h",
