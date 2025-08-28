@@ -8,6 +8,7 @@
 #include <Log/Log.h>
 
 #include <algorithm>
+#include <chrono>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -196,6 +197,8 @@ namespace Shinkiro::Asset
         auto cacheIt = assetCache.find( assetName );
         if ( cacheIt != assetCache.end() )
         {
+            SHNK_CORE_TRACE( "Asset '{}' found in cache.", assetName );
+
             return cacheIt->second;
         }
 
@@ -205,7 +208,8 @@ namespace Shinkiro::Asset
             SHNK_CORE_TRACE( "Asset metadata not loaded. Loading bundle info for {}.", bundlePath.string() );
             if ( !LoadBundleInfo() )
             {
-                // LoadBundleInfo failed, throw an error.
+                SHNK_CORE_ERROR( "Failed to load bundle info for: {}", bundlePath.string() );
+
                 throw std::runtime_error( "Failed to load bundle info for: " + bundlePath.string() );
             }
         }
@@ -222,6 +226,7 @@ namespace Shinkiro::Asset
         if ( it == assets.end() )
         {
             SHNK_CORE_ERROR( "Asset not found in bundle: {}", assetName );
+
             throw std::runtime_error( "Asset not found: " + assetName );
         }
 
@@ -229,48 +234,52 @@ namespace Shinkiro::Asset
         if ( !file.is_open() )
         {
             SHNK_CORE_ERROR( "Failed to open bundle: {}", bundlePath.string() );
+
             throw std::runtime_error( "Failed to open bundle: " + bundlePath.string() );
         }
 
-        SHNK_CORE_TRACE( "Loaded bundle {}", bundlePath.string() );
+        auto start = std::chrono::high_resolution_clock::now();
 
-        file.seekg( it->offset );
-        std::vector<uint8_t> fileData( it->compressedSize );
-        file.read( reinterpret_cast<char *>( fileData.data() ), it->compressedSize );
+        std::vector<uint8_t> finalData;
 
-        SHNK_CORE_TRACE( "Found asset." );
-
-        // Check if the data is actually compressed
-        if ( it->compressedSize < it->uncompressedSize )
         {
-            std::vector<uint8_t> decompressedData( it->uncompressedSize );
-            size_t const         decompressedSize = ZSTD_decompress(
-                decompressedData.data(),
-                decompressedData.size(),
-                fileData.data(),
-                fileData.size()
-            );
+            file.seekg( it->offset );
+            std::vector<uint8_t> fileData( it->compressedSize );
+            file.read( reinterpret_cast<char *>( fileData.data() ), it->compressedSize );
 
-            if ( ZSTD_isError( decompressedSize ) )
+            if ( it->compressedSize < it->uncompressedSize )
             {
-                throw std::runtime_error(
-                    "Failed to decompress asset " + assetName + ": " + ZSTD_getErrorName( decompressedSize )
+                std::vector<uint8_t> decompressedData( it->uncompressedSize );
+                size_t const         decompressedSize = ZSTD_decompress(
+                    decompressedData.data(),
+                    decompressedData.size(),
+                    fileData.data(),
+                    fileData.size()
                 );
+
+                if ( ZSTD_isError( decompressedSize ) )
+                {
+                    SHNK_CORE_ERROR( "Failed to decompress asset {}: {}", assetName, ZSTD_getErrorName( decompressedSize ) );
+
+                    throw std::runtime_error(
+                        "Failed to decompress asset " + assetName + ": " +
+                        ZSTD_getErrorName( decompressedSize )
+                    );
+                }
+
+                decompressedData.resize( decompressedSize );
+                finalData = std::move( decompressedData );
             }
-            decompressedData.resize( decompressedSize );
-
-            // Emplace the data into the cache and return it.
-            auto [emplacedIt, success] = assetCache.emplace( assetName, std::move( decompressedData ) );
-
-            return emplacedIt->second;
+            else
+            {
+                finalData = std::move( fileData );
+            }
         }
-        else
-        {
-            // Data is not compressed, just move it to the cache
-            auto [emplacedIt, success] = assetCache.emplace( assetName, std::move( fileData ) );
 
-            return emplacedIt->second;
-        }
+        SHNK_CORE_TRACE( "Loaded '{0}' in {1} ms", assetName, std::chrono::duration<float, std::milli>( std::chrono::high_resolution_clock::now() - start ).count() );
+
+        auto [emplacedIt, success] = assetCache.emplace( assetName, std::move( finalData ) );
+        return emplacedIt->second;
     }
 
     /**
