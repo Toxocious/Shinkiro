@@ -4,6 +4,8 @@
 
 #    include <Platform/_Defs.h>
 
+#    include <Core/Util/UpdateStatus.h>
+
 #    include <string>
 
 namespace Shinkiro::Platform
@@ -20,11 +22,11 @@ namespace Shinkiro::Platform
         virtual bool Start();
         virtual bool CleanUp();
 
-        virtual Shinkiro::Platform::UpdateStatus PreUpdate();
-        virtual Shinkiro::Platform::UpdateStatus Update();
-        virtual Shinkiro::Platform::UpdateStatus PostUpdate();
+        virtual Shinkiro::Core::UpdateStatus PreUpdate()  = 0;
+        virtual Shinkiro::Core::UpdateStatus Update()     = 0;
+        virtual Shinkiro::Core::UpdateStatus PostUpdate() = 0;
 
-        static std::string UpdateStatusToString( Shinkiro::Platform::UpdateStatus us );
+        static std::string UpdateStatusToString( Shinkiro::Core::UpdateStatus us );
 
     public:
         std::string m_Name;

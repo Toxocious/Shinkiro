@@ -15,22 +15,16 @@ project "Editor"
         files { '%{wks.location}/Assets/Resources.rc', '**.ico' }
         vpaths { [ '%{wks.location}/Assets/*' ] = { '**.ico' } }
 
-    files
-    {
-        "**.h",
-        "**.hpp",
-        "**.cpp"
-    }
-
     includedirs
     {
         "%{wks.location}/Libraries/miniaudio/include",
 
-        "../Lib-Asset/Include",
-        "../Lib-Audio/Include",
-        "../Lib-Core/Include",
-        "../Lib-Logger/Include",
-        "../Lib-Platform/Include",
+        "%{wks.location}/Projects/Lib-Asset/Include",
+        "%{wks.location}/Projects/Lib-Audio/Include",
+        "%{wks.location}/Projects/Lib-Core/Include",
+        "%{wks.location}/Projects/Lib-Logger/Include",
+        "%{wks.location}/Projects/Lib-Platform/Include",
+        "%{wks.location}/Projects/Lib-Renderer/Include",
 
         "./Include",
     }
@@ -45,6 +39,11 @@ project "Editor"
         "%{wks.location}/Projects/Lib-Audio/Include/**.h",
         "%{wks.location}/Projects/Lib-Logger/Include/**.h",
         "%{wks.location}/Projects/Lib-Platform/Include/**.h",
+        "%{wks.location}/Projects/Lib-Renderer/Include/**.h",
+
+        "**.h",
+        "**.hpp",
+        "**.cpp",
     }
 
     links
@@ -54,6 +53,7 @@ project "Editor"
         "Lib-Audio",
         "Lib-Logger",
         "Lib-Platform",
+        "Lib-Renderer",
     }
 
     dependson
@@ -63,6 +63,7 @@ project "Editor"
         "Lib-Audio",
         "Lib-Logger",
         "Lib-Platform",
+        "Lib-Renderer",
     }
 
     defines

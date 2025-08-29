@@ -1,26 +1,47 @@
-#include <Platform/Application.h>
+#include <Editor/Application.h>
+
+#include <Platform/Modules/Window.h>
+#include <Platform/Modules/_Module.h>
 
 #include <chrono>
 
-Shinkiro::Platform::Application * App = nullptr;
+Shinkiro::Application * App = nullptr;
 
-namespace Shinkiro::Platform
+namespace Shinkiro
 {
     Application::Application()
         : m_BundleManager( "assets.bundle" )
     {
-        App = this;
+        Core::App = this;
     }
 
     Application::~Application()
     {
-        App = nullptr;
+        Core::App = nullptr;
+    }
+
+    /**
+     * Manager accessors.
+     */
+    Asset::AssetBundleManager & Application::GetBundleManager()
+    {
+        return m_BundleManager;
+    }
+
+    Audio::AudioManager & Application::GetAudioManager()
+    {
+        return m_AudioManager;
+    }
+
+    Platform::Window * Application::GetWindow()
+    {
+        return m_Window;
     }
 
     /**
      * Initialize a new application.
      */
-    bool Application::Initialize( std::string name, std::string version, int height, int width )
+    bool Application::Initialize( const std::string & name, const std::string & version, int height, int width )
     {
         // Create instances of required modules.
         m_Window = new Shinkiro::Platform::Window();
@@ -36,17 +57,19 @@ namespace Shinkiro::Platform
 
             if ( p_Module->m_Name == "Window" )
             {
+                std::string windowTitle = name + " v" + version;
+
 #if defined( SHINKIRO_DEBUG )
-                name += " v" + version + " [DEBUG]";
+                windowTitle += " [DEBUG]";
 #elif defined( SHINKIRO_RELEASE )
-                name += " v" + version + " [RELEASE]";
+                windowTitle += " [RELEASE]";
 #elif defined( SHINKIRO_DIST )
-                name += " v" + version + " [DIST]";
+                windowTitle += " [DIST]";
 #else
-                name += " v" + version + " [UNKNOWN]";
+                windowTitle += " [UNKNOWN]";
 #endif
 
-                p_Module->Initialize( name.c_str(), height, width );
+                p_Module->Initialize( windowTitle.c_str(), height, width );
             }
             else
             {
@@ -70,12 +93,19 @@ namespace Shinkiro::Platform
         }
 
         {
-            const auto AtmosphereBGM = App->m_BundleManager.GetAssetData( "Audio/BGM/Atmosphere-Crystal.wav" );
-            m_AudioManager.PlayOST( AtmosphereBGM );
-            m_AudioManager.SetOSTVolume( 0.1f );
+            // const auto AtmosphereBGM = App->m_BundleManager.GetAssetData( "Audio/BGM/Atmosphere-Crystal.wav" );
+            // m_AudioManager.PlayOST( AtmosphereBGM );
+            // m_AudioManager.SetOSTVolume( 0.1f );
 
-            const auto AbsolCry = App->m_BundleManager.GetAssetData( "Audio/Cries/absol.wav" );
-            m_AudioManager.PlaySoundAsync( AbsolCry );
+            // const auto AbsolCry = App->m_BundleManager.GetAssetData( "Audio/Cries/absol.wav" );
+            // m_AudioManager.PlaySoundAsync( AbsolCry );
+
+            const auto AtmosphereBGM = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Audio/BGM/Atmosphere-Crystal.wav" );
+            Shinkiro::Core::App->GetAudioManager().PlayOST( AtmosphereBGM );
+            Shinkiro::Core::App->GetAudioManager().SetOSTVolume( 0.1f );
+
+            const auto AbsolCry = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Audio/Cries/absol.wav" );
+            Shinkiro::Core::App->GetAudioManager().PlaySoundAsync( AbsolCry );
         }
 
         return true;
@@ -94,6 +124,11 @@ namespace Shinkiro::Platform
                 SHNK_CORE_TRACE( "Cleaning module '{0}'", p_Module->m_Name.c_str() );
                 p_Module->CleanUp();
             }
+
+            m_Modules.clear();
+
+            delete m_Window;
+            m_Window = nullptr;
         }
 
         return true;
@@ -102,9 +137,9 @@ namespace Shinkiro::Platform
     /**
      * Update loop.
      */
-    Shinkiro::Platform::UpdateStatus Application::Update()
+    Shinkiro::Core::UpdateStatus Application::Update()
     {
-        Shinkiro::Platform::UpdateStatus status = Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE;
+        Shinkiro::Core::UpdateStatus status = Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
 
         // Pre-Update
         {
@@ -113,10 +148,9 @@ namespace Shinkiro::Platform
                 auto p_Module = ( *module );
 
                 status = p_Module->PreUpdate();
-                if ( status != Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE )
+                if ( status != Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE )
                 {
                     SHNK_CORE_ERROR( "Module '{0}' failed on PreUpdate() -> '{1}'", p_Module->m_Name, p_Module->UpdateStatusToString( status ).c_str() );
-
                     return status;
                 }
             }
@@ -129,10 +163,9 @@ namespace Shinkiro::Platform
                 auto p_Module = ( *module );
 
                 status = p_Module->Update();
-                if ( status != Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE )
+                if ( status != Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE )
                 {
                     SHNK_CORE_ERROR( "Module '{0}' failed on Update() -> '{1}'", p_Module->m_Name, p_Module->UpdateStatusToString( status ).c_str() );
-
                     return status;
                 }
             }
@@ -145,10 +178,9 @@ namespace Shinkiro::Platform
                 auto p_Module = ( *module );
 
                 status = p_Module->PostUpdate();
-                if ( status != Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE )
+                if ( status != Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE )
                 {
                     SHNK_CORE_ERROR( "Module '{0}' failed on PostUpdate() -> '{1}'", p_Module->m_Name, p_Module->UpdateStatusToString( status ).c_str() );
-
                     return status;
                 }
             }

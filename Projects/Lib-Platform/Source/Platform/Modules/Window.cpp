@@ -1,6 +1,9 @@
 #include <Platform/Modules/Window.h>
 
-#include <Platform/Application.h>
+#include <Core/IApplication.h>
+#include <Core/Util/UpdateStatus.h>
+
+#include <Asset/AssetBundleManager.h>
 
 // #include <Core/Util/FileSystem.h>
 
@@ -42,11 +45,24 @@ namespace Shinkiro::Platform
             return false;
         }
 
+        glfwMakeContextCurrent( GetGLFWWindow() );
+        glfwSwapInterval( 0 );
+
+        if ( !gladLoadGLLoader( ( GLADloadproc ) glfwGetProcAddress ) )
+        {
+            std::cerr << "Failed to initialize GLAD" << std::endl;
+            return false;
+        }
+
         glfwSetKeyCallback( GetGLFWWindow(), SetKeyCallbacks );
         glfwSetCursorPosCallback( GetGLFWWindow(), SetMouseCallbacks );
         glfwSetScrollCallback( GetGLFWWindow(), SetMouseWheelCallbacks );
-
         glfwSetInputMode( GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL );
+
+        glEnable( GL_DEPTH_TEST );
+        glCullFace( GL_BACK );
+        glEnable( GL_BLEND );
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
         SetWindowIcon();
         CenterWindow();
@@ -67,7 +83,7 @@ namespace Shinkiro::Platform
         return true;
     }
 
-    Shinkiro::Platform::UpdateStatus Window::PreUpdate()
+    Shinkiro::Core::UpdateStatus Window::PreUpdate()
     {
         float currentTime = ( float ) glfwGetTime();
         m_DeltaTime       = currentTime - m_LastTime;
@@ -78,25 +94,33 @@ namespace Shinkiro::Platform
         glfwGetCursorPos( GetGLFWWindow(), &xpos, &ypos );
         SetMousePos( glm::vec2( xpos, ypos ) );
 
-        return Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE;
+        return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
 
-    Shinkiro::Platform::UpdateStatus Window::Update()
+    Shinkiro::Core::UpdateStatus Window::Update()
     {
         if ( ShouldClose() )
         {
-            return Shinkiro::Platform::UpdateStatus::UPDATE_STOP;
+            return Shinkiro::Core::UpdateStatus::UPDATE_STOP;
         }
 
-        return Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE;
+        Render();
+
+        return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
 
-    Shinkiro::Platform::UpdateStatus Window::PostUpdate()
+    Shinkiro::Core::UpdateStatus Window::PostUpdate()
     {
         SwapBuffers();
         PollEvents();
 
-        return Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE;
+        return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
+    }
+
+    void Window::Render()
+    {
+        glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     }
 
     void Window::SetTitle( const char * title )
@@ -163,7 +187,7 @@ namespace Shinkiro::Platform
     // Set the window icon
     void Window::SetWindowIcon()
     {
-        const auto ShinkiroWindowIcon = App->m_BundleManager.GetAssetData( "ShinkiroWindowIcon.png" );
+        const auto ShinkiroWindowIcon = Shinkiro::Core::App->GetBundleManager().GetAssetData( "ShinkiroWindowIcon.png" );
 
         int iconWidth, iconHeight, channels;
 

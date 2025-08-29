@@ -7,6 +7,9 @@
 
 #    include <Platform/Modules/_Module.h>
 
+#    include <Core/Util/UpdateStatus.h>
+
+#    include <glad/glad.h>
 #    include <glm/glm.hpp>
 #    include <stb_image/stb_image.h>
 
@@ -27,9 +30,12 @@ namespace Shinkiro::Platform
         bool Start() override;
         bool CleanUp() override;
 
-        Shinkiro::Platform::UpdateStatus PreUpdate() override;
-        Shinkiro::Platform::UpdateStatus Update() override;
-        Shinkiro::Platform::UpdateStatus PostUpdate() override;
+        Shinkiro::Core::UpdateStatus PreUpdate() override;
+        Shinkiro::Core::UpdateStatus Update() override;
+        Shinkiro::Core::UpdateStatus PostUpdate() override;
+
+        // Window
+        void Render();
 
         // Window utilities
         void SetTitle( const char * title );

@@ -1,6 +1,6 @@
 #include <Log/Log.h>
 
-#include <Platform/Application.h>
+#include <Editor/Application.h>
 
 #include <Core/Util/UpdateStatus.h>
 
@@ -12,7 +12,7 @@ int main()
 
     Shinkiro::Logger::Log::Init();
     {
-        Shinkiro::Platform::ApplicationState currentState = Shinkiro::Platform::ApplicationState::CREATION;
+        Shinkiro::ApplicationState currentState = Shinkiro::ApplicationState::CREATION;
 
         bool running = true;
 
@@ -20,84 +20,84 @@ int main()
         {
             switch ( currentState )
             {
-                case Shinkiro::Platform::ApplicationState::CREATION:
+                case Shinkiro::ApplicationState::CREATION:
                     SHNK_INFO( "Creating application" );
                     {
-                        App          = new Shinkiro::Platform::Application();
-                        currentState = Shinkiro::Platform::ApplicationState::INIT;
+                        App          = new Shinkiro::Application();
+                        currentState = Shinkiro::ApplicationState::INIT;
                     }
                     SHNK_INFO( "Application successfully created" );
                     break;
 
-                case Shinkiro::Platform::ApplicationState::INIT:
+                case Shinkiro::ApplicationState::INIT:
                     SHNK_INFO( "Initializing application and modules" );
                     {
                         if ( App->Initialize( APPLICATION_TITLE, APPLICATION_VERSION, HEIGHT, WIDTH ) )
                         {
-                            currentState = Shinkiro::Platform::ApplicationState::START;
+                            currentState = Shinkiro::ApplicationState::START;
                         }
                         else
                         {
                             SHNK_ERROR( "Failed to create application. Exiting" );
-                            currentState = Shinkiro::Platform::ApplicationState::EXIT_ERROR;
+                            currentState = Shinkiro::ApplicationState::EXIT_ERROR;
                             break;
                         }
                     }
                     SHNK_INFO( "Application successfully initialized" );
                     break;
 
-                case Shinkiro::Platform::ApplicationState::START:
+                case Shinkiro::ApplicationState::START:
                     SHNK_INFO( "Starting application modules" );
                     {
                         if ( App->Start() )
                         {
-                            currentState = Shinkiro::Platform::ApplicationState::UPDATE;
+                            currentState = Shinkiro::ApplicationState::UPDATE;
                         }
                         else
                         {
                             SHNK_ERROR( "Failed to start application modules. Exiting" );
-                            currentState = Shinkiro::Platform::ApplicationState::EXIT_ERROR;
+                            currentState = Shinkiro::ApplicationState::EXIT_ERROR;
                         }
                     }
                     SHNK_INFO( "Application modules successfully started" );
 
                     break;
 
-                case Shinkiro::Platform::ApplicationState::UPDATE:
+                case Shinkiro::ApplicationState::UPDATE:
 
                     App->Update();
                     switch ( App->Update() )
                     {
-                        case Shinkiro::Platform::UpdateStatus::UPDATE_STOP:
-                            currentState = Shinkiro::Platform::ApplicationState::FINISH;
+                        case Shinkiro::Core::UpdateStatus::UPDATE_STOP:
+                            currentState = Shinkiro::ApplicationState::FINISH;
                             break;
-                        case Shinkiro::Platform::UpdateStatus::UPDATE_ERROR:
-                            currentState = Shinkiro::Platform::ApplicationState::EXIT_ERROR;
+                        case Shinkiro::Core::UpdateStatus::UPDATE_ERROR:
+                            currentState = Shinkiro::ApplicationState::EXIT_ERROR;
                             break;
                     }
                     break;
 
-                case Shinkiro::Platform::ApplicationState::FINISH:
+                case Shinkiro::ApplicationState::FINISH:
                     SHNK_INFO( "Cleaning up application before exiting" );
                     {
                         if ( App->CleanUp() )
                         {
-                            currentState = Shinkiro::Platform::ApplicationState::EXIT;
+                            currentState = Shinkiro::ApplicationState::EXIT;
                         }
                         else
                         {
                             SHNK_ERROR( "Failed to clean up the application. Exiting" );
-                            currentState = Shinkiro::Platform::ApplicationState::EXIT_ERROR;
+                            currentState = Shinkiro::ApplicationState::EXIT_ERROR;
                         }
                     }
                     break;
 
-                case Shinkiro::Platform::ApplicationState::EXIT:
+                case Shinkiro::ApplicationState::EXIT:
                     SHNK_INFO( "Application has successfully exited" );
                     running = false;
                     break;
 
-                case Shinkiro::Platform::ApplicationState::EXIT_ERROR:
+                case Shinkiro::ApplicationState::EXIT_ERROR:
                     SHNK_INFO( "Application has exited with errors" );
                     running = false;
                     break;
@@ -106,7 +106,6 @@ int main()
     }
 
     delete App;
-    App = nullptr;
 
     return 0;
 }

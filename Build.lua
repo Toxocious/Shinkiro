@@ -127,9 +127,11 @@ workspace "Shinkiro"
         -- Copy AssetBundles to the Editor executable directory
         "{COPYDIR} %{wks.location}" .. AssetBundlesPath .. " %{wks.location}" .. EditorBinaryDir .. "\\AssetBundles",
 
-        -- Copy Lib-Asset DLL to the AssetPacker and AssetUnpacker executable directories
+        -- Copy required Lib-* DLL to the AssetPacker and AssetUnpacker executable directories
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetPackerBinaryDir,
         "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetUnpackerBinaryDir,
+        "{COPY} %{wks.location}" .. CoreLoggerPath .. " %{wks.location}" .. AssetPackerBinaryDir,
+        "{COPY} %{wks.location}" .. CoreLoggerPath .. " %{wks.location}" .. AssetUnpackerBinaryDir,
 
         -- Copy all Lib-* DLLs to the Editor executable directory
         "{COPY} %{wks.location}" .. CorePath .. " %{wks.location}" .. EditorBinaryDir,

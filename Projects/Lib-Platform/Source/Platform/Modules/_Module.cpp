@@ -28,19 +28,19 @@ namespace Shinkiro::Platform
         return true;
     }
 
-    Shinkiro::Platform::UpdateStatus Module::PreUpdate()
+    Shinkiro::Core::UpdateStatus Module::PreUpdate()
     {
-        return Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE;
+        return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
 
-    Shinkiro::Platform::UpdateStatus Module::Update()
+    Shinkiro::Core::UpdateStatus Module::Update()
     {
-        return Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE;
+        return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
 
-    Shinkiro::Platform::UpdateStatus Module::PostUpdate()
+    Shinkiro::Core::UpdateStatus Module::PostUpdate()
     {
-        return Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE;
+        return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
 
     bool Module::CleanUp()
@@ -48,15 +48,15 @@ namespace Shinkiro::Platform
         return true;
     }
 
-    std::string Module::UpdateStatusToString( Shinkiro::Platform::UpdateStatus updateStatus )
+    std::string Module::UpdateStatusToString( Shinkiro::Core::UpdateStatus updateStatus )
     {
         switch ( updateStatus )
         {
-            case Shinkiro::Platform::UpdateStatus::UPDATE_CONTINUE:
+            case Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE:
                 return std::string( "Update Continue" );
-            case Shinkiro::Platform::UpdateStatus::UPDATE_STOP:
+            case Shinkiro::Core::UpdateStatus::UPDATE_STOP:
                 return std::string( "Update Stop" );
-            case Shinkiro::Platform::UpdateStatus::UPDATE_ERROR:
+            case Shinkiro::Core::UpdateStatus::UPDATE_ERROR:
                 return std::string( "Update Error" );
         }
 

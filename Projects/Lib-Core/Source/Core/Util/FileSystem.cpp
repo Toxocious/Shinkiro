@@ -6,21 +6,41 @@
 
 namespace Shinkiro::Core
 {
-    namespace fs = std::filesystem;
+    /**
+     * @brief Gets the fs::path to the current executable.
+     * @return The executable path.
+     */
+    std::filesystem::path FileSystem::GetExecutablePath()
+    {
+        std::filesystem::path executablePath;
+
+        wchar_t path[MAX_PATH] = { 0 };
+        GetModuleFileNameW( NULL, path, MAX_PATH );
+        executablePath = path;
+
+        return executablePath;
+    }
+
+    /**
+     * @brief Gets the fs::path to the directory containing the executable.
+     * @return The directory path.
+     */
+    std::filesystem::path FileSystem::GetExecutableDirectory()
+    {
+        return GetExecutablePath().parent_path();
+    }
 
     /**
      * Returns a fs::path to the /Assets folder relative to the executable.
      */
     std::filesystem::path FileSystem::GetCoreAssetPath()
     {
-        namespace fs = std::filesystem;
-
         char exePath[MAX_PATH];
         GetModuleFileNameA( NULL, exePath, MAX_PATH );
-        fs::path executablePath = fs::path( exePath ).parent_path();
+        std::filesystem::path executablePath = std::filesystem::path( exePath ).parent_path();
 
-        fs::path assetPath = executablePath / "Assets";
-        if ( fs::exists( assetPath ) )
+        std::filesystem::path assetPath = executablePath / "Assets";
+        if ( std::filesystem::exists( assetPath ) )
         {
             return assetPath;
         }
@@ -34,7 +54,7 @@ namespace Shinkiro::Core
      */
     std::string FileSystem::GetFullPath( const char * path )
     {
-        return fs::absolute( path ).string();
+        return std::filesystem::absolute( path ).string();
     }
 
     /**
@@ -127,7 +147,7 @@ namespace Shinkiro::Core
     {
         try
         {
-            return fs::exists( path );
+            return std::filesystem::exists( path );
         }
         catch ( const std::filesystem::filesystem_error & e )
         {

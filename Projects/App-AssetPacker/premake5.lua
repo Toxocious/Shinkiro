@@ -12,6 +12,9 @@ project "AssetPacker"
 
     files
     {
+        "%{wks.location}/Projects/Lib-Asset/Include/**.h",
+        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
+
         "**.h",
         "**.hpp",
         "**.cpp"
@@ -19,7 +22,8 @@ project "AssetPacker"
 
     includedirs
     {
-        "../Lib-Asset/Include",
+        "%{wks.location}/Projects/Lib-Asset/Include",
+        "%{wks.location}/Projects/Lib-Logger/Include",
 
         "./Include",
     }
@@ -27,11 +31,13 @@ project "AssetPacker"
     links
     {
         "Lib-Asset",
+        "Lib-Logger",
     }
 
     dependson
     {
         "Lib-Asset",
+        "Lib-Logger",
     }
 
     filter { "system:windows" }

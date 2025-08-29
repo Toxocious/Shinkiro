@@ -63,6 +63,7 @@ project "Lib-Platform"
     {
         "Lib-Audio",
         "Lib-Asset",
+        "Lib-Core",
         "Lib-Logger",
     }
 
@@ -70,6 +71,7 @@ project "Lib-Platform"
     {
         "Lib-Audio",
         "Lib-Asset",
+        "Lib-Core",
         "Lib-Logger",
     }
 

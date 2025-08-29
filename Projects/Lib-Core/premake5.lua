@@ -25,10 +25,10 @@ project "Lib-Core"
 
         "%{wks.location}/Libraries/spdlog/include",
 
-        -- "%{wks.location}/Projects/Lib-Asset/Include",
-        -- "%{wks.location}/Projects/Lib-Audio/Include",
+        "%{wks.location}/Projects/Lib-Asset/Include",
+        "%{wks.location}/Projects/Lib-Audio/Include",
         "%{wks.location}/Projects/Lib-Logger/Include",
-        -- "%{wks.location}/Projects/Lib-Platform/Include",
+        "%{wks.location}/Projects/Lib-Platform/Include",
 
         "./Include",
     }
@@ -74,11 +74,15 @@ project "Lib-Core"
 
     links
     {
+        "Lib-Asset",
+        "Lib-Audio",
         "Lib-Logger",
     }
 
     dependson
     {
+        "Lib-Asset",
+        "Lib-Audio",
         "Lib-Logger",
     }
 

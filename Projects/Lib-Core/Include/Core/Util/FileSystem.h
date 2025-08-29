@@ -9,7 +9,7 @@
 
 namespace Shinkiro::Core
 {
-    class FileSystem
+    class CORE_API FileSystem
     {
     public:
         static std::string OpenTextFile( const char * path );
@@ -21,6 +21,8 @@ namespace Shinkiro::Core
         static std::string GetFileExtension( const char * file, bool with_dot = false );
         static std::string GetFullPath( const char * path );
 
+        static std::filesystem::path GetExecutablePath();
+        static std::filesystem::path GetExecutableDirectory();
         static std::filesystem::path GetCoreAssetPath();
 
         static std::string NormalizePath( const std::string & path );
