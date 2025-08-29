@@ -28,10 +28,7 @@ project "Lib-Core"
 
         "%{wks.location}/Libraries/spdlog/include",
 
-        "%{wks.location}/Projects/Lib-Asset/Include",
-        "%{wks.location}/Projects/Lib-Audio/Include",
         "%{wks.location}/Projects/Lib-Logger/Include",
-        "%{wks.location}/Projects/Lib-Platform/Include",
 
         "./Include",
     }
@@ -55,12 +52,8 @@ project "Lib-Core"
         "%{wks.location}/Libraries/spdlog/include/**.h",
 		"%{wks.location}/Libraries/spdlog/include/**.cpp",
 
-        -- "%{wks.location}/Projects/Lib-Asset/Include/**.h",
-        -- "%{wks.location}/Projects/Lib-Audio/Include/**.h",
         "%{wks.location}/Projects/Lib-Logger/Include/**.h",
         "%{wks.location}/Projects/Lib-Logger/Include/**.cpp",
-        -- "%{wks.location}/Projects/Lib-Platform/Include/**.h",
-        -- "%{wks.location}/Projects/Lib-Platform/Include/**.cpp",
 
         "**.h",
         "**.hpp",
@@ -77,15 +70,11 @@ project "Lib-Core"
 
     links
     {
-        "Lib-Asset",
-        "Lib-Audio",
         "Lib-Logger",
     }
 
     dependson
     {
-        "Lib-Asset",
-        "Lib-Audio",
         "Lib-Logger",
     }
 

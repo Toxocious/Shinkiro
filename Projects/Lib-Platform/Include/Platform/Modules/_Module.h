@@ -18,16 +18,49 @@ namespace Shinkiro::Platform
         Module( const char * name, bool enabled );
         virtual ~Module();
 
+        /**
+         * @brief Initialize the module. This is called once when the application starts
+         */
         virtual bool Initialize();
+
+        /**
+         * @brief Initialize - specifically, the Window module - when the application starts.
+         * @param title The title of the window
+         * @param height The height of the window
+         * @param width The width of the window
+         */
         virtual bool Initialize( const char * title, int height, int width );
 
+        /**
+         * @brief Start the module. This is called once when the application starts, after Initialize
+         * @return True if the module started successfully, false otherwise
+         */
         virtual bool Start();
+
+        /**
+         * @brief Clean up the module. This is called once when the application is closing
+         * @return True if the module cleaned up successfully, false otherwise
+         */
         virtual bool CleanUp();
 
-        virtual Shinkiro::Core::UpdateStatus PreUpdate()  = 0;
-        virtual Shinkiro::Core::UpdateStatus Update()     = 0;
+        /**
+         * @brief Any pre-update logic for the module. This is called once per frame, before Update()
+         */
+        virtual Shinkiro::Core::UpdateStatus PreUpdate() = 0;
+
+        /**
+         * @brief Any update logic for the module. This is called once per frame, after PreUpdate() and before PostUpdate()
+         */
+        virtual Shinkiro::Core::UpdateStatus Update() = 0;
+
+        /**
+         * @brief Any post-update logic for the module. This is called once per frame, after Update()
+         */
         virtual Shinkiro::Core::UpdateStatus PostUpdate() = 0;
 
+        /**
+         * @brief Convert an UpdateStatus enum to a string
+         */
         static std::string UpdateStatusToString( Shinkiro::Core::UpdateStatus us );
 
     public:

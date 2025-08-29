@@ -2,6 +2,8 @@
 
 #include <Audio/AudioManager.h>
 
+#include <Log/Log.h>
+
 namespace Shinkiro::Audio
 {
     AudioManager::AudioManager()
@@ -9,7 +11,7 @@ namespace Shinkiro::Audio
         if ( ma_engine_init( NULL, &m_Engine ) != MA_SUCCESS ||
              m_Engine.pDevice == nullptr || m_Engine.pDevice->pContext == nullptr )
         {
-            std::cerr << "[AudioManager] Failed to initialize audio engine or device.\n";
+            SHNK_CORE_ERROR("[AudioManager] Failed to initialize audio engine or device");
             return;
         }
 
@@ -73,13 +75,13 @@ namespace Shinkiro::Audio
 
         if ( ma_decoder_init_memory( m_OSTData.data(), m_OSTData.size(), NULL, &m_OSTDecoder ) != MA_SUCCESS )
         {
-            std::cerr << "[AudioManager] Failed to init OST decoder.\n";
+            SHNK_CORE_ERROR( "[AudioManager] Failed to init OST decoder." );
             return;
         }
 
         if ( ma_sound_init_from_data_source( &m_Engine, &m_OSTDecoder, MA_SOUND_FLAG_ASYNC, NULL, &m_OSTSound ) != MA_SUCCESS )
         {
-            std::cerr << "[AudioManager] Failed to init OST sound.\n";
+            SHNK_CORE_ERROR( "[AudioManager] Failed to init OST sound." );
             ma_decoder_uninit( &m_OSTDecoder );
             return;
         }
@@ -120,7 +122,7 @@ namespace Shinkiro::Audio
     {
         if ( m_Engine.pDevice )
         {
-            ma_engine_stop( &m_Engine ); // Stops all active sounds
+            ma_engine_stop( &m_Engine );
         }
         StopOST();
     }

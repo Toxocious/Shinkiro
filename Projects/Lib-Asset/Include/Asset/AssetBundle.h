@@ -18,6 +18,11 @@ namespace Shinkiro::Asset
     class ASSET_API AssetBundle
     {
     public:
+        /**
+         * @brief Constructs a new AssetBundle
+         * @param name The name of the asset bundle
+         * @param type The AssetType of the bundle
+         */
         AssetBundle( const std::string & name, AssetType type );
         ~AssetBundle() = default;
 
@@ -27,6 +32,11 @@ namespace Shinkiro::Asset
         bool PackAssets( const std::filesystem::path & outputPath );
 
     public:
+        /**
+         * @brief Adds an asset to the bundle
+         * @param assetPath The file path to the asset
+         * @return True if the asset was added successfully, false otherwise
+         */
         template <AssetType Type>
         inline bool AddAsset( const std::filesystem::path & assetPath )
         {
@@ -34,6 +44,11 @@ namespace Shinkiro::Asset
             return false;
         }
 
+        /**
+         * @brief Specialization for adding Font assets
+         * @param assetPath The file path to the font asset or directory containing font assets
+         * @return True if the asset was added successfully, false otherwise
+         */
         template <>
         inline bool AddAsset<AssetType::Font>( const std::filesystem::path & assetPath )
         {
@@ -64,6 +79,11 @@ namespace Shinkiro::Asset
             return false;
         }
 
+        /**
+         * @brief Specialization for adding Texture assets
+         * @param assetPath The file path to the texture asset
+         * @return True if the asset was added successfully, false otherwise
+         */
         template <>
         inline bool AddAsset<AssetType::Texture>( const std::filesystem::path & assetPath )
         {
@@ -78,11 +98,19 @@ namespace Shinkiro::Asset
         }
 
     public:
+        /**
+         * @brief Gets the name of the asset bundle
+         * @return The name of the asset bundle
+         */
         const std::string & GetName() const
         {
             return m_Name;
         };
 
+        /**
+         * @brief Gets the AssetType of the asset bundle
+         * @return The AssetType of the asset bundle
+         */
         AssetType GetType() const
         {
             return m_Type;

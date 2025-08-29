@@ -45,15 +45,50 @@ namespace Shinkiro
         ~Application();
 
     public:
+        /**
+         * @brief Initializes the application with the specified parameters.
+         * @param name The name of the application.
+         * @param version The version of the application.
+         * @param height The height of the application window.
+         * @param width The width of the application window.
+         */
         bool Initialize( const std::string & name, const std::string & version, int height, int width ) override;
+
+        /**
+         * @brief Starts the application, initializing all modules and entering the main loop.
+         * @return True if the application started successfully, false otherwise.
+         */
         bool Start() override;
+
+        /**
+         * @brief Cleans up resources and shuts down the application.
+         * @return True if cleanup was successful, false otherwise.
+         */
         bool CleanUp() override;
 
+        /**
+         * @brief Updates the application state, processing events and rendering.
+         * @return The current update status (continue, stop, error).
+         */
         Shinkiro::Core::UpdateStatus Update() override;
 
     public:
+        /**
+         * @brief Get the application's Bundle Manager
+         * @return A reference to the Bundle Manager
+         */
         Asset::AssetBundleManager & GetBundleManager() override;
+
+        /**
+         * @brief Get the application's Audio Manager
+         * @return A reference to the Audio Manager
+         */
         Audio::AudioManager &       GetAudioManager() override;
+
+        /**
+         * @brief Get the window module of the application
+         * @return A pointer to the window module
+         */
         Platform::Window *          GetWindow() override;
 
     public:

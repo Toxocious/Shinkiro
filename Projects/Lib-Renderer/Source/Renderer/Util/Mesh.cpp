@@ -4,10 +4,7 @@
 
 namespace Shinkiro::Renderer
 {
-    /**
-     * @brief Render the mesh.
-     * @param shader The shader to use for rendering.
-     */
+
     void Mesh::Draw( Shader & shader )
     {
         unsigned int diffuseNr  = 1;
@@ -26,7 +23,7 @@ namespace Shinkiro::Renderer
                 number = std::to_string( specularNr++ );
             }
 
-            shader.setInt( ( "material." + name + number ).c_str(), i );
+            shader.SetInt( ( "material." + name + number ).c_str(), i );
             glBindTexture( GL_TEXTURE_2D, m_Textures[i].id );
         }
 
@@ -37,9 +34,6 @@ namespace Shinkiro::Renderer
         glActiveTexture( GL_TEXTURE0 );
     }
 
-    /**
-     * @brief Initializes all the buffer objects/arrays.
-     */
     void Mesh::SetupMesh()
     {
         glGenVertexArrays( 1, &m_VAO );
@@ -56,9 +50,11 @@ namespace Shinkiro::Renderer
         // Vertex Positions
         glEnableVertexAttribArray( 0 );
         glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void * ) 0 );
+
         // Vertex Normals
         glEnableVertexAttribArray( 1 );
         glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void * ) offsetof( Vertex, Normal ) );
+
         // Vertex Texture Coords
         glEnableVertexAttribArray( 2 );
         glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void * ) offsetof( Vertex, TexCoords ) );

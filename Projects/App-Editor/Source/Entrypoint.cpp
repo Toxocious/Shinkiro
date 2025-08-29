@@ -10,7 +10,7 @@ int main()
     const char * APPLICATION_TITLE   = "Shinkiro Map Editor";
     const char * APPLICATION_VERSION = SHINKIRO_VERSION;
 
-    Shinkiro::Logger::Log::Init();
+    Shinkiro::Logger::Log::Initialize();
     {
         Shinkiro::ApplicationState currentState = Shinkiro::ApplicationState::CREATION;
 

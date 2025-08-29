@@ -20,72 +20,72 @@ namespace Shinkiro::Renderer
         Shader( const std::string & vertexPath, const std::string & fragmentPath );
 
     public:
-        void use() const
+        void Use() const
         {
             glUseProgram( m_ID );
         }
 
     public:
-        unsigned int getID() const
+        unsigned int GetID() const
         {
             return m_ID;
         }
 
     public:
-        void setBool( const std::string & name, bool value ) const
+        void SetBool( const std::string & name, bool value ) const
         {
-            glUniform1i( getUniformLocation( name ), ( int ) value );
+            glUniform1i( GetUniformLocation( name ), ( int ) value );
         }
 
-        void setInt( const std::string & name, int value ) const
+        void SetInt( const std::string & name, int value ) const
         {
-            glUniform1i( getUniformLocation( name ), value );
+            glUniform1i( GetUniformLocation( name ), value );
         }
 
-        void setFloat( const std::string & name, float value ) const
+        void SetFloat( const std::string & name, float value ) const
         {
-            glUniform1f( getUniformLocation( name ), value );
+            glUniform1f( GetUniformLocation( name ), value );
         }
 
-        void setVec2( const std::string & name, const glm::vec2 & value ) const
+        void SetVec2( const std::string & name, const glm::vec2 & value ) const
         {
-            glUniform2fv( getUniformLocation( name ), 1, &value[0] );
+            glUniform2fv( GetUniformLocation( name ), 1, &value[0] );
         }
 
-        void setVec3( const std::string & name, const glm::vec3 & value ) const
+        void SetVec3( const std::string & name, const glm::vec3 & value ) const
         {
-            glUniform3fv( getUniformLocation( name ), 1, &value[0] );
+            glUniform3fv( GetUniformLocation( name ), 1, &value[0] );
         }
 
-        void setVec4( const std::string & name, const glm::vec4 & value ) const
+        void SetVec4( const std::string & name, const glm::vec4 & value ) const
         {
-            glUniform4fv( getUniformLocation( name ), 1, &value[0] );
+            glUniform4fv( GetUniformLocation( name ), 1, &value[0] );
         }
 
-        void setMat2( const std::string & name, const glm::mat2 & mat ) const
+        void SetMat2( const std::string & name, const glm::mat2 & mat ) const
         {
-            glUniformMatrix2fv( getUniformLocation( name ), 1, GL_FALSE, &mat[0][0] );
+            glUniformMatrix2fv( GetUniformLocation( name ), 1, GL_FALSE, &mat[0][0] );
         }
 
-        void setMat3( const std::string & name, const glm::mat3 & mat ) const
+        void SetMat3( const std::string & name, const glm::mat3 & mat ) const
         {
-            glUniformMatrix3fv( getUniformLocation( name ), 1, GL_FALSE, &mat[0][0] );
+            glUniformMatrix3fv( GetUniformLocation( name ), 1, GL_FALSE, &mat[0][0] );
         }
 
-        void setMat4( const std::string & name, const glm::mat4 & mat ) const
+        void SetMat4( const std::string & name, const glm::mat4 & mat ) const
         {
-            glUniformMatrix4fv( getUniformLocation( name ), 1, GL_FALSE, &mat[0][0] );
+            glUniformMatrix4fv( GetUniformLocation( name ), 1, GL_FALSE, &mat[0][0] );
         }
 
     public:
         unsigned int CreateShaderProgram( const std::string & vertexPath, const std::string & fragmentPath );
 
     public:
-        int getUniformLocation( const std::string & name ) const
+        int GetUniformLocation( const std::string & name ) const
         {
-            if ( m_uniformCache.find( name ) != m_uniformCache.end() )
+            if ( m_UniformCache.find( name ) != m_UniformCache.end() )
             {
-                return m_uniformCache[name];
+                return m_UniformCache[name];
             }
 
             int location = glGetUniformLocation( m_ID, name.c_str() );
@@ -94,14 +94,14 @@ namespace Shinkiro::Renderer
                 SHNK_CORE_WARN( "Uniform '{}' not found in shader!", name );
             }
 
-            m_uniformCache[name] = location;
+            m_UniformCache[name] = location;
 
             return location;
         }
 
     private:
         unsigned int                                 m_ID;
-        mutable std::unordered_map<std::string, int> m_uniformCache;
+        mutable std::unordered_map<std::string, int> m_UniformCache;
     };
 }
 

@@ -21,7 +21,7 @@ namespace Shinkiro
     }
 
     /**
-     * Manager accessors.
+     * Manager Accessors
      */
     Asset::AssetBundleManager & Application::GetBundleManager()
     {
@@ -93,13 +93,6 @@ namespace Shinkiro
         }
 
         {
-            // const auto AtmosphereBGM = App->m_BundleManager.GetAssetData( "Audio/BGM/Atmosphere-Crystal.wav" );
-            // m_AudioManager.PlayOST( AtmosphereBGM );
-            // m_AudioManager.SetOSTVolume( 0.1f );
-
-            // const auto AbsolCry = App->m_BundleManager.GetAssetData( "Audio/Cries/absol.wav" );
-            // m_AudioManager.PlaySoundAsync( AbsolCry );
-
             const auto AtmosphereBGM = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Audio/BGM/Atmosphere-Crystal.wav" );
             Shinkiro::Core::App->GetAudioManager().PlayOST( AtmosphereBGM );
             Shinkiro::Core::App->GetAudioManager().SetOSTVolume( 0.1f );

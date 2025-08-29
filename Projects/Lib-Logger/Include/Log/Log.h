@@ -14,7 +14,7 @@ namespace Shinkiro::Logger
     class Log
     {
     public:
-        LOG_API static void Init();
+        LOG_API static void Initialize();
 
         LOG_API static Ref<spdlog::logger> & GetCoreLogger();
         LOG_API static Ref<spdlog::logger> & GetApplicationLogger();

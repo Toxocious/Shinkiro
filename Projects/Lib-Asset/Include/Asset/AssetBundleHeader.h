@@ -5,6 +5,8 @@
 
 #    include <Asset/_Defs.h>
 
+#    include <Log/Log.h>
+
 namespace Shinkiro::Asset
 {
     class ASSET_API AssetBundleHeader
@@ -13,47 +15,50 @@ namespace Shinkiro::Asset
         AssetBundleHeader();
 
     public:
+        /**
+         * @brief Displays the bundle header information
+         */
         void DisplayBundleInfo() const
         {
-            std::cout << "Bundle Info:" << std::endl;
-            std::cout << "  Magic: 0x" << std::hex << m_Magic << std::dec << std::endl;
-            std::cout << "  Version: " << m_Version << std::endl;
-            std::cout << "  Asset Count: " << m_AssetCount << std::endl;
-            std::cout << "  Header Size: " << m_HeaderSize << " bytes" << std::endl;
+            SHNK_CORE_INFO( "Bundle Info:" );
+            SHNK_CORE_INFO( "  Magic: 0x{0:X}", m_Magic );
+            SHNK_CORE_INFO( "  Version: {0}", m_Version );
+            SHNK_CORE_INFO( "  Asset Count: {0}", m_AssetCount );
+            SHNK_CORE_INFO( "  Header Size: {0} bytes", m_HeaderSize );
         }
 
-        bool isValid() const
+        bool IsValid() const
         {
             return m_Magic == 0x53484E4B && m_Version > 0;
         }
 
-        uint32_t getMagic() const
+        uint32_t GetMagic() const
         {
             return m_Magic;
         }
 
-        uint32_t getVersion() const
+        uint32_t GetVersion() const
         {
             return m_Version;
         }
 
-        uint32_t getAssetCount() const
+        uint32_t GetAssetCount() const
         {
             return m_AssetCount;
         }
 
-        void setAssetCount( uint32_t count )
+        void SetAssetCount( uint32_t count )
         {
             m_AssetCount = count;
         }
 
-        uint32_t getHeaderSize() const
+        uint32_t GetHeaderSize() const
         {
             return m_HeaderSize;
         }
 
     private:
-        uint32_t m_Magic;      // Magic number to identify bundle format (e.g., 'BNDL')
+        uint32_t m_Magic;      // Magic number to identify bundle format (e.g., 'SHNK')
         uint32_t m_Version;    // Bundle format version
         uint32_t m_AssetCount; // Number of assets in the bundle
         uint32_t m_HeaderSize; // Size of the header in bytes

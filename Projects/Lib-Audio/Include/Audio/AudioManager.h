@@ -28,16 +28,46 @@ namespace Shinkiro::Audio
         AudioManager();
         ~AudioManager();
 
+    public:
+        /**
+         * @brief Plays a sound asynchronously.
+         * @param data The sound data as a byte vector.
+         * @param durationMs The duration to play the sound in milliseconds.
+         * @param loop Whether to loop the sound.
+         */
         void PlaySoundAsync( std::vector<uint8_t> data, int durationMs = 1500, bool loop = false );
+
+        /**
+         * @brief Plays the original soundtrack (OST) in the background. Allows async sounds to be played over it.
+         * @param data The sound data as a byte vector.
+         */
         void PlayOST( std::vector<uint8_t> data );
+
+        /**
+         * @brief Sets the volume for the original soundtrack (OST).
+         * @param volume The volume level (0.0 to 1.0).
+         */
         void SetOSTVolume( float volume );
 
+        /**
+         * @brief Stops the original soundtrack (OST).
+         */
         void StopOST();
+
+        /**
+         * @brief Stops all currently playing sounds.
+         */
         void StopAll();
 
+        /**
+         * @brief Shuts down the audio manager and cleans up resources. Stops all sounds if any are playing.
+         */
         void Shutdown();
 
     private:
+        /**
+         * @brief The worker loop that processes the sound queue.
+         */
         void WorkerLoop();
 
     private:

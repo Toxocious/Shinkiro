@@ -9,44 +9,29 @@
 
 #include <Log/Log.h>
 
-/**
- * @file AssetBundleManager.cpp
- * @brief Implementation of the AssetBundleManager class for managing asset bundles.
- */
 namespace Shinkiro::Asset
 {
-    /**
-     * @brief Constructor for AssetBundleManager.
-     * @param BundleName The name of the asset bundle to manage.
-     */
     AssetBundleManager::AssetBundleManager( const std::string & BundleName )
-        : bundleName( BundleName )
+        : m_BundleName( BundleName )
     {
         // Use AssetBundles subdirectory for bundle path
-        bundlePath = GetExecutableDirectory() / "AssetBundles" / bundleName;
+        m_BundlePath = GetExecutableDirectory() / "AssetBundles" / m_BundleName;
 
         // Keep extraction path in root executable directory
-        extractionPath = GetExecutableDirectory() / "UnpackedAssets";
+        m_ExtractionPath = GetExecutableDirectory() / "UnpackedAssets";
     }
 
-    /**
-     * @brief Set the extraction path for unpacked assets.
-     * @param path The directory where assets will be extracted.
-     */
     void AssetBundleManager::SetExtractionPath( const std::filesystem::path & path )
     {
-        extractionPath = path;
+        m_ExtractionPath = path;
     }
 
-    /**
-     * @brief Load the asset bundle header and asset entries from the bundle file.
-     */
     bool AssetBundleManager::LoadBundleInfo()
     {
-        std::ifstream file( bundlePath, std::ios::binary );
+        std::ifstream file( m_BundlePath, std::ios::binary );
         if ( !file.is_open() )
         {
-            std::string msg = "Failed to open bundle: " + bundlePath.string();
+            std::string msg = "Failed to open bundle: " + m_BundlePath.string();
             Log::Write( msg );
             std::cerr << msg << std::endl;
             return false;
@@ -54,31 +39,33 @@ namespace Shinkiro::Asset
 
         AssetBundleHeader header;
         file.read( reinterpret_cast<char *>( &header ), sizeof( header ) );
-        if ( !header.isValid() )
+        if ( !header.IsValid() )
         {
-            std::string msg = "Invalid bundle format: " + bundlePath.string() + " (magic: 0x" + std::to_string( header.getMagic() ) + ")" +
-                              " (version: " + std::to_string( header.getVersion() ) + ")";
+            std::string msg = "Invalid bundle format: " + m_BundlePath.string() + " (magic: 0x" + std::to_string( header.GetMagic() ) + ")" +
+                              " (version: " + std::to_string( header.GetVersion() ) + ")";
             Log::Write( msg );
             std::cerr << msg << std::endl;
+
+            SHNK_CORE_ERROR( "Invalid bundle format: {} (magic: 0x{:X}) (version: {})", m_BundlePath.string(), header.GetMagic(), header.GetVersion() );
 
             return false;
         }
 
         std::stringstream ss;
         ss << "--- Bundle Information ---" << std::endl;
-        ss << "  Name: " << bundleName << std::endl;
-        ss << "  Magic: 0x" << std::hex << header.getMagic() << std::dec << std::endl;
-        ss << "  Version: " << header.getVersion() << std::endl;
-        ss << "  Asset Count: " << header.getAssetCount() << std::endl;
-        ss << "  Header Size: " << header.getHeaderSize() << " bytes" << std::endl;
+        ss << "  Name: " << m_BundleName << std::endl;
+        ss << "  Magic: 0x" << std::hex << header.GetMagic() << std::dec << std::endl;
+        ss << "  Version: " << header.GetVersion() << std::endl;
+        ss << "  Asset Count: " << header.GetAssetCount() << std::endl;
+        ss << "  Header Size: " << header.GetHeaderSize() << " bytes" << std::endl;
         ss << "--------------------------";
         Log::Write( ss.str() );
         Log::Write( "" );
 
         header.DisplayBundleInfo();
-        assets.clear();
+        m_Assets.clear();
 
-        for ( uint32_t i = 0; i < header.getAssetCount(); ++i )
+        for ( uint32_t i = 0; i < header.GetAssetCount(); ++i )
         {
             uint32_t nameLength;
             file.read( reinterpret_cast<char *>( &nameLength ), sizeof( nameLength ) );
@@ -91,21 +78,17 @@ namespace Shinkiro::Asset
             file.read( reinterpret_cast<char *>( &compressedSize ), sizeof( compressedSize ) );
             file.read( reinterpret_cast<char *>( &uncompressedSize ), sizeof( uncompressedSize ) );
 
-            assets.emplace_back( name, offset, compressedSize, uncompressedSize );
+            m_Assets.emplace_back( name, offset, compressedSize, uncompressedSize );
         }
 
         return true;
     }
 
-    /**
-     * @brief Load all assets from the asset bundle into memory.
-     * @throws std::runtime_error if any asset is not found or the bundle cannot be opened.
-     */
     void AssetBundleManager::LoadAssetsIntoMemory()
     {
-        const auto bundlePath = GetBundlePath();
+        const auto m_BundlePath = GetBundlePath();
 
-        if ( std::filesystem::exists( bundlePath ) )
+        if ( std::filesystem::exists( m_BundlePath ) )
         {
             if ( LoadBundleInfo() )
             {
@@ -116,7 +99,6 @@ namespace Shinkiro::Asset
                     {
                         try
                         {
-                            // ExtractAssetToMemory will place the data in the cache
                             ExtractAssetToMemory( assetName );
                         }
                         catch ( const std::exception & e )
@@ -133,7 +115,7 @@ namespace Shinkiro::Asset
         }
         else
         {
-            std::string msg = "Asset bundle does not exist: " + bundlePath.string();
+            std::string msg = "Asset bundle does not exist: " + m_BundlePath.string();
             Log::Write( msg );
             std::cerr << msg << std::endl;
 
@@ -141,14 +123,10 @@ namespace Shinkiro::Asset
         }
     }
 
-    /**
-     * @brief Get a list of all asset names in the bundle.
-     * @return A vector of asset names.
-     */
     std::vector<std::string> AssetBundleManager::GetAssetList()
     {
         std::vector<std::string> names;
-        for ( const auto & asset : assets )
+        for ( const auto & asset : m_Assets )
         {
             names.push_back( asset.name );
         }
@@ -156,37 +134,23 @@ namespace Shinkiro::Asset
         return names;
     }
 
-    /**
-     * @brief Get the data for a specific asset by name.
-     * @param assetName The name of the asset to retrieve.
-     * @return A reference to the vector containing the asset data.
-     */
     const std::vector<uint8_t> & AssetBundleManager::GetAssetData( const std::string & assetName )
     {
-        auto cacheIt = assetCache.find( assetName );
-        if ( cacheIt != assetCache.end() )
+        auto cacheIt = m_AssetCache.find( assetName );
+        if ( cacheIt != m_AssetCache.end() )
         {
             return cacheIt->second;
         }
 
-        // Data is not in cache, so extract it. It will be cached by ExtractAssetToMemory.
         ExtractAssetToMemory( assetName );
 
-        // Return the newly cached data.
-        return assetCache.at( assetName );
+        return m_AssetCache.at( assetName );
     }
 
-    /**
-     * @brief Extract a specific asset to memory.
-     * @param assetName The name of the asset to extract.
-     * @return A vector containing the asset data.
-     * @throws std::runtime_error if the asset is not found or the bundle cannot be opened.
-     */
     std::vector<uint8_t> AssetBundleManager::ExtractAssetToMemory( const std::string & assetName )
     {
-        // If it's already cached, just return it.
-        auto cacheIt = assetCache.find( assetName );
-        if ( cacheIt != assetCache.end() )
+        auto cacheIt = m_AssetCache.find( assetName );
+        if ( cacheIt != m_AssetCache.end() )
         {
             SHNK_CORE_TRACE( "Asset '{}' found in cache.", assetName );
 
@@ -194,39 +158,39 @@ namespace Shinkiro::Asset
         }
 
         // If the asset metadata hasn't been loaded yet, load it now.
-        if ( assets.empty() )
+        if ( m_Assets.empty() )
         {
-            SHNK_CORE_TRACE( "Asset metadata not loaded. Loading bundle info for {}.", bundlePath.string() );
+            SHNK_CORE_TRACE( "Asset metadata not loaded. Loading bundle info for {}.", m_BundlePath.string() );
             if ( !LoadBundleInfo() )
             {
-                SHNK_CORE_ERROR( "Failed to load bundle info for: {}", bundlePath.string() );
+                SHNK_CORE_ERROR( "Failed to load bundle info for: {}", m_BundlePath.string() );
 
-                throw std::runtime_error( "Failed to load bundle info for: " + bundlePath.string() );
+                throw std::runtime_error( "Failed to load bundle info for: " + m_BundlePath.string() );
             }
         }
 
         auto it = std::find_if(
-            assets.begin(),
-            assets.end(),
+            m_Assets.begin(),
+            m_Assets.end(),
             [&]( const AssetEntry & entry )
             {
                 return entry.name == assetName;
             }
         );
 
-        if ( it == assets.end() )
+        if ( it == m_Assets.end() )
         {
             SHNK_CORE_ERROR( "Asset not found in bundle: {}", assetName );
 
             throw std::runtime_error( "Asset not found: " + assetName );
         }
 
-        std::ifstream file( bundlePath, std::ios::binary );
+        std::ifstream file( m_BundlePath, std::ios::binary );
         if ( !file.is_open() )
         {
-            SHNK_CORE_ERROR( "Failed to open bundle: {}", bundlePath.string() );
+            SHNK_CORE_ERROR( "Failed to open bundle: {}", m_BundlePath.string() );
 
-            throw std::runtime_error( "Failed to open bundle: " + bundlePath.string() );
+            throw std::runtime_error( "Failed to open bundle: " + m_BundlePath.string() );
         }
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -269,20 +233,14 @@ namespace Shinkiro::Asset
 
         SHNK_CORE_TRACE( "Loaded '{0}' in {1} ms", assetName, std::chrono::duration<float, std::milli>( std::chrono::high_resolution_clock::now() - start ).count() );
 
-        auto [emplacedIt, success] = assetCache.emplace( assetName, std::move( finalData ) );
+        auto [emplacedIt, success] = m_AssetCache.emplace( assetName, std::move( finalData ) );
         return emplacedIt->second;
     }
 
-    /**
-     * @brief Extract a specific asset to a file.
-     * @param assetName The name of the asset to extract.
-     * @return The path to the extracted file.
-     * @throws std::runtime_error if the asset is not found or the output file cannot be created.
-     */
     std::filesystem::path AssetBundleManager::ExtractAssetToFile( const std::string & assetName )
     {
         std::vector<uint8_t>  data    = ExtractAssetToMemory( assetName );
-        std::filesystem::path outPath = extractionPath / assetName;
+        std::filesystem::path outPath = m_ExtractionPath / assetName;
 
         // Create subdirectories if needed
         std::filesystem::path parent = outPath.parent_path();
@@ -302,45 +260,39 @@ namespace Shinkiro::Asset
         return outPath;
     }
 
-    /**
-     * @brief Extract all assets in the bundle to files.
-     * @return A map of asset names to their extracted file paths.
-     */
     std::map<std::string, std::filesystem::path> AssetBundleManager::ExtractAllAssets()
     {
         Log::Write( "Unpacking All Assets" );
         Log::Write( "" );
 
-        Log::Write( "~ Found " + std::to_string( assets.size() ) + " assets in the bundle" );
+        Log::Write( "~ Found " + std::to_string( m_Assets.size() ) + " assets in the bundle" );
         Log::Write( "" );
 
         std::map<std::string, std::filesystem::path> extractedPaths;
 
-        for ( const auto & asset : assets )
+        for ( const auto & asset : m_Assets )
         {
             try
             {
                 std::filesystem::path path = ExtractAssetToFile( asset.name );
                 extractedPaths[asset.name] = path;
                 Log::Write( "Unpacked asset: " + asset.name );
+
+                SHNK_CORE_INFO( "Unpacked asset: {}", asset.name );
             }
             catch ( const std::exception & e )
             {
                 std::string msg = "Failed to extract asset " + asset.name + ": " + e.what();
                 Log::Write( msg );
                 std::cerr << msg << std::endl;
+
+                SHNK_CORE_ERROR( "Failed to extract asset {}: {}", asset.name, e.what() );
             }
         }
 
         return extractedPaths;
     }
 
-    /**
-     * @brief Create an asset bundle from a directory of files.
-     * @param inputDir The directory containing files to bundle.
-     * @param outputPath The path where the bundle will be created.
-     * @return True if the bundle was created successfully, false otherwise.
-     */
     bool AssetBundleManager::CreateBundle( const std::filesystem::path & inputDir, const std::filesystem::path & outputPath )
     {
         Log::Write( "Creating asset bundle: " + outputPath.string() );
@@ -378,7 +330,7 @@ namespace Shinkiro::Asset
         }
 
         AssetBundleHeader header;
-        header.setAssetCount( static_cast<uint32_t>( files.size() ) );
+        header.SetAssetCount( static_cast<uint32_t>( files.size() ) );
 
         // Leave space for the header
         bundle.seekp( sizeof( header ), std::ios::beg );

@@ -17,15 +17,15 @@ namespace Shinkiro::Renderer
 
     Renderer::~Renderer()
     {
-        glDeleteVertexArrays( 1, &m_cubeVAO );
-        glDeleteBuffers( 1, &m_cubeVBO );
+        glDeleteVertexArrays( 1, &m_CubeVAO );
+        glDeleteBuffers( 1, &m_CubeVBO );
 
-        glDeleteVertexArrays( 1, &m_skyboxVAO );
-        glDeleteBuffers( 1, &m_skyboxVBO );
+        glDeleteVertexArrays( 1, &m_SkyboxVAO );
+        glDeleteBuffers( 1, &m_SkyboxVBO );
         glDeleteTextures( 1, &m_cubemapTexture );
     }
 
-    bool Renderer::init()
+    bool Renderer::Initialize()
     {
         /**
          * Create the generic map tile shader program.
@@ -36,19 +36,19 @@ namespace Shinkiro::Renderer
                 "Shaders/MapTile/maptile.fragment.glsl"
             );
 
-            if ( m_MapTileShader->getID() == 0 )
+            if ( m_MapTileShader->GetID() == 0 )
             {
                 SHNK_CORE_ERROR( "Renderer failed to initialize MapTile shader!" );
                 return false;
             }
 
-            m_MapTileShader->use();
-            m_MapTileShader->setMat4( "model", glm::mat4( 1.0f ) );
-            m_MapTileShader->setMat4( "view", glm::mat4( 1.0f ) );
-            m_MapTileShader->setMat4( "projection", glm::mat4( 1.0f ) );
-            m_MapTileShader->setVec3( "objectColor", glm::vec3( 1.0f, 1.0f, 1.0f ) );
-            m_MapTileShader->setVec2( "uvOffset", glm::vec2( 0.0f ) );
-            m_MapTileShader->setVec2( "uvScale", glm::vec2( 1.0f ) );
+            m_MapTileShader->Use();
+            m_MapTileShader->SetMat4( "model", glm::mat4( 1.0f ) );
+            m_MapTileShader->SetMat4( "view", glm::mat4( 1.0f ) );
+            m_MapTileShader->SetMat4( "projection", glm::mat4( 1.0f ) );
+            m_MapTileShader->SetVec3( "objectColor", glm::vec3( 1.0f, 1.0f, 1.0f ) );
+            m_MapTileShader->SetVec2( "uvOffset", glm::vec2( 0.0f ) );
+            m_MapTileShader->SetVec2( "uvScale", glm::vec2( 1.0f ) );
         }
 
         /**
@@ -71,30 +71,28 @@ namespace Shinkiro::Renderer
                 MapTileFragmentShader.size()
             );
 
-            // Use your Shader class instead of raw program creation
             m_MapTileHighlighterShader = std::make_unique<Shader>(
                 MapTileVertexSource,
                 MapTileFragmentSource
             );
 
-            if ( m_MapTileHighlighterShader->getID() == 0 )
+            if ( m_MapTileHighlighterShader->GetID() == 0 )
             {
                 SHNK_CORE_ERROR( "Renderer failed to initialize MapTileHighlight shader!" );
                 return false;
             }
 
-            // Example: set some default uniforms (no need for cached locations anymore)
-            m_MapTileHighlighterShader->use();
-            m_MapTileHighlighterShader->setMat4( "model", glm::mat4( 1.0f ) );
-            m_MapTileHighlighterShader->setMat4( "view", glm::mat4( 1.0f ) );
-            m_MapTileHighlighterShader->setMat4( "projection", glm::mat4( 1.0f ) );
-            m_MapTileHighlighterShader->setVec4( "highlightColor", glm::vec4( 1.0f, 1.0f, 0.0f, 1.0f ) );
+            m_MapTileHighlighterShader->Use();
+            m_MapTileHighlighterShader->SetMat4( "model", glm::mat4( 1.0f ) );
+            m_MapTileHighlighterShader->SetMat4( "view", glm::mat4( 1.0f ) );
+            m_MapTileHighlighterShader->SetMat4( "projection", glm::mat4( 1.0f ) );
+            m_MapTileHighlighterShader->SetVec4( "highlightColor", glm::vec4( 1.0f, 1.0f, 0.0f, 1.0f ) );
 
-            // Setup vertex data for a unit cube
-            glGenVertexArrays( 1, &m_cubeVAO );
-            glGenBuffers( 1, &m_cubeVBO );
-            glBindVertexArray( m_cubeVAO );
-            glBindBuffer( GL_ARRAY_BUFFER, m_cubeVBO );
+            // Setup vertex data
+            glGenVertexArrays( 1, &m_CubeVAO );
+            glGenBuffers( 1, &m_CubeVBO );
+            glBindVertexArray( m_CubeVAO );
+            glBindBuffer( GL_ARRAY_BUFFER, m_CubeVBO );
             glBufferData( GL_ARRAY_BUFFER, sizeof( m_TileVertices ), m_TileVertices, GL_STATIC_DRAW );
 
             // Position attribute
@@ -122,22 +120,21 @@ namespace Shinkiro::Renderer
                 MapSkyboxFragmentShader.size()
             );
 
-            // Use the Shader class
             m_MapSkyboxShader = std::make_unique<Shader>(
                 MapSkyBoxVertexSource,
                 MapSkyBoxFragmentSource
             );
 
-            if ( m_MapSkyboxShader->getID() == 0 )
+            if ( m_MapSkyboxShader->GetID() == 0 )
             {
                 SHNK_CORE_ERROR( "Renderer failed to initialize MapSkybox shader!" );
                 return false;
             }
 
-            glGenVertexArrays( 1, &m_skyboxVAO );
-            glGenBuffers( 1, &m_skyboxVBO );
-            glBindVertexArray( m_skyboxVAO );
-            glBindBuffer( GL_ARRAY_BUFFER, m_skyboxVBO );
+            glGenVertexArrays( 1, &m_SkyboxVAO );
+            glGenBuffers( 1, &m_SkyboxVBO );
+            glBindVertexArray( m_SkyboxVAO );
+            glBindBuffer( GL_ARRAY_BUFFER, m_SkyboxVBO );
             glBufferData( GL_ARRAY_BUFFER, sizeof( m_SkyboxVertices ), &m_SkyboxVertices, GL_STATIC_DRAW );
 
             glEnableVertexAttribArray( 0 );
@@ -155,7 +152,7 @@ namespace Shinkiro::Renderer
                 ( skyboxDir / "Skybox_Front.png" ).string(), // Front
                 ( skyboxDir / "Skybox_Back.png" ).string()   // Back
             };
-            m_cubemapTexture = loadCubemap( faces );
+            m_cubemapTexture = LoadCubemap( faces );
         }
 
         glBindVertexArray( 0 );
@@ -165,106 +162,94 @@ namespace Shinkiro::Renderer
 
     void Renderer::DrawHighlight( int x, int y, float layer_y_offset, const glm::mat4 & view, const glm::mat4 & projection )
     {
-        // Use the highlight shader
-        m_MapTileHighlighterShader->use();
+        m_MapTileHighlighterShader->Use();
 
-        // Set matrices
-        m_MapTileHighlighterShader->setMat4( "view", view );
-        m_MapTileHighlighterShader->setMat4( "projection", projection );
+        m_MapTileHighlighterShader->SetMat4( "view", view );
+        m_MapTileHighlighterShader->SetMat4( "projection", projection );
 
-        // Set highlight color
-        m_MapTileHighlighterShader->setVec4( "highlightColor", glm::vec4( 0.2f, 0.2f, 1.0f, 0.5f ) );
+        m_MapTileHighlighterShader->SetVec4( "highlightColor", glm::vec4( 0.2f, 0.2f, 1.0f, 0.5f ) );
 
-        // Compute model matrix
         glm::mat4 model = glm::mat4( 1.0f );
         model           = glm::translate( model, glm::vec3( static_cast<float>( x ), layer_y_offset + 0.51f, static_cast<float>( y ) ) );
         model           = glm::scale( model, glm::vec3( 1.0f, 0.1f, 1.0f ) );
 
-        m_MapTileHighlighterShader->setMat4( "model", model );
+        m_MapTileHighlighterShader->SetMat4( "model", model );
 
-        // Enable blending for transparency
         glEnable( GL_BLEND );
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-        // Disable writing to the depth buffer for transparency
         glDepthMask( GL_FALSE );
 
-        // Draw the plane
-        glBindVertexArray( m_cubeVAO );
+        glBindVertexArray( m_CubeVAO );
         glDrawArrays( GL_TRIANGLES, 0, 36 );
 
-        // Reset state
         glDepthMask( GL_TRUE );
         glBindVertexArray( 0 );
-        glDisable( GL_BLEND ); // optional: reset blend state
+        glDisable( GL_BLEND );
     }
 
-    void Renderer::loadTilesetTextures( MapData & mapData )
+    void Renderer::LoadTilesetTextures( MapData & mapData )
     {
-        stbi_set_flip_vertically_on_load( true ); // Match OpenGL's coordinate system
+        stbi_set_flip_vertically_on_load( true );
 
         for ( auto & tileset : mapData.tilesets )
         {
             glGenTextures( 1, &tileset.textureID );
             glBindTexture( GL_TEXTURE_2D, tileset.textureID );
 
-            // Set texture wrapping and filtering options
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 
-            // Use nearest for pixel art
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
             glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 
             int width, height, nrChannels;
 
-            // IMPORTANT: Tiled may use relative paths. You might need to prepend a base path.
             unsigned char * data = stbi_load( tileset.imageSource.c_str(), &width, &height, &nrChannels, 0 );
             if ( data )
             {
                 GLenum format = ( nrChannels == 4 ) ? GL_RGBA : GL_RGB;
                 glTexImage2D( GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data );
                 glGenerateMipmap( GL_TEXTURE_2D );
-                std::cout << "Loaded texture: " << tileset.imageSource << std::endl;
+
+                SHNK_CORE_INFO( "Loaded texture: {}", tileset.imageSource );
             }
             else
             {
-                std::cerr << "Failed to load texture: " << tileset.imageSource << std::endl;
+                SHNK_CORE_ERROR( "Failed to load texture: {}", tileset.imageSource );
             }
+
             stbi_image_free( data );
         }
 
         stbi_set_flip_vertically_on_load( false );
     }
 
-    const Tileset * Renderer::findTilesetForGid( int gid, const std::vector<Tileset> & tilesets ) const
+    const Tileset * Renderer::FindTilesetForGid( int gid, const std::vector<Tileset> & tilesets ) const
     {
-        for ( int i = tilesets.size() - 1; i >= 0; --i )
+        for ( size_t i = tilesets.size() - 1; i >= 0; --i )
         {
             if ( gid >= tilesets[i].firstGid )
             {
-                // Return a pointer to the found tileset
                 return &tilesets[i];
             }
         }
 
         SHNK_CORE_WARN( "GID {} has no corresponding tileset. Skipping.", gid );
+
         return nullptr;
     }
 
-    void Renderer::drawMap( MapData & mapData, const Camera & camera, const glm::mat4 & view, const glm::mat4 & projection )
+    void Renderer::DrawMap( MapData & mapData, const Camera & camera, const glm::mat4 & view, const glm::mat4 & projection )
     {
-        m_renderedTileCount = 0;
+        m_RenderedTileCount = 0;
 
-        // Activate the shader
-        m_MapTileShader->use();
+        m_MapTileShader->Use();
 
-        // Set the view and projection matrices once for all tiles
-        m_MapTileShader->setMat4( "view", view );
-        m_MapTileShader->setMat4( "projection", projection );
+        m_MapTileShader->SetMat4( "view", view );
+        m_MapTileShader->SetMat4( "projection", projection );
 
-        // Bind the cube VAO
-        glBindVertexArray( m_cubeVAO );
+        glBindVertexArray( m_CubeVAO );
 
         float layer_y_offset = 0.0f;
         for ( const auto & layer : mapData.layers )
@@ -278,18 +263,17 @@ namespace Shinkiro::Renderer
                     int gid = layer.data[y * layer.width + x];
                     if ( gid == 0 )
                     {
-                        continue; // Skip empty tiles
+                        continue;
                     }
 
                     glm::vec3 tileCenter = { float( x ), layer_y_offset, float( y ) };
                     if ( !camera.m_Frustum.IsSphereInFrustum( tileCenter, tileBoundingRadius ) )
                     {
-                        continue; // Cull this tile
+                        continue;
                     }
 
-                    // Find the tileset
                     const Tileset * currentTileset = nullptr;
-                    for ( int i = mapData.tilesets.size() - 1; i >= 0; --i )
+                    for ( size_t i = mapData.tilesets.size() - 1; i >= 0; --i )
                     {
                         if ( gid >= mapData.tilesets[i].firstGid )
                         {
@@ -311,12 +295,10 @@ namespace Shinkiro::Renderer
                         continue;
                     }
 
-                    // Bind the texture
                     glActiveTexture( GL_TEXTURE0 );
                     glBindTexture( GL_TEXTURE_2D, currentTileset->textureID );
-                    m_MapTileShader->setInt( "texture_diffuse1", 0 );
+                    m_MapTileShader->SetInt( "texture_diffuse1", 0 );
 
-                    // Calculate UV scale and offset
                     int localTileId = gid - currentTileset->firstGid;
                     int tileX       = localTileId % currentTileset->columns;
                     int tileY       = localTileId / currentTileset->columns;
@@ -327,16 +309,16 @@ namespace Shinkiro::Renderer
                     float uv_offset_x = float( tileX ) * uv_scale_x;
                     float uv_offset_y = 1.0f - ( float( tileY ) * uv_scale_y ) - uv_scale_y;
 
-                    m_MapTileShader->setVec2( "uvScale", glm::vec2( uv_scale_x, uv_scale_y ) );
-                    m_MapTileShader->setVec2( "uvOffset", glm::vec2( uv_offset_x, uv_offset_y ) );
+                    m_MapTileShader->SetVec2( "uvScale", glm::vec2( uv_scale_x, uv_scale_y ) );
+                    m_MapTileShader->SetVec2( "uvOffset", glm::vec2( uv_offset_x, uv_offset_y ) );
 
-                    // Calculate model matrix and draw
                     glm::mat4 model = glm::mat4( 1.0f );
                     model           = glm::translate( model, glm::vec3( float( x ), layer_y_offset, float( y ) ) );
-                    m_MapTileShader->setMat4( "model", model );
+                    m_MapTileShader->SetMat4( "model", model );
 
                     glDrawArrays( GL_TRIANGLES, 0, 36 );
-                    m_renderedTileCount++;
+
+                    m_RenderedTileCount++;
                 }
             }
 
@@ -346,73 +328,64 @@ namespace Shinkiro::Renderer
         glBindVertexArray( 0 );
     }
 
-    void Renderer::drawSkybox( const glm::mat4 & view, const glm::mat4 & projection )
+    void Renderer::DrawSkybox( const glm::mat4 & view, const glm::mat4 & projection )
     {
-        // Change depth function so skybox passes depth test when values are equal to depth buffer
         glDepthFunc( GL_LEQUAL );
 
-        // Use the skybox shader
-        m_MapSkyboxShader->use();
-        m_MapSkyboxShader->setMat4( "view", view );
-        m_MapSkyboxShader->setMat4( "projection", projection );
-        m_MapSkyboxShader->setInt( "skybox", 0 ); // Bind sampler to texture unit 0
+        m_MapSkyboxShader->Use();
+        m_MapSkyboxShader->SetMat4( "view", view );
+        m_MapSkyboxShader->SetMat4( "projection", projection );
+        m_MapSkyboxShader->SetInt( "skybox", 0 );
 
-        // Bind skybox VAO and cubemap texture
-        glBindVertexArray( m_skyboxVAO );
+        glBindVertexArray( m_SkyboxVAO );
         glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_CUBE_MAP, m_cubemapTexture );
 
-        // Draw the skybox cube
         glDrawArrays( GL_TRIANGLES, 0, 36 );
 
         glBindVertexArray( 0 );
 
-        // Restore default depth function
         glDepthFunc( GL_LESS );
     }
 
-    void Renderer::drawGrid( int mapWidth, int mapHeight, float layer_y_offset, const glm::mat4 & view, const glm::mat4 & projection )
+    void Renderer::DrawGrid( int mapWidth, int mapHeight, float layer_y_offset, const glm::mat4 & view, const glm::mat4 & projection )
     {
-        // Use the highlight shader
-        m_MapTileHighlighterShader->use();
+        m_MapTileHighlighterShader->Use();
 
-        // Set view and projection matrices
-        m_MapTileHighlighterShader->setMat4( "view", view );
-        m_MapTileHighlighterShader->setMat4( "projection", projection );
+        m_MapTileHighlighterShader->SetMat4( "view", view );
+        m_MapTileHighlighterShader->SetMat4( "projection", projection );
 
-        // Set grid color
-        m_MapTileHighlighterShader->setVec4( "highlightColor", glm::vec4( 0.5f, 0.5f, 0.5f, 0.95f ) );
+        m_MapTileHighlighterShader->SetVec4( "highlightColor", glm::vec4( 0.5f, 0.5f, 0.5f, 0.95f ) );
 
-        glBindVertexArray( m_cubeVAO );
+        glBindVertexArray( m_CubeVAO );
 
-        // Calculate Y position for the current layer
         float y_pos     = layer_y_offset - 0.49f;
         float thickness = 0.05f;
 
-        // Draw horizontal lines
         for ( int z = 0; z <= mapHeight; ++z )
         {
             glm::mat4 model = glm::mat4( 1.0f );
             model           = glm::translate( model, glm::vec3( float( mapWidth ) / 2.0f - 0.5f, y_pos, float( z ) - 0.5f ) );
             model           = glm::scale( model, glm::vec3( float( mapWidth ), thickness, thickness ) );
-            m_MapTileHighlighterShader->setMat4( "model", model );
+            m_MapTileHighlighterShader->SetMat4( "model", model );
+
             glDrawArrays( GL_TRIANGLES, 0, 36 );
         }
 
-        // Draw vertical lines
         for ( int x = 0; x <= mapWidth; ++x )
         {
             glm::mat4 model = glm::mat4( 1.0f );
             model           = glm::translate( model, glm::vec3( float( x ) - 0.5f, y_pos, float( mapHeight ) / 2.0f - 0.5f ) );
             model           = glm::scale( model, glm::vec3( thickness, thickness, float( mapHeight ) ) );
-            m_MapTileHighlighterShader->setMat4( "model", model );
+            m_MapTileHighlighterShader->SetMat4( "model", model );
+
             glDrawArrays( GL_TRIANGLES, 0, 36 );
         }
 
         glBindVertexArray( 0 );
     }
 
-    unsigned int Renderer::loadCubemap( std::vector<std::string> faces )
+    unsigned int Renderer::LoadCubemap( std::vector<std::string> faces )
     {
         unsigned int textureID;
         glGenTextures( 1, &textureID );
@@ -421,13 +394,12 @@ namespace Shinkiro::Renderer
         int width, height, nrChannels;
         for ( unsigned int i = 0; i < faces.size(); i++ )
         {
-            // Force loading the image as 3-channel RGB, regardless of its original format.
             unsigned char * data = stbi_load( faces[i].c_str(), &width, &height, &nrChannels, 3 );
             if ( data )
             {
-                // Now that we've forced 3 channels, the format is always GL_RGB.
                 glTexImage2D( GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data );
                 stbi_image_free( data );
+
                 SHNK_CORE_INFO( "Loaded cubemap texture: {}", faces[i] );
             }
             else
@@ -435,6 +407,7 @@ namespace Shinkiro::Renderer
                 SHNK_CORE_ERROR( "Cubemap texture failed to load at path: {}", faces[i] );
             }
         }
+
         glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );

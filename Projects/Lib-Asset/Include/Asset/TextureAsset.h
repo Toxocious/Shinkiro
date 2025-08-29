@@ -23,23 +23,84 @@ namespace Shinkiro::Asset
     class ASSET_API TextureAsset : public Asset
     {
     public:
+        /**
+         * @brief Constructs a new TextureAsset
+         * @param name The name of the texture asset
+         */
         TextureAsset( const std::string & name );
         ~TextureAsset() override = default;
 
-        // Asset interface implementation
+    public:
+        /**
+         * @brief Serializes the texture asset to a byte vector
+         * @param data The vector to store the serialized data
+         */
         void Serialize( std::vector<char> & data ) const override;
+
+        /**
+         * @brief Deserializes the texture asset from a byte vector
+         * @param data The vector containing the serialized data
+         * @throws A runtime error if the texture asset data size is invalid
+         */
         void Deserialize( const std::vector<char> & data ) override;
 
-        // Custom methods
+        /**
+         * @brief Load texture data from a file
+         * @param filepath The path to the texture file
+         * @return True if the texture was loaded successfully, false otherwise
+         */
         bool LoadFromFile( const std::string & filepath );
 
-        uint32_t                     GetWidth() const;
-        uint32_t                     GetHeight() const;
-        uint32_t                     GetChannels() const;
-        TextureFormat                GetFormat() const;
-        const std::vector<uint8_t> & GetPixelData() const;
-
     public:
+        /**
+         * @brief Get the width of the texture in pixels
+         * @return The width of the texture
+         */
+        uint32_t GetWidth() const
+        {
+            return m_Width;
+        }
+
+        /**
+         * @brief Get the height of the texture in pixels
+         * @return The height of the texture
+         */
+        uint32_t GetHeight() const
+        {
+            return m_Height;
+        }
+
+        /**
+         * @brief Get the number of color channels in the texture
+         * @return The number of channels (e.g., 3 for RGB, 4
+         */
+        uint32_t GetChannels() const
+        {
+            return m_Channels;
+        }
+
+        /**
+         * @brief Get the texture format
+         * @return The TextureFormat enum value
+         */
+        TextureFormat GetFormat() const
+        {
+            return m_Format;
+        }
+
+        /**
+         * @brief Check if the texture has mipmaps
+         * @return True if the texture has mipmaps, false otherwise
+         */
+        const std::vector<uint8_t> & GetPixelData() const
+        {
+            return m_PixelData;
+        }
+
+        /**
+         * @brief Get the path of the texture asset
+         * @return The path of the texture as a string
+         */
         const std::string & GetPath() const
         {
             return m_Path;

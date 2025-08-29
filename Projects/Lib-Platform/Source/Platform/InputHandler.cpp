@@ -12,39 +12,38 @@ namespace Shinkiro::Platform
 
     void InputHandler::Update()
     {
-        m_previousKeyStates = m_currentKeyStates;
+        m_PreviousKeyStates = m_CurrentKeyStates;
 
-        // Update current key states
         for ( int i = 0; i < 256; i++ )
         {
-            m_currentKeyStates[i] = ( GetAsyncKeyState( i ) & 0x8000 ) != 0;
+            m_CurrentKeyStates[i] = ( GetAsyncKeyState( i ) & 0x8000 ) != 0;
         }
     }
 
     bool InputHandler::IsKeyPressed( int keyCode ) const
     {
-        auto it = m_currentKeyStates.find( keyCode );
-        return it != m_currentKeyStates.end() && it->second;
+        auto it = m_CurrentKeyStates.find( keyCode );
+        return it != m_CurrentKeyStates.end() && it->second;
     }
 
     bool InputHandler::IsKeyJustPressed( int keyCode ) const
     {
-        auto currIt = m_currentKeyStates.find( keyCode );
-        auto prevIt = m_previousKeyStates.find( keyCode );
+        auto currIt = m_CurrentKeyStates.find( keyCode );
+        auto prevIt = m_PreviousKeyStates.find( keyCode );
 
-        bool currentState  = currIt != m_currentKeyStates.end() && currIt->second;
-        bool previousState = prevIt != m_previousKeyStates.end() && prevIt->second;
+        bool currentState  = currIt != m_CurrentKeyStates.end() && currIt->second;
+        bool previousState = prevIt != m_PreviousKeyStates.end() && prevIt->second;
 
         return currentState && !previousState;
     }
 
     bool InputHandler::IsKeyJustReleased( int keyCode ) const
     {
-        auto currIt = m_currentKeyStates.find( keyCode );
-        auto prevIt = m_previousKeyStates.find( keyCode );
+        auto currIt = m_CurrentKeyStates.find( keyCode );
+        auto prevIt = m_PreviousKeyStates.find( keyCode );
 
-        bool currentState  = currIt != m_currentKeyStates.end() && currIt->second;
-        bool previousState = prevIt != m_previousKeyStates.end() && prevIt->second;
+        bool currentState  = currIt != m_CurrentKeyStates.end() && currIt->second;
+        bool previousState = prevIt != m_PreviousKeyStates.end() && prevIt->second;
 
         return !currentState && previousState;
     }

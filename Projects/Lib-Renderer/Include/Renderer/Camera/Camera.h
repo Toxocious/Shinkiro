@@ -33,26 +33,6 @@ namespace Shinkiro::Renderer
     class Camera
     {
     public:
-        // Frustrum
-        Frustum m_Frustum;
-
-        // Camera Attributes
-        glm::vec3 m_Position;
-        glm::vec3 m_Front;
-        glm::vec3 m_Up;
-        glm::vec3 m_Right;
-        glm::vec3 m_WorldUp;
-
-        // Euler Angles
-        float m_Yaw;
-        float m_Pitch;
-
-        // Camera Options
-        float m_MovementSpeed;
-        float m_MouseSensitivity;
-        float m_Zoom;
-
-    public:
         /**
          * @brief Constructor with vectors
          * @param position The initial position of the camera
@@ -137,6 +117,26 @@ namespace Shinkiro::Renderer
         {
             return m_Pitch;
         }
+
+    public:
+        // Frustrum
+        Frustum m_Frustum;
+
+        // Camera Attributes
+        glm::vec3 m_Position;
+        glm::vec3 m_Front;
+        glm::vec3 m_Up;
+        glm::vec3 m_Right;
+        glm::vec3 m_WorldUp;
+
+        // Euler Angles
+        float m_Yaw;
+        float m_Pitch;
+
+        // Camera Options
+        float m_MovementSpeed;
+        float m_MouseSensitivity;
+        float m_Zoom;
     };
 }
 

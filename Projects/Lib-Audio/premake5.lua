@@ -14,6 +14,9 @@ project "Lib-Audio"
     includedirs
     {
         "%{wks.location}/Libraries/miniaudio/include",
+        "%{wks.location}/Libraries/spdlog/include",
+
+        "%{wks.location}/Projects/Lib-Logger/Include",
 
         "./Include",
     }
@@ -23,9 +26,28 @@ project "Lib-Audio"
         "%{wks.location}/Libraries/miniaudio/include/**.h",
         "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
 
+        "%{wks.location}/Libraries/spdlog/include/**.h",
+
+        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
+
         "**.h",
         "**.hpp",
         "**.cpp",
+    }
+
+    libdirs
+    {
+        "%{wks.location}/Libraries/spdlog/lib",
+    }
+
+    links
+    {
+        "Lib-Logger",
+    }
+
+    dependson
+    {
+        "Lib-Logger",
     }
 
     defines

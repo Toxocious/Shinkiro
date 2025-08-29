@@ -15,6 +15,13 @@ namespace Shinkiro::Renderer
 
         Plane() = default;
 
+        /**
+         * @brief Constructs a plane from the given coefficients and normalizes it
+         * @param a Coefficient A
+         * @param b Coefficient B
+         * @param c Coefficient C
+         * @param d Coefficient D
+         */
         Plane( float a, float b, float c, float d )
         {
             glm::vec3 n( a, b, c );
@@ -23,7 +30,12 @@ namespace Shinkiro::Renderer
             distance      = d / mag;
         }
 
-        float getSignedDistanceToPlane( const glm::vec3 & point ) const
+        /**
+         * @brief Calculates the signed distance from a point to the plane
+         * @param point The point in 3D space
+         * @return The signed distance from the point to the plane
+         */
+        float GetSignedDistanceToPlane( const glm::vec3 & point ) const
         {
             return glm::dot( normal, point ) + distance;
         }
@@ -32,15 +44,27 @@ namespace Shinkiro::Renderer
     class Frustum
     {
     public:
-        Plane topFace;
-        Plane bottomFace;
-        Plane rightFace;
-        Plane leftFace;
-        Plane farFace;
-        Plane nearFace;
-
+        /**
+         * @brief Updates the frustum planes
+         * @param viewProjectionMatrix The combined view and projection matrix
+         */
         void Update( const glm::mat4 & viewProjectionMatrix );
+
+        /**
+         * @brief Checks if a sphere is inside the frustum
+         * @param center The center of the sphere
+         * @param radius The radius of the sphere
+         * @return True if the sphere is inside or intersects the frustum, false otherwise
+         */
         bool IsSphereInFrustum( const glm::vec3 & center, float radius ) const;
+
+    public:
+        Plane m_TopFace;
+        Plane m_BottomFace;
+        Plane m_RightFace;
+        Plane m_LeftFace;
+        Plane m_FarFace;
+        Plane m_NearFace;
     };
 }
 

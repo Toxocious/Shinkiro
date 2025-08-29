@@ -9,7 +9,7 @@ namespace Shinkiro::Renderer
         const glm::mat4 & m = viewProjectionMatrix;
 
         // Left Frustum Plane
-        leftFace = Plane(
+        m_LeftFace = Plane(
             m[0][3] + m[0][0],
             m[1][3] + m[1][0],
             m[2][3] + m[2][0],
@@ -17,7 +17,7 @@ namespace Shinkiro::Renderer
         );
 
         // Right Frustum Plane
-        rightFace = Plane(
+        m_RightFace = Plane(
             m[0][3] - m[0][0],
             m[1][3] - m[1][0],
             m[2][3] - m[2][0],
@@ -25,7 +25,7 @@ namespace Shinkiro::Renderer
         );
 
         // Bottom Frustum Plane
-        bottomFace = Plane(
+        m_BottomFace = Plane(
             m[0][3] + m[0][1],
             m[1][3] + m[1][1],
             m[2][3] + m[2][1],
@@ -33,7 +33,7 @@ namespace Shinkiro::Renderer
         );
 
         // Top Frustum Plane
-        topFace = Plane(
+        m_TopFace = Plane(
             m[0][3] - m[0][1],
             m[1][3] - m[1][1],
             m[2][3] - m[2][1],
@@ -41,7 +41,7 @@ namespace Shinkiro::Renderer
         );
 
         // Near Frustum Plane
-        nearFace = Plane(
+        m_NearFace = Plane(
             m[0][3] + m[0][2],
             m[1][3] + m[1][2],
             m[2][3] + m[2][2],
@@ -49,7 +49,7 @@ namespace Shinkiro::Renderer
         );
 
         // Far Frustum Plane
-        farFace = Plane(
+        m_FarFace = Plane(
             m[0][3] - m[0][2],
             m[1][3] - m[1][2],
             m[2][3] - m[2][2],
@@ -59,28 +59,7 @@ namespace Shinkiro::Renderer
 
     bool Frustum::IsSphereInFrustum( const glm::vec3 & center, float radius ) const
     {
-        // Check if the sphere is outside any of the frustum planes.
-        if ( topFace.getSignedDistanceToPlane( center ) < -radius )
-        {
-            return false;
-        }
-        if ( bottomFace.getSignedDistanceToPlane( center ) < -radius )
-        {
-            return false;
-        }
-        if ( rightFace.getSignedDistanceToPlane( center ) < -radius )
-        {
-            return false;
-        }
-        if ( leftFace.getSignedDistanceToPlane( center ) < -radius )
-        {
-            return false;
-        }
-        if ( farFace.getSignedDistanceToPlane( center ) < -radius )
-        {
-            return false;
-        }
-        if ( nearFace.getSignedDistanceToPlane( center ) < -radius )
+        if ( m_TopFace.GetSignedDistanceToPlane( center ) < -radius || m_BottomFace.GetSignedDistanceToPlane( center ) < -radius || m_RightFace.GetSignedDistanceToPlane( center ) < -radius || m_LeftFace.GetSignedDistanceToPlane( center ) < -radius || m_FarFace.GetSignedDistanceToPlane( center ) < -radius || m_NearFace.GetSignedDistanceToPlane( center ) < -radius )
         {
             return false;
         }

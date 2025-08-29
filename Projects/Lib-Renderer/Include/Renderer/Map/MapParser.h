@@ -58,7 +58,7 @@ namespace Shinkiro::Renderer
         int tileWidth  = 0;
         int tileHeight = 0;
 
-        int m_visibleLayerCount = 0;
+        int m_VisibleLayerCount = 0;
 
         std::vector<TileLayer> layers;
         std::vector<Tileset>   tilesets;
@@ -136,28 +136,48 @@ namespace Shinkiro::Renderer
             newLayer.data.assign( this->width * this->height, 0 );
             layers.push_back( newLayer );
 
-            m_visibleLayerCount++;
+            m_VisibleLayerCount++;
         }
     };
 
     /**
-     * @class TmxParser
+     * @class MapParser
      * @brief Parses a CSV-encoded .tmx file created by the Tiled Map Editor.
      */
-    class TmxParser
+    class MapParser
     {
     public:
-        MapData parse( const char * filename );
+        /**
+         * @brief Parses the specified .tmx file.
+         * @param filename The path to the .tmx file.
+         * @return A MapData struct containing the parsed map information or an empty MapData on failure.
+         */
+        MapData Parse( const char * filename );
 
-        bool save( const MapData & mapData );
+        /**
+         * @brief Saves the current map data to a .tmx file.
+         * @param mapData The MapData struct containing the map information to save.
+         * @param filename The path to the .tmx file where the map data will be saved.
+         */
+        bool SaveMap( const MapData & mapData );
 
     private:
-        std::optional<TileLayer> parseLayer( tinyxml2::XMLElement * layerElement );
+        /**
+         * @brief Helper function to parse a <Tileset> element.
+         * @param setElement The XML element representing the set.
+         * @return A TileSet struct.
+         */
+        Tileset ParseTileset( tinyxml2::XMLElement * TilesetElement );
 
-        Tileset parseTileSet( tinyxml2::XMLElement * TilesetElement );
+        /**
+         * @brief Helper function to parse a single <layer> element.
+         * @param layerElement The XML element representing the layer.
+         * @return A TileLayer struct containing the parsed layer data.
+         */
+        std::optional<TileLayer> ParseLayer( tinyxml2::XMLElement * layerElement );
 
     private:
-        std::string m_filePath;
+        std::string m_FilePath;
     };
 }
 

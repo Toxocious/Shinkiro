@@ -32,31 +32,6 @@ namespace Shinkiro::Asset
         return true;
     }
 
-    uint32_t TextureAsset::GetWidth() const
-    {
-        return m_Width;
-    }
-
-    uint32_t TextureAsset::GetHeight() const
-    {
-        return m_Height;
-    }
-
-    uint32_t TextureAsset::GetChannels() const
-    {
-        return m_Channels;
-    }
-
-    TextureFormat TextureAsset::GetFormat() const
-    {
-        return m_Format;
-    }
-
-    const std::vector<uint8_t> & TextureAsset::GetPixelData() const
-    {
-        return m_PixelData;
-    }
-
     void TextureAsset::Serialize( std::vector<char> & data ) const
     {
         // Calculate total size needed

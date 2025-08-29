@@ -39,9 +39,16 @@ namespace Shinkiro::Renderer
         }
 
     public:
+        /**
+         * @brief Render the mesh
+         * @param shader The shader program to use for rendering
+         */
         void Draw( Shader & shader );
 
     private:
+        /**
+         * @brief Initializes all the buffer objects/arrays from the mesh's vertices, indices, and textures
+         */
         void SetupMesh();
 
     public:

@@ -84,28 +84,6 @@ namespace Shinkiro::Asset
                 break;
         }
 
-        // Write asset paths to the output file
-        // for ( const auto & assetPath : m_AssetPaths )
-        // {
-        //     std::ifstream inputFile( assetPath, std::ios::binary );
-        //     if ( !inputFile.is_open() )
-        //     {
-        //         return false;
-        //     }
-
-        //     // Get file size
-        //     inputFile.seekg( 0, std::ios::end );
-        //     size_t fileSize = inputFile.tellg();
-        //     inputFile.seekg( 0, std::ios::beg );
-
-        //     // Read entire file
-        //     std::vector<char> buffer( fileSize );
-        //     inputFile.read( buffer.data(), fileSize );
-
-        //     // Write to output file
-        //     outputFile.write( buffer.data(), fileSize );
-        // }
-
         return true;
     }
 
@@ -117,6 +95,7 @@ namespace Shinkiro::Asset
         }
 
         m_AssetPaths.push_back( assetPath );
+
         return true;
     }
 }

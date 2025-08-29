@@ -17,12 +17,10 @@ namespace Shinkiro::Asset
             return false;
         }
 
-        // Get file size
         file.seekg( 0, std::ios::end );
         size_t fileSize = file.tellg();
         file.seekg( 0, std::ios::beg );
 
-        // Read entire file
         m_FontData.resize( fileSize );
         file.read( reinterpret_cast<char *>( m_FontData.data() ), fileSize );
 

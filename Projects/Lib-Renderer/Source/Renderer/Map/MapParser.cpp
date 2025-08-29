@@ -6,12 +6,7 @@
 
 namespace Shinkiro::Renderer
 {
-    /**
-     * @brief Parses the specified .tmx file.
-     * @param filename The path to the .tmx file.
-     * @return A MapData struct containing the parsed map information or an empty MapData on failure.
-     */
-    MapData TmxParser::parse( const char * filename )
+    MapData MapParser::Parse( const char * filename )
     {
         using namespace tinyxml2;
 
@@ -20,17 +15,17 @@ namespace Shinkiro::Renderer
 
         if ( doc.LoadFile( filename ) != XML_SUCCESS )
         {
-            std::cerr << "Error loading TMX file: " << filename << std::endl;
+            SHNK_CORE_ERROR( "Error loading map TMX file: {}", filename );
             return mapData;
         }
 
-        m_filePath   = filename;
+        m_FilePath   = filename;
         mapData.name = std::filesystem::path( filename ).stem().string();
 
         XMLElement * mapElement = doc.RootElement();
         if ( !mapElement )
         {
-            std::cerr << "Error: Could not find root <map> element in " << filename << std::endl;
+            SHNK_CORE_ERROR( "Error: Could not find root <map> element in {}", filename );
             return mapData;
         }
 
@@ -84,49 +79,44 @@ namespace Shinkiro::Renderer
             std::string value = e->Value();
             if ( value == "layer" )
             {
-                if ( auto layerOpt = parseLayer( e ) )
+                if ( auto layerOpt = ParseLayer( e ) )
                 {
                     mapData.layers.push_back( *layerOpt );
                 }
             }
             else if ( value == "tileset" )
             {
-                mapData.tilesets.push_back( parseTileSet( e ) );
+                mapData.tilesets.push_back( ParseTileset( e ) );
             }
         }
 
-        mapData.m_visibleLayerCount = 0;
+        mapData.m_VisibleLayerCount = 0;
         for ( const auto & layer : mapData.layers )
         {
             if ( layer.visible )
             {
-                mapData.m_visibleLayerCount++;
+                mapData.m_VisibleLayerCount++;
             }
         }
 
         return mapData;
     }
 
-    /**
-     * @brief Saves the current map data to a .tmx file.
-     * @param mapData The MapData struct containing the map information to save.
-     * @param filename The path to the .tmx file where the map data will be saved.
-     */
-    bool TmxParser::save( const MapData & mapData )
+    bool MapParser::SaveMap( const MapData & mapData )
     {
         using namespace tinyxml2;
 
         tinyxml2::XMLDocument doc;
-        if ( doc.LoadFile( this->m_filePath.c_str() ) != XML_SUCCESS )
+        if ( doc.LoadFile( this->m_FilePath.c_str() ) != XML_SUCCESS )
         {
-            SHNK_CORE_ERROR( "Failed to load TMX file for saving: {}", this->m_filePath );
+            SHNK_CORE_ERROR( "Failed to load TMX file for saving: {}", this->m_FilePath );
             return false;
         }
 
         XMLElement * mapElement = doc.RootElement();
         if ( !mapElement )
         {
-            SHNK_CORE_ERROR( "Error: Could not find root <map> element in {} for saving.", this->m_filePath );
+            SHNK_CORE_ERROR( "Error: Could not find root <map> element in {} for saving.", this->m_FilePath );
             return false;
         }
 
@@ -252,24 +242,19 @@ namespace Shinkiro::Renderer
             }
         }
 
-        if ( doc.SaveFile( this->m_filePath.c_str() ) == XML_SUCCESS )
+        if ( doc.SaveFile( this->m_FilePath.c_str() ) == XML_SUCCESS )
         {
-            SHNK_CORE_INFO( "Map saved successfully to {}", this->m_filePath );
+            SHNK_CORE_INFO( "Map saved successfully to {}", this->m_FilePath );
             return true;
         }
         else
         {
-            SHNK_CORE_ERROR( "Failed to save map to {}", this->m_filePath );
+            SHNK_CORE_ERROR( "Failed to save map to {}", this->m_FilePath );
             return false;
         }
     }
 
-    /**
-     * @brief Helper function to parse a <Tileset> element.
-     * @param setElement The XML element representing the set.
-     * @return A TileSet struct.
-     */
-    Tileset TmxParser::parseTileSet( tinyxml2::XMLElement * tilesetElement )
+    Tileset MapParser::ParseTileset( tinyxml2::XMLElement * tilesetElement )
     {
         using namespace tinyxml2;
         Tileset tileset;
@@ -278,7 +263,7 @@ namespace Shinkiro::Renderer
         const char * source = tilesetElement->Attribute( "source" );
         if ( source )
         {
-            std::filesystem::path tsxPath = std::filesystem::path( m_filePath ).parent_path() / source;
+            std::filesystem::path tsxPath = std::filesystem::path( m_FilePath ).parent_path() / source;
             tinyxml2::XMLDocument tsxDoc;
 
             if ( tsxDoc.LoadFile( tsxPath.string().c_str() ) != XML_SUCCESS )
@@ -298,7 +283,6 @@ namespace Shinkiro::Renderer
                 if ( imageElement )
                 {
                     // The image source in the TSX is relative to the TSX file itself
-
                     const char *          imageSource = imageElement->Attribute( "source" );
                     std::filesystem::path imagePath   = tsxPath.parent_path() / imageSource;
                     tileset.imageSource               = imagePath.string();
@@ -317,9 +301,9 @@ namespace Shinkiro::Renderer
             XMLElement * imageElement = tilesetElement->FirstChildElement( "image" );
             if ( imageElement )
             {
-                const char *          imageSource = imageElement->Attribute( "source" );
                 // The image source is relative to the TMX file
-                std::filesystem::path imagePath   = std::filesystem::path( m_filePath ).parent_path() / imageSource;
+                const char *          imageSource = imageElement->Attribute( "source" );
+                std::filesystem::path imagePath   = std::filesystem::path( m_FilePath ).parent_path() / imageSource;
                 tileset.imageSource               = imagePath.string();
                 tileset.imageWidth                = imageElement->IntAttribute( "width" );
                 tileset.imageHeight               = imageElement->IntAttribute( "height" );
@@ -342,12 +326,7 @@ namespace Shinkiro::Renderer
         return tileset;
     }
 
-    /**
-     * @brief Helper function to parse a single <layer> element.
-     * @param layerElement The XML element representing the layer.
-     * @return A TileLayer struct containing the parsed layer data.
-     */
-    std::optional<TileLayer> TmxParser::parseLayer( tinyxml2::XMLElement * layerElement )
+    std::optional<TileLayer> MapParser::ParseLayer( tinyxml2::XMLElement * layerElement )
     {
         using namespace tinyxml2;
         TileLayer layer;
