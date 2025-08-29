@@ -1,3 +1,5 @@
+#include <Asset/_Common.h>
+
 #include <Asset/AssetBundle.h>
 
 namespace Shinkiro::Asset

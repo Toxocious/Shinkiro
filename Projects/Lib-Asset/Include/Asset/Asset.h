@@ -5,6 +5,7 @@
 
 #    include <Asset/_Defs.h>
 
+#    include <filesystem>
 #    include <string>
 #    include <vector>
 

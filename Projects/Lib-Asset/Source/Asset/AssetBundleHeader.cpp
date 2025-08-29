@@ -1,4 +1,4 @@
-#pragma once
+#include <Asset/_Common.h>
 
 #include <Asset/AssetBundleHeader.h>
 

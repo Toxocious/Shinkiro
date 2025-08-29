@@ -1,3 +1,5 @@
+#include <Renderer/_Common.h>
+
 #include <Renderer/Util/Mesh.h>
 
 namespace Shinkiro::Renderer

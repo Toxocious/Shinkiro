@@ -1,3 +1,5 @@
+#include <Core/_Common.h>
+
 #include <Core/IApplication.h>
 
 namespace Shinkiro::Core

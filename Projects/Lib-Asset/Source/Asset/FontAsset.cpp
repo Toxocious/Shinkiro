@@ -1,7 +1,6 @@
-#include <Asset/FontAsset.h>
+#include <Asset/_Common.h>
 
-#include <fstream>
-#include <stdexcept>
+#include <Asset/FontAsset.h>
 
 namespace Shinkiro::Asset
 {

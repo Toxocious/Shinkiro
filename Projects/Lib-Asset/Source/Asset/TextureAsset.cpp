@@ -1,9 +1,6 @@
+#include <Asset/_Common.h>
+
 #include <Asset/TextureAsset.h>
-
-#include <fstream>
-#include <stdexcept>
-
-#include <stb_image/stb_image.h>
 
 namespace Shinkiro::Asset
 {

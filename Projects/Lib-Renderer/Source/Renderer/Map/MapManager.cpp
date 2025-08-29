@@ -1,3 +1,5 @@
+#include <Renderer/_Common.h>
+
 #include <Renderer/Map/MapManager.h>
 
 #include <Core/IApplication.h>
@@ -6,24 +8,6 @@
 #include <Asset/AssetBundleManager.h>
 
 #include <Log/Log.h>
-
-//
-#include <glad/glad.h>
-
-//
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-//
-#include <stb_image/stb_image.h>
-
-//
-#include <algorithm>
-#include <filesystem>
-#include <sstream>
-#include <string>
-#include <vector>
 
 namespace Shinkiro::Renderer
 {
@@ -298,7 +282,7 @@ namespace Shinkiro::Renderer
                     }
 
                     glm::vec3 tileCenter = { float( x ), layer_y_offset, float( y ) };
-                    if ( !camera.frustum.IsSphereInFrustum( tileCenter, tileBoundingRadius ) )
+                    if ( !camera.m_Frustum.IsSphereInFrustum( tileCenter, tileBoundingRadius ) )
                     {
                         continue; // Cull this tile
                     }

@@ -1,4 +1,4 @@
-#include <Log/_Defs.h>
+#include <Log/_Common.h>
 
 #include <Log/Log.h>
 

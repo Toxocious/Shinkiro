@@ -5,20 +5,19 @@
 
 #    include <Log/_Defs.h>
 
-#    include <Log/_Common.h>
-
-#    include <Log/Util/Assert.h>
 #    include <Log/Util/Macro.h>
+
+#    include <spdlog/spdlog.h>
 
 namespace Shinkiro::Logger
 {
-    class LOG_API Log
+    class Log
     {
     public:
-        static void Init();
+        LOG_API static void Init();
 
-        static Ref<spdlog::logger> & GetCoreLogger();
-        static Ref<spdlog::logger> & GetApplicationLogger();
+        LOG_API static Ref<spdlog::logger> & GetCoreLogger();
+        LOG_API static Ref<spdlog::logger> & GetApplicationLogger();
 
     private:
         static Ref<spdlog::logger> s_CoreLogger;

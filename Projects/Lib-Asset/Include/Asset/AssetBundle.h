@@ -10,8 +10,8 @@
 #    include <Asset/TextureAsset.h>
 
 #    include <filesystem>
-#    include <fstream>
-#    include <stack>
+#    include <string>
+#    include <vector>
 
 namespace Shinkiro::Asset
 {

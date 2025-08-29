@@ -1,8 +1,6 @@
-#include <Core/Util/FileSystem.h>
+#include <Core/_Common.h>
 
-#include <filesystem>
-#include <fstream>
-#include <stack>
+#include <Core/Util/FileSystem.h>
 
 namespace Shinkiro::Core
 {

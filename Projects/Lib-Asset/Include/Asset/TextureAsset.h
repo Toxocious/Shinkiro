@@ -7,6 +7,7 @@
 
 #    include <Asset/Asset.h>
 
+#    include <string>
 #    include <vector>
 
 namespace Shinkiro::Asset

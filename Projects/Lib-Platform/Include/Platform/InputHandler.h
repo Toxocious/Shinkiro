@@ -5,8 +5,6 @@
 
 #    include <Platform/_Defs.h>
 
-#    include <Windows.h>
-
 #    include <unordered_map>
 
 namespace Shinkiro::Platform

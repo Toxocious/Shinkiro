@@ -8,6 +8,9 @@ project "Lib-Platform"
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "Platform/_Common.h"
+    pchsource "Source/Platform/_Common.cpp"
+
     files
     {
         "%{wks.location}/Libraries/glad/include/**.h",
@@ -80,6 +83,19 @@ project "Lib-Platform"
         "SHINKIRO_PLATFORM_EXPORTS"
     }
 
+    filter { "files:**/Libraries/glad/**.c" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/glfw/**.cpp" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/glm/**.cpp" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/miniaudio/**.c" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/stb_image/**.cpp" }
+        flags { "NoPCH" }
+
+    filter {}
+
     filter { "configurations:Debug" }
 		links {
 			"glad_debug",
@@ -104,7 +120,7 @@ project "Lib-Platform"
     filter "system:windows"
         systemversion "latest"
 
-        buildoptions { "/FS" }
+        buildoptions { "/FS", "/MP" }
 
         defines
         {

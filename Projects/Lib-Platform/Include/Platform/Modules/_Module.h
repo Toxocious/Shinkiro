@@ -4,6 +4,8 @@
 
 #    include <Platform/_Defs.h>
 
+#    include <Platform/Modules/_Module.h>
+
 #    include <Core/Util/UpdateStatus.h>
 
 #    include <string>

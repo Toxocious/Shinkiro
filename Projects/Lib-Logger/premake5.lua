@@ -8,6 +8,9 @@ project "Lib-Logger"
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "Log/_Common.h"
+    pchsource "Source/Log/_Common.cpp"
+
     defines
     {
         "SHINKIRO_LOGGER_EXPORTS"
@@ -24,7 +27,6 @@ project "Lib-Logger"
     {
 
         "%{wks.location}/Libraries/spdlog/include/**.h",
-		"%{wks.location}/Libraries/spdlog/include/**.cpp",
 
         "**.h",
         "**.hpp",
@@ -35,6 +37,11 @@ project "Lib-Logger"
     {
         "%{wks.location}/Libraries/spdlog/lib",
     }
+
+    filter { "files:**/Libraries/spdlog/**.cpp" }
+        flags { "NoPCH" }
+
+    filter {}
 
     filter { "configurations:Debug" }
 		links {
@@ -54,7 +61,7 @@ project "Lib-Logger"
     filter "system:windows"
         systemversion "latest"
 
-        buildoptions { "/FS" }
+        buildoptions { "/FS", "/MP" }
 
         defines
         {

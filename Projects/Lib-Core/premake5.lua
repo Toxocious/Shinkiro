@@ -8,6 +8,9 @@ project "Lib-Core"
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "Core/_Common.h"
+    pchsource "Source/Core/_Common.cpp"
+
     defines
     {
         "SHINKIRO_CORE_EXPORTS"
@@ -86,6 +89,21 @@ project "Lib-Core"
         "Lib-Logger",
     }
 
+    filter { "files:**/Libraries/glad/**.c" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/glfw/**.cpp" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/glm/**.cpp" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/miniaudio/**.c" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/stb_image/**.cpp" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/spdlog/**.cpp" }
+        flags { "NoPCH" }
+
+    filter {}
+
     filter { "configurations:Debug" }
 		links {
 			"glad_debug",
@@ -113,7 +131,7 @@ project "Lib-Core"
     filter "system:windows"
         systemversion "latest"
 
-        buildoptions { "/FS" }
+        buildoptions { "/FS", "/MP" }
 
         defines
         {

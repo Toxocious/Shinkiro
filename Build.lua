@@ -53,6 +53,16 @@ workspace "Shinkiro"
         exe     = "ShinkiroEditor.exe"
     }
 
+    -- Build options
+    buildoptions {
+        "/wd4251", -- Disable C4251 warning (needs to have dll-interface)
+    }
+
+    -- Linker options
+    linkoptions {
+        "/NODEFAULTLIB:MSVCRT" -- Disables LNK4098: defaultlib 'MSVCRT' conflicts…
+    }
+
     -- Configurations for Debug, Release, an Distribution
     filter "configurations:Debug"
         defines {
@@ -61,6 +71,7 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "DSPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
+            "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
             "BUILD_TYPE=\"" .. gitBranch .. "\"",
             'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
@@ -75,6 +86,7 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "SPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
+            "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
             "BUILD_TYPE=\"Beta\"",
             'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
@@ -89,11 +101,12 @@ workspace "Shinkiro"
             "SHINKIRO_PLATFORM_WINDOWS",
             "SPDLOG_COMPILED_LIB",
             "_CRT_SECURE_NO_WARNINGS",
+            "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
             "BUILD_TYPE=\"Dist\"",
             'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
         runtime "Release"
-        optimize "On"
+        optimize "Full"
         symbols "Off"
 
     filter {}

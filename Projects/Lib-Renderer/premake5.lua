@@ -8,6 +8,9 @@ project "Lib-Renderer"
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "Renderer/_Common.h"
+    pchsource "Source/Renderer/_Common.cpp"
+
     files
     {
         "%{wks.location}/Libraries/assimp/include/**.h",
@@ -90,6 +93,21 @@ project "Lib-Renderer"
         "CORE_RENDERER_EXPORTS"
     }
 
+    filter { "files:**/Libraries/assimp/**.cpp" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/glad/**.c" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/glfw/**.cpp" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/glm/**.cpp" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/miniaudio/**.c" }
+        flags { "NoPCH" }
+    filter { "files:**/Libraries/stb_image/**.cpp" }
+        flags { "NoPCH" }
+
+    filter {}
+
     filter { "configurations:Debug" }
 		links {
 			"assimp_debug",
@@ -120,7 +138,7 @@ project "Lib-Renderer"
     filter "system:windows"
         systemversion "latest"
 
-        buildoptions { "/FS" }
+        buildoptions { "/FS", "/MP" }
 
         defines
         {

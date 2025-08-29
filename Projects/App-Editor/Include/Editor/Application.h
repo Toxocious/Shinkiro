@@ -74,6 +74,6 @@ namespace Shinkiro
     };
 }
 
-extern CORE_API Shinkiro::Application * App;
+extern __declspec( dllexport ) Shinkiro::Application * App;
 
 #endif

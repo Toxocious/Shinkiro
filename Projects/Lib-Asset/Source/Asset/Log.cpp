@@ -1,6 +1,6 @@
-#include <Asset/Log.h>
+#include <Asset/_Common.h>
 
-#include <iostream>
+#include <Asset/Log.h>
 
 namespace Shinkiro::Asset
 {

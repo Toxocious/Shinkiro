@@ -1,6 +1,6 @@
-#include <Renderer/Camera/Frustum.h>
+#include <Renderer/_Common.h>
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <Renderer/Camera/Frustum.h>
 
 namespace Shinkiro::Renderer
 {

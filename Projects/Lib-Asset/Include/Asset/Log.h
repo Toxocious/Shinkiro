@@ -2,10 +2,8 @@
 
 #include <Asset/_Defs.h>
 
-#include <filesystem>
 #include <fstream>
 #include <mutex>
-#include <string>
 
 namespace Shinkiro::Asset
 {

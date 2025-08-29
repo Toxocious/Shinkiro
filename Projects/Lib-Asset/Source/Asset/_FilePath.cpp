@@ -1,3 +1,5 @@
+#include <Asset/_Common.h>
+
 #include <Asset/_FilePath.h>
 
 namespace Shinkiro::Asset

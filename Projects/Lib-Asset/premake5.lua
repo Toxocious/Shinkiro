@@ -8,10 +8,13 @@ project "Lib-Asset"
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "Asset/_Common.h"
+    pchsource "Source/Asset/_Common.cpp"
+
     files
     {
         "%{wks.location}/Libraries/stb_image/include/**.h",
-		"%{wks.location}/Libraries/stb_image/include/**.cpp",
+        "%{wks.location}/Libraries/stb_image/include/**.cpp",
 
 		"%{wks.location}/Libraries/zstd/include/**.h",
 
@@ -55,6 +58,14 @@ project "Lib-Asset"
         "SHINKIRO_ASSET_EXPORTS"
     }
 
+    filter { "files:**/Libraries/stb_image/**.cpp" }
+        flags { "NoPCH" }
+
+    filter { "files:**/Libraries/zstd/**.c" }
+        flags { "NoPCH" }
+
+    filter {}
+
     filter { "configurations:Debug" }
 		links {
 			"zstd_static_debug",
@@ -73,7 +84,7 @@ project "Lib-Asset"
     filter "system:windows"
         systemversion "latest"
 
-        buildoptions { "/FS" }
+        buildoptions { "/FS", "/MP" }
 
         defines
         {

@@ -1,6 +1,6 @@
-#include <Platform/Modules/_Module.h>
+#include <Platform/_Common.h>
 
-#include <string>
+#include <Platform/Modules/_Module.h>
 
 namespace Shinkiro::Platform
 {

@@ -8,6 +8,9 @@ project "Lib-Audio"
     targetdir ("../../Build/Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("../../Build/Artifacts/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "Audio/_Common.h"
+    pchsource "Source/Audio/_Common.cpp"
+
     includedirs
     {
         "%{wks.location}/Libraries/miniaudio/include",
@@ -30,10 +33,15 @@ project "Lib-Audio"
         "SHINKIRO_AUDIO_EXPORTS"
     }
 
+    filter { "files:**/Libraries/miniaudio/**.c" }
+        flags { "NoPCH" }
+
+    filter {}
+
     filter "system:windows"
         systemversion "latest"
 
-        buildoptions { "/FS" }
+        buildoptions { "/FS", "/MP" }
 
         defines
         {

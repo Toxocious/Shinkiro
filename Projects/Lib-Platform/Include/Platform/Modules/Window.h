@@ -10,11 +10,10 @@
 #    include <Core/Util/UpdateStatus.h>
 
 #    include <glad/glad.h>
-#    include <glm/glm.hpp>
-#    include <stb_image/stb_image.h>
 
-#    include <chrono>
-#    include <string>
+#    include <glm/glm.hpp>
+
+#    include <stb_image/stb_image.h>
 
 void SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods );
 

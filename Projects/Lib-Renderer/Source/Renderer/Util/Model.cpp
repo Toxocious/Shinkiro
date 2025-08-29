@@ -1,7 +1,6 @@
-#include <Renderer/Util/Model.h>
+#include <Renderer/_Common.h>
 
-#include <algorithm>
-#include <functional>
+#include <Renderer/Util/Model.h>
 
 namespace Shinkiro::Renderer
 {

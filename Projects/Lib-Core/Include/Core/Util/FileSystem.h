@@ -5,7 +5,8 @@
 
 #    include <Core/_Defs.h>
 
-#    include <Core/_Common.h>
+#    include <filesystem>
+#    include <string>
 
 namespace Shinkiro::Core
 {

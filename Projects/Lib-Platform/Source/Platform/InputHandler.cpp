@@ -1,3 +1,5 @@
+#include <Platform/_Common.h>
+
 #include <Platform/InputHandler.h>
 
 namespace Shinkiro::Platform

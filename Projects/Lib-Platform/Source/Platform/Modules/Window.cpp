@@ -1,11 +1,10 @@
+#include <Platform/_Common.h>
+
 #include <Platform/Modules/Window.h>
 
 #include <Core/IApplication.h>
-#include <Core/Util/UpdateStatus.h>
 
 #include <Asset/AssetBundleManager.h>
-
-// #include <Core/Util/FileSystem.h>
 
 namespace Shinkiro::Platform
 {

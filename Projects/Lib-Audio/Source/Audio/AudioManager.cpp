@@ -1,3 +1,5 @@
+#include <Audio/_Common.h>
+
 #include <Audio/AudioManager.h>
 
 namespace Shinkiro::Audio

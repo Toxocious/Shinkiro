@@ -1,13 +1,8 @@
-//
+#include <Renderer/_Common.h>
+
 #include <Renderer/Map/MapParser.h>
 
 #include <Log/Log.h>
-
-//
-#include <algorithm>
-#include <filesystem>
-#include <set>
-#include <sstream>
 
 namespace Shinkiro::Renderer
 {

@@ -28,13 +28,3 @@
 #    include <Log/Util/Assert.h>
 #    include <Log/Util/Macro.h>
 #endif
-
-// namespace Shinkiro::Platform
-// {
-//     enum class PLATFORM_API UpdateStatus
-//     {
-//         UPDATE_CONTINUE,
-//         UPDATE_STOP,
-//         UPDATE_ERROR
-//     };
-// }

@@ -1,43 +1,59 @@
 #pragma once
+#ifndef SHINKIRO_LOGGER_PCH
+#    define SHINKIRO_LOGGER_PCH
 
-#include <iostream>
-#include <memory>
+#    include <Log/_Defs.h>
 
-#if defined _WIN32
-#    include <Windows.h>
+#    include <iostream>
+#    include <memory>
 
-#    if !defined( assert )
-#        include <stdio.h>
-#        define assert( x )                                      \
-            do                                                   \
-            {                                                    \
-                if ( !( x ) )                                    \
-                {                                                \
-                    printf( "Error: assert(%s) failed!\n", #x ); \
-                }                                                \
-            } while ( 0 )
+#    if defined _WIN32
+#        ifndef NOMINMAX
+#            define NOMINMAX
+#        endif
+#        ifndef WIN32_LEAN_AND_MEAN
+#            define WIN32_LEAN_AND_MEAN
+#        endif
+
+#        include <Windows.h>
+
+#        if !defined( assert )
+#            include <stdio.h>
+
+#            define assert( x )                                      \
+                do                                                   \
+                {                                                    \
+                    if ( !( x ) )                                    \
+                    {                                                \
+                        printf( "Error: assert(%s) failed!\n", #x ); \
+                    }                                                \
+                } while ( 0 )
+#        endif
 #    endif
-#endif
 
-#ifndef SHINKIRO_IMPL_SPDLOG
-#    define SHINKIRO_IMPL_SPDLOG
-#    pragma warning( push, 0 )
-#    ifdef SHINKIRO_DEBUG
-#        pragma comment( lib, "spdlogd" )
-#    else
-#        pragma comment( lib, "spdlog" )
+#    ifndef SHINKIRO_IMPL_SPDLOG
+#        define SHINKIRO_IMPL_SPDLOG
+#        pragma warning( push, 0 )
+#        ifdef SHINKIRO_DEBUG
+#            pragma comment( lib, "spdlogd" )
+#        else
+#            pragma comment( lib, "spdlog" )
+#        endif
+
+#        include <spdlog/spdlog.h>
+
+#        include <spdlog/fmt/ostr.h>
+
+#        include <spdlog/sinks/basic_file_sink.h>
+#        include <spdlog/sinks/stdout_color_sinks.h>
+#        pragma warning( pop )
 #    endif
-#    include <spdlog/spdlog.h>
 
-#    include <spdlog/fmt/ostr.h>
+#    ifndef SHINKIRO_LOG_HEADERS
+#        define SHINKIRO_LOG_HEADERS
 
-#    include <spdlog/sinks/basic_file_sink.h>
-#    include <spdlog/sinks/stdout_color_sinks.h>
-#    pragma warning( pop )
-#endif
+#        include <Log/Util/Assert.h>
+#        include <Log/Util/Macro.h>
+#    endif
 
-#ifndef SHINKIRO_LOG_HEADERS
-#    define SHINKIRO_LOG_HEADERS
-#    include <Log/Util/Assert.h>
-#    include <Log/Util/Macro.h>
 #endif

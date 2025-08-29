@@ -1,3 +1,5 @@
+#include <Renderer/_Common.h>
+
 #include <Renderer/Util/Shader.h>
 
 #include <Core/IApplication.h>
