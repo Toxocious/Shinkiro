@@ -1,6 +1,18 @@
 {
     "version": "2.0.0",
     "tasks": [
+        // Automatically extracted all dependency's lib files.
+        {
+            "label": "Compressed Library Extraction",
+            "type": "shell",
+            "command": "premake5",
+            "args": [
+                "--file=Build.lua",
+                "unzip-deps",
+            ],
+            "group": "build",
+        },
+
         // Generate Application Resource File
         {
             "label": "Generate Application Resource File",
@@ -11,6 +23,7 @@
                 "genresources",
             ],
             "group": "build",
+            "dependsOn": ["Compressed Library Extraction"],
         },
 
         // Generate VS2022 solution
