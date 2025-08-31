@@ -34,5 +34,15 @@ project "AssetUnpacker"
         "Lib-Asset",
     }
 
+    prebuildcommands {
+        "{MKDIR} %{wks.location}" .. _G.AssetUnpackerBinaryDir,
+    }
+
+    postbuildcommands {
+        -- Copy all Lib-* DLLs to the Asset Unpacker executable directory
+        copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. AssetUnpackerBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. AssetUnpackerBinaryDir),
+    }
+
     filter { "system:windows" }
         systemversion "latest"

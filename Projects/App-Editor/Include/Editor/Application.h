@@ -13,6 +13,8 @@
 
 #    include <Audio/AudioManager.h>
 
+#    include <Renderer/Map/MapManager.h>
+
 #    include <Platform/Modules/Window.h>
 
 #    include <string>
@@ -77,23 +79,30 @@ namespace Shinkiro
          * @brief Get the application's Bundle Manager
          * @return A reference to the Bundle Manager
          */
-        Asset::AssetBundleManager & GetBundleManager() override;
+        Shinkiro::Asset::AssetBundleManager & GetBundleManager() override;
 
         /**
          * @brief Get the application's Audio Manager
          * @return A reference to the Audio Manager
          */
-        Audio::AudioManager &       GetAudioManager() override;
+        Shinkiro::Audio::AudioManager & GetAudioManager() override;
+
+        /**
+         * @brief Get the application's Map Renderer Manager
+         * @return A reference to the Map Renderer Manager
+         */
+        Shinkiro::Renderer::MapManager & GetMapManager() override;
 
         /**
          * @brief Get the window module of the application
          * @return A pointer to the window module
          */
-        Platform::Window *          GetWindow() override;
+        Shinkiro::Platform::Window * GetWindow() override;
 
     public:
+        Shinkiro::Renderer::MapManager      m_MapManager;
         Shinkiro::Asset::AssetBundleManager m_BundleManager;
-        Audio::AudioManager                 m_AudioManager;
+        Shinkiro::Audio::AudioManager       m_AudioManager;
 
     public:
         Shinkiro::Platform::Window * m_Window = nullptr;
@@ -106,6 +115,8 @@ namespace Shinkiro
         std::string m_Version;
         int         m_Height;
         int         m_Width;
+
+        Core::AppState m_AppState = Core::AppState::LOADING;
     };
 }
 

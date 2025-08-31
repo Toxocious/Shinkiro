@@ -15,6 +15,10 @@
 
 #    include <stb_image/stb_image.h>
 
+#    include <imgui.h>
+#    include <imgui_impl_glfw.h>
+#    include <imgui_impl_opengl3.h>
+
 void SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods );
 
 namespace Shinkiro::Platform
@@ -47,6 +51,13 @@ namespace Shinkiro::Platform
         int  ShouldClose();
         void SwapBuffers();
         void PollEvents();
+
+        // ImGui
+        void BeginImGuiFrame();
+        void EndImGuiFrame();
+        void RenderImGui();
+        void ShutdownImGui();
+        void InitializeImGui();
 
         // Callbacks
         static void SetMouseCallbacks( GLFWwindow * window, double xposIn, double yposIn );

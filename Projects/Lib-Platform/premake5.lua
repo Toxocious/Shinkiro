@@ -21,6 +21,9 @@ project "Lib-Platform"
         "%{wks.location}/Libraries/glm/include/**.hpp",
 		"%{wks.location}/Libraries/glm/include/**.inl",
 
+        "%{wks.location}/Libraries/imgui/include/**.h",
+		"%{wks.location}/Libraries/imgui/include/**.cpp",
+
         "%{wks.location}/Libraries/miniaudio/include/**.h",
         "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
 
@@ -42,6 +45,7 @@ project "Lib-Platform"
         "%{wks.location}/Libraries/glad/include",
         "%{wks.location}/Libraries/glfw/include",
 		"%{wks.location}/Libraries/glm/include",
+        "%{wks.location}/Libraries/imgui/include",
         "%{wks.location}/Libraries/miniaudio/include",
         "%{wks.location}/Libraries/stb_image/include",
         "%{wks.location}/Libraries/spdlog/include",
@@ -59,6 +63,7 @@ project "Lib-Platform"
         "%{wks.location}/Libraries/glad/lib",
 		"%{wks.location}/Libraries/glfw/lib",
 		"%{wks.location}/Libraries/glm/lib",
+		"%{wks.location}/Libraries/imgui/lib",
 		"%{wks.location}/Libraries/spdlog/lib",
     }
 
@@ -91,6 +96,8 @@ project "Lib-Platform"
         flags { "NoPCH" }
     filter { "files:**/Libraries/miniaudio/**.c" }
         flags { "NoPCH" }
+    filter { "files:**/Libraries/imgui/**.cpp" }
+        flags { "NoPCH" }
     filter { "files:**/Libraries/stb_image/**.cpp" }
         flags { "NoPCH" }
 
@@ -101,6 +108,7 @@ project "Lib-Platform"
 			"glad_debug",
 			"glfw3",
 			"glm_debug",
+			"imgui_debug",
 		}
 
 	filter { "configurations:Dist" }
@@ -108,6 +116,7 @@ project "Lib-Platform"
 			"glad_dist",
 			"glfw3",
 			"glm_dist",
+			"imgui_dist",
 		}
 
 	filter { "configurations:Release" }
@@ -115,6 +124,7 @@ project "Lib-Platform"
 			"glad_release",
 			"glfw3",
 			"glm_release",
+			"imgui_release",
 		}
 
     filter "system:windows"

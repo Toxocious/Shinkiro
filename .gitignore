@@ -10,9 +10,13 @@ node_modules/
 *.vcxproj.filters
 *.sln
 *.log
+*.bak
 
 # Asset Bundles
 AssetBundles/
+
+# Libraries
+Libraries/*/lib
 
 # Tools
 Tools/Asset_Downloader/Audio

@@ -6,6 +6,9 @@
 
 #include <Asset/AssetBundleManager.h>
 
+#include <chrono>
+#include <thread>
+
 namespace Shinkiro::Platform
 {
     Window::Window( bool enabled )
@@ -66,6 +69,8 @@ namespace Shinkiro::Platform
         SetWindowIcon();
         CenterWindow();
 
+        InitializeImGui();
+
         return true;
     }
 
@@ -103,7 +108,25 @@ namespace Shinkiro::Platform
             return Shinkiro::Core::UpdateStatus::UPDATE_STOP;
         }
 
-        Render();
+        switch ( Shinkiro::Core::App->m_AppState )
+        {
+            case Core::AppState::LOADING:
+                {
+                    RenderImGui();
+
+                    std::this_thread::sleep_for( std::chrono::seconds( 3 ) );
+
+                    Shinkiro::Core::App->m_AppState = Core::AppState::RUNNING;
+
+                    break;
+                }
+
+            case Core::AppState::RUNNING:
+                {
+                    Render();
+                    break;
+                }
+        }
 
         return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
@@ -120,6 +143,106 @@ namespace Shinkiro::Platform
     {
         glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    }
+
+    void Window::RenderImGui()
+    {
+        BeginImGuiFrame();
+
+        {
+            glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+            ImGui::SetNextWindowPos( ImVec2( 0, 0 ) );
+            ImGui::SetNextWindowSize( ImGui::GetIO().DisplaySize );
+            ImGui::Begin( "LoadingScreen", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground );
+
+            float windowWidth  = ImGui::GetWindowSize().x;
+            float windowHeight = ImGui::GetWindowSize().y;
+
+            // Calculate total height of all elements for vertical centering
+            float titleTextHeight   = ImGui::CalcTextSize( m_Title ).y;
+            float loadingTextHeight = ImGui::CalcTextSize( "Loading..." ).y;
+            // float totalContentHeight = m_iconHeight + titleTextHeight + loadingTextHeight + ImGui::GetStyle().ItemSpacing.y * 2;
+
+            // ImGui::SetCursorPosY( ( windowHeight - totalContentHeight ) * 0.5f );
+
+            // // 1. Icon
+            // if ( m_iconTextureID != 0 )
+            // {
+            //     ImGui::SetCursorPosX( ( windowWidth - m_iconWidth ) * 0.5f );
+            //     ImGui::Image( ( intptr_t ) m_iconTextureID, ImVec2( ( float ) m_iconWidth, ( float ) m_iconHeight ) );
+            // }
+
+            // 2. Application Title
+            float titleTextWidth = ImGui::CalcTextSize( m_Title ).x;
+            ImGui::SetCursorPosX( ( windowWidth - titleTextWidth ) * 0.5f );
+            ImGui::Text( "%s", m_Title );
+
+            // 3. "Loading..." text
+            float loadingTextWidth = ImGui::CalcTextSize( "Loading..." ).x;
+            ImGui::SetCursorPosX( ( windowWidth - loadingTextWidth ) * 0.5f );
+            ImGui::Text( "Loading..." );
+
+            ImGui::End();
+
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+            glfwSwapBuffers( GetGLFWWindow() );
+
+            // if ( m_assetsLoaded )
+            // {
+            //     loadInitialAssets();
+
+            //     loadSelectableObjects();
+            //     // loadModels();
+
+            //     m_state = AppState::RUNNING;
+            // }
+            // else
+            // {
+            //     m_assetsLoaded = true;
+            // }
+        }
+
+        EndImGuiFrame();
+    }
+
+    void Window::InitializeImGui()
+    {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO & io    = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+        ImGui::StyleColorsDark();
+
+        ImGuiStyle & style = ImGui::GetStyle();
+
+        ImGui_ImplGlfw_InitForOpenGL( GetGLFWWindow(), true );
+        ImGui_ImplOpenGL3_Init( "#version 330" );
+
+        SHNK_CORE_INFO( "Dear ImGui initialized successfully." );
+    }
+
+    void Window::ShutdownImGui()
+    {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+    }
+
+    void Window::BeginImGuiFrame()
+    {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+    }
+
+    void Window::EndImGuiFrame()
+    {
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
     }
 
     void Window::SetTitle( const char * title )
@@ -166,7 +289,6 @@ namespace Shinkiro::Platform
         return glfwPollEvents();
     }
 
-    // Callbacks
     void Window::SetMouseWheelCallbacks( GLFWwindow * window, double xOffset, double yOffset )
     {
     }
@@ -183,7 +305,6 @@ namespace Shinkiro::Platform
         }
     }
 
-    // Set the window icon
     void Window::SetWindowIcon()
     {
         const auto ShinkiroWindowIcon = Shinkiro::Core::App->GetBundleManager().GetAssetData( "ShinkiroWindowIcon.png" );

@@ -18,6 +18,11 @@ namespace Shinkiro::Audio
     class AudioManager;
 }
 
+namespace Shinkiro::Renderer
+{
+    class MapManager;
+}
+
 namespace Shinkiro::Platform
 {
     class Window;
@@ -25,6 +30,12 @@ namespace Shinkiro::Platform
 
 namespace Shinkiro::Core
 {
+    enum class CORE_API AppState
+    {
+        LOADING,
+        RUNNING
+    };
+
     /**
      * @brief An abstracted interface for creating and managing applications.
      */
@@ -58,9 +69,17 @@ namespace Shinkiro::Core
         virtual Audio::AudioManager & GetAudioManager() = 0;
 
         /**
+         * @brief Returns a ref to the Map Manager
+         */
+        virtual Renderer::MapManager & GetMapManager() = 0;
+
+        /**
          * @brief Returns a pointer to the active window
          */
         virtual Platform::Window * GetWindow() = 0;
+
+    public:
+        AppState m_AppState = AppState::LOADING;
     };
 
     /**

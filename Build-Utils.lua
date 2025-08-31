@@ -11,64 +11,80 @@ function getCurrentGitBranch()
     return "unknown"
 end
 
+-- Helper function to copy over required directories and DLLs to a destination directory.
+function copy_if_needed(src, dst)
+    if os.host() == "windows" then
+        if path.hasextension(src) then
+            return "{COPY} " .. src .. " " .. dst
+        else
+            return "{COPYDIR} " .. src .. " " .. dst
+        end
+    end
+end
+
 -- Link our dependencies.
 function linkDependencies()
-	includedirs {
-		"%{wks.location}/Libraries/assimp/include",
-		"%{wks.location}/Libraries/glad/include",
-		"%{wks.location}/Libraries/glfw/include",
-		"%{wks.location}/Libraries/glm/include",
-		"%{wks.location}/Libraries/imgui/include",
-		"%{wks.location}/Libraries/spdlog/include",
-		"%{wks.location}/Libraries/stb_image/include",
-		"%{wks.location}/Libraries/zstd/include",
-	}
+    includedirs {
+        "%{wks.location}/Libraries/assimp/include",
+        "%{wks.location}/Libraries/glad/include",
+        "%{wks.location}/Libraries/glfw/include",
+        "%{wks.location}/Libraries/glm/include",
+        "%{wks.location}/Libraries/imgui/include",
+        "%{wks.location}/Libraries/spdlog/include",
+        "%{wks.location}/Libraries/stb_image/include",
+        "%{wks.location}/Libraries/zstd/include",
+    }
 
-	libdirs {
-		"%{wks.location}/Libraries/assimp/lib",
-		"%{wks.location}/Libraries/glad/lib",
-		"%{wks.location}/Libraries/glfw/lib",
-		"%{wks.location}/Libraries/glm/lib",
-		"%{wks.location}/Libraries/imgui/lib",
-		"%{wks.location}/Libraries/spdlog/lib",
-		"%{wks.location}/Libraries/zstd/lib",
-	}
+    libdirs {
+        "%{wks.location}/Libraries/assimp/lib",
+        "%{wks.location}/Libraries/glad/lib",
+        "%{wks.location}/Libraries/glfw/lib",
+        "%{wks.location}/Libraries/glm/lib",
+        "%{wks.location}/Libraries/imgui/lib",
+        "%{wks.location}/Libraries/spdlog/lib",
+        "%{wks.location}/Libraries/zstd/lib",
+    }
 
-	-- Our static lib should not link against our dependencies
-	filter { "kind:not SharedLib", "configurations:Debug" }
-		links {
-			"assimp_debug",
-			"glad_debug",
-			"glm_debug",
-			"glfw3",
-			"imgui_debug",
-			"spdlogd",
+    -- Static linking flags for Assimp
+    filter { "kind:not SharedLib", "configurations:Debug" }
+        defines { "ASSIMP_STATIC" }
+        links {
+            "assimp_debug",
+            "glad_debug",
+            "glm_debug",
+            "glfw3",
+            "imgui_debug",
+            "spdlogd",
             "zstd_static_debug",
-		}
+        }
 
-	filter { "kind:not SharedLib", "configurations:Dist" }
-		links {
-			"assimp_dist",
-			"glad_dist",
-			"glm_dist",
-			"glfw3",
-			"imgui_dist",
-			"spdlog",
+    filter { "kind:not SharedLib", "configurations:Release" }
+        defines { "ASSIMP_STATIC" }
+        links {
+            "assimp_release",
+            "glad_release",
+            "glm_release",
+            "glfw3",
+            "imgui_release",
+            "spdlog",
             "zstd_static_release",
-		}
+        }
 
-	filter { "kind:not SharedLib", "configurations:Release" }
-		links {
-			"assimp_release",
-			"glad_release",
-			"glm_release",
-			"glfw3",
-			"imgui_release",
-			"spdlog",
+    filter { "kind:not SharedLib", "configurations:Dist" }
+        defines { "ASSIMP_STATIC" }
+        links {
+            "assimp_dist",
+            "glad_dist",
+            "glm_dist",
+            "glfw3",
+            "imgui_dist",
+            "spdlog",
             "zstd_static_release",
-		}
+        }
 
+    filter {}
 end
+
 
 -- Include the files that we use from our dependencies.
 function includeDependencies()

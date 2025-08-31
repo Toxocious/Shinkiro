@@ -10,15 +10,19 @@ project "Editor"
 
     entrypoint "mainCRTStartup"
 
-    -- Set the program icon
-    filter { "system:windows" }
-        files { '%{wks.location}/Assets/Resources.rc', '**.ico' }
-        vpaths { [ '%{wks.location}/Assets/*' ] = { '**.ico' } }
+    files
+    {
+        "%{wks.location}/Libraries/miniaudio/include/**.h",
+        "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
+
+        "**.h",
+        "**.hpp",
+        "**.cpp",
+    }
 
     includedirs
     {
         "%{wks.location}/Libraries/miniaudio/include",
-
         "%{wks.location}/Projects/Lib-Asset/Include",
         "%{wks.location}/Projects/Lib-Audio/Include",
         "%{wks.location}/Projects/Lib-Core/Include",
@@ -27,23 +31,6 @@ project "Editor"
         "%{wks.location}/Projects/Lib-Renderer/Include",
 
         "./Include",
-    }
-
-    files
-    {
-        "%{wks.location}/Libraries/miniaudio/include/**.h",
-        "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
-
-        "%{wks.location}/Projects/Lib-Core/Include/**.h",
-        "%{wks.location}/Projects/Lib-Asset/Include/**.h",
-        "%{wks.location}/Projects/Lib-Audio/Include/**.h",
-        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
-        "%{wks.location}/Projects/Lib-Platform/Include/**.h",
-        "%{wks.location}/Projects/Lib-Renderer/Include/**.h",
-
-        "**.h",
-        "**.hpp",
-        "**.cpp",
     }
 
     links
@@ -68,7 +55,31 @@ project "Editor"
 
     defines
     {
-        "PLATFORM_WINDOWS"
+        "PLATFORM_WINDOWS",
+    }
+
+    prebuildcommands {
+        "{MKDIR} %{wks.location}" .. _G.EditorBinaryDir,
+    }
+
+    postbuildcommands {
+        -- Copy assets
+        copy_if_needed("%{wks.location}" .. _G.AssetsPath, "%{wks.location}" .. AssetPackerBinaryDir .. "\\Assets"),
+        copy_if_needed("%{wks.location}" .. _G.AssetBundlesPath, "%{wks.location}" .. EditorBinaryDir .. "\\AssetBundles"),
+
+        -- Copy required DLLs for tools
+        copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. AssetPackerBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. AssetUnpackerBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. AssetPackerBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. AssetUnpackerBinaryDir),
+
+        -- Copy all Lib-* DLLs to the Editor executable directory
+        copy_if_needed("%{wks.location}" .. _G.CorePath, "%{wks.location}" .. EditorBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. EditorBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CoreAudioPath, "%{wks.location}" .. EditorBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. EditorBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CoreRendererPath, "%{wks.location}" .. EditorBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CorePlatformPath, "%{wks.location}" .. EditorBinaryDir),
     }
 
     includeDependencies();
@@ -76,22 +87,18 @@ project "Editor"
 
     filter { "system:windows" }
         systemversion "latest"
+        buildoptions { "/FS", "/MP" }
+        files { '%{wks.location}/Assets/Resources.rc', '**.ico' }
+        vpaths { [ '%{wks.location}/Assets/*' ] = { '**.ico' } }
+        links { "OpenGL32" }
 
-		links
-        {
-            "OpenGL32"
-        }
-
-	filter { "system:not windows" }
-		links
-        {
-            "GL"
-        }
+    filter { "system:not windows" }
+        links { "GL" }
 
     filter { "configurations:Debug" }
         kind "ConsoleApp"
 
-	filter { "configurations:Release" }
+    filter { "configurations:Release" }
         kind "WindowedApp"
 
     filter { "configurations:Dist" }

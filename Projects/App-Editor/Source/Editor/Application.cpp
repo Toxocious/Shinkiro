@@ -10,7 +10,7 @@ Shinkiro::Application * App = nullptr;
 namespace Shinkiro
 {
     Application::Application()
-        : m_BundleManager( "assets.bundle" )
+        : m_BundleManager( "assets.bundle" ), m_AudioManager(), m_MapManager()
     {
         Core::App = this;
     }
@@ -31,6 +31,11 @@ namespace Shinkiro
     Audio::AudioManager & Application::GetAudioManager()
     {
         return m_AudioManager;
+    }
+
+    Renderer::MapManager & Application::GetMapManager()
+    {
+        return m_MapManager;
     }
 
     Platform::Window * Application::GetWindow()

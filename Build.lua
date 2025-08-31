@@ -1,6 +1,7 @@
 -- Custom Actions
 require "Clean"
 require "Build-Resource-File"
+require "Build-Unzip-Deps"
 
 -- Build Utility Functions
 include "./Build-Utils.lua"
@@ -12,25 +13,25 @@ local gitBranch = getCurrentGitBranch()
 outputdir = "%{cfg.buildcfg}-%{string.gsub(cfg.system, '^%l', string.upper)}-%{cfg.architecture}"
 
 -- Compiled binary and artifact directory locations
-local BinaryDir = "Build\\Binaries\\%{outputdir}\\%{prj.name}"
-local ObjectDir = "Build\\Artifacts\\%{outputdir}\\%{prj.name}"
+_G.BinaryDir = "Build\\Binaries\\%{outputdir}\\%{prj.name}"
+_G.ObjectDir = "Build\\Artifacts\\%{outputdir}\\%{prj.name}"
 
 -- Assets Path
-local AssetsPath = "Assets"
-local AssetBundlesPath = "AssetBundles"
+_G.AssetsPath = "Assets"
+_G.AssetBundlesPath = "AssetBundles"
 
 -- Core DLL Paths
-local CorePath = "Build\\Binaries\\%{outputdir}\\Lib-Core\\ShinkiroCore.dll"
-local CoreAssetPath = "Build\\Binaries\\%{outputdir}\\Lib-Asset\\ShinkiroAsset.dll"
-local CoreAudioPath = "Build\\Binaries\\%{outputdir}\\Lib-Audio\\ShinkiroAudio.dll"
-local CoreLoggerPath = "Build\\Binaries\\%{outputdir}\\Lib-Logger\\ShinkiroLogger.dll"
-local CorePlatformPath = "Build\\Binaries\\%{outputdir}\\Lib-Platform\\ShinkiroPlatform.dll"
-local CoreRendererPath = "Build\\Binaries\\%{outputdir}\\Lib-Renderer\\ShinkiroRenderer.dll"
+_G.CorePath = "Build\\Binaries\\%{outputdir}\\Lib-Core\\ShinkiroCore.dll"
+_G.CoreAssetPath = "Build\\Binaries\\%{outputdir}\\Lib-Asset\\ShinkiroAsset.dll"
+_G.CoreAudioPath = "Build\\Binaries\\%{outputdir}\\Lib-Audio\\ShinkiroAudio.dll"
+_G.CoreLoggerPath = "Build\\Binaries\\%{outputdir}\\Lib-Logger\\ShinkiroLogger.dll"
+_G.CorePlatformPath = "Build\\Binaries\\%{outputdir}\\Lib-Platform\\ShinkiroPlatform.dll"
+_G.CoreRendererPath = "Build\\Binaries\\%{outputdir}\\Lib-Renderer\\ShinkiroRenderer.dll"
 
 -- Executable Paths
-local EditorBinaryDir = "Build\\Binaries\\%{outputdir}\\Editor"
-local AssetPackerBinaryDir = "Build\\Binaries\\%{outputdir}\\AssetPacker"
-local AssetUnpackerBinaryDir = "Build\\Binaries\\%{outputdir}\\AssetUnpacker"
+_G.EditorBinaryDir = "Build\\Binaries\\%{outputdir}\\Editor"
+_G.AssetPackerBinaryDir = "Build\\Binaries\\%{outputdir}\\AssetPacker"
+_G.AssetUnpackerBinaryDir = "Build\\Binaries\\%{outputdir}\\AssetUnpacker"
 
 -- Primary Workspace
 workspace "Shinkiro"
@@ -69,9 +70,13 @@ workspace "Shinkiro"
             "SHINKIRO_DEBUG",
             "SHINKIRO_ENABLE_ASSERTS",
             "SHINKIRO_PLATFORM_WINDOWS",
+            "ASSIMP_BUILD_NO_EXPORT",
+            "ASSIMP_STATIC",
             "DSPDLOG_COMPILED_LIB",
+
             "_CRT_SECURE_NO_WARNINGS",
             "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
+
             "BUILD_TYPE=\"" .. gitBranch .. "\"",
             'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
@@ -84,9 +89,13 @@ workspace "Shinkiro"
             "SHINKIRO_RELEASE",
             "SHINKIRO_ENABLE_ASSERTS",
             "SHINKIRO_PLATFORM_WINDOWS",
+            "ASSIMP_BUILD_NO_EXPORT",
+            "ASSIMP_STATIC",
             "SPDLOG_COMPILED_LIB",
+
             "_CRT_SECURE_NO_WARNINGS",
             "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
+
             "BUILD_TYPE=\"Beta\"",
             'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
@@ -99,9 +108,13 @@ workspace "Shinkiro"
             "SHINKIRO_DIST",
             "SHINKIRO_ENABLE_ASSERTS",
             "SHINKIRO_PLATFORM_WINDOWS",
+            "ASSIMP_BUILD_NO_EXPORT",
+            "ASSIMP_STATIC",
             "SPDLOG_COMPILED_LIB",
+
             "_CRT_SECURE_NO_WARNINGS",
             "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
+
             "BUILD_TYPE=\"Dist\"",
             'SHINKIRO_VERSION="' .. (_G.appMetadata.version or "0.0.0") .. '"',
         }
@@ -111,7 +124,7 @@ workspace "Shinkiro"
 
     filter {}
 
-    -- Include all project DLL configurations
+    -- Include all project Lib-* DLL configurations
     include "Projects/Lib-Core"
     include "Projects/Lib-Asset"
     include "Projects/Lib-Audio"
@@ -119,38 +132,7 @@ workspace "Shinkiro"
     include "Projects/Lib-Platform"
     include "Projects/Lib-Renderer"
 
-    -- Include all project executable configurations
+    -- Include all project App-* executable configurations
     include "Projects/App-Editor"
     include "Projects/App-AssetPacker"
     include "Projects/App-AssetUnpacker"
-
-    -- Pre build commands for Editor project to create the Editor binary directory in case it isn't there
-    -- This is necessary for the post build commands to actually copy the DLLs over
-    prebuildcommands {
-        "{MKDIR} %{wks.location}" .. EditorBinaryDir,
-        "{MKDIR} %{wks.location}" .. AssetPackerBinaryDir,
-        "{MKDIR} %{wks.location}" .. AssetUnpackerBinaryDir,
-    }
-
-    -- Post build commands for Core projects to copy DLLs to the Editor directory
-    postbuildcommands {
-        -- Copy the Assets directory to the AssetPacker executable directory
-        "{COPYDIR} %{wks.location}" .. AssetsPath .. " %{wks.location}" .. AssetPackerBinaryDir .. "\\Assets",
-
-        -- Copy AssetBundles to the Editor executable directory
-        "{COPYDIR} %{wks.location}" .. AssetBundlesPath .. " %{wks.location}" .. EditorBinaryDir .. "\\AssetBundles",
-
-        -- Copy required Lib-* DLL to the AssetPacker and AssetUnpacker executable directories
-        "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetPackerBinaryDir,
-        "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. AssetUnpackerBinaryDir,
-        "{COPY} %{wks.location}" .. CoreLoggerPath .. " %{wks.location}" .. AssetPackerBinaryDir,
-        "{COPY} %{wks.location}" .. CoreLoggerPath .. " %{wks.location}" .. AssetUnpackerBinaryDir,
-
-        -- Copy all Lib-* DLLs to the Editor executable directory
-        "{COPY} %{wks.location}" .. CorePath .. " %{wks.location}" .. EditorBinaryDir,
-        "{COPY} %{wks.location}" .. CoreAssetPath .. " %{wks.location}" .. EditorBinaryDir,
-        "{COPY} %{wks.location}" .. CoreAudioPath .. " %{wks.location}" .. EditorBinaryDir,
-        "{COPY} %{wks.location}" .. CoreLoggerPath .. " %{wks.location}" .. EditorBinaryDir,
-        "{COPY} %{wks.location}" .. CoreRendererPath .. " %{wks.location}" .. EditorBinaryDir,
-        "{COPY} %{wks.location}" .. CorePlatformPath .. " %{wks.location}" .. EditorBinaryDir,
-    }

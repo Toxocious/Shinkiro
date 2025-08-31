@@ -13,29 +13,13 @@ project "Lib-Renderer"
 
     files
     {
-        "%{wks.location}/Libraries/assimp/include/**.h",
-		"%{wks.location}/Libraries/assimp/include/**.hpp",
-		"%{wks.location}/Libraries/assimp/include/**.inl",
-
         "%{wks.location}/Libraries/glad/include/**.h",
-		"%{wks.location}/Libraries/glad/src/glad.c",
-
-		"%{wks.location}/Libraries/glfw/include/**.h",
-
+        "%{wks.location}/Libraries/glad/src/glad.c",
+        "%{wks.location}/Libraries/glfw/include/**.h",
         "%{wks.location}/Libraries/glm/include/**.hpp",
-		"%{wks.location}/Libraries/glm/include/**.inl",
-
-        "%{wks.location}/Libraries/miniaudio/include/**.h",
-        "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
-
+        "%{wks.location}/Libraries/glm/include/**.inl",
         "%{wks.location}/Libraries/stb_image/include/**.h",
-		"%{wks.location}/Libraries/stb_image/include/**.cpp",
-
-        "%{wks.location}/Projects/Lib-Asset/Include/**.h",
-        "%{wks.location}/Projects/Lib-Audio/Include/**.h",
-        "%{wks.location}/Projects/Lib-Core/Include/**.h",
-        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
-        "%{wks.location}/Projects/Lib-Platform/Include/**.h",
+        "%{wks.location}/Libraries/stb_image/include/**.cpp",
 
         "**.h",
         "**.hpp",
@@ -47,8 +31,7 @@ project "Lib-Renderer"
         "%{wks.location}/Libraries/assimp/include",
         "%{wks.location}/Libraries/glad/include",
         "%{wks.location}/Libraries/glfw/include",
-		"%{wks.location}/Libraries/glm/include",
-        "%{wks.location}/Libraries/miniaudio/include",
+        "%{wks.location}/Libraries/glm/include",
         "%{wks.location}/Libraries/stb_image/include",
         "%{wks.location}/Libraries/spdlog/include",
 
@@ -65,9 +48,9 @@ project "Lib-Renderer"
     {
         "%{wks.location}/Libraries/assimp/lib",
         "%{wks.location}/Libraries/glad/lib",
-		"%{wks.location}/Libraries/glfw/lib",
-		"%{wks.location}/Libraries/glm/lib",
-		"%{wks.location}/Libraries/spdlog/lib",
+        "%{wks.location}/Libraries/glfw/lib",
+        "%{wks.location}/Libraries/glm/lib",
+        "%{wks.location}/Libraries/spdlog/lib",
     }
 
     links
@@ -90,57 +73,26 @@ project "Lib-Renderer"
 
     defines
     {
-        "CORE_RENDERER_EXPORTS"
+        "CORE_RENDERER_EXPORTS",
+        "ASSIMP_BUILD_NO_EXPORT" -- Explicitly define for static linking
     }
 
-    filter { "files:**/Libraries/assimp/**.cpp" }
+    filter { "files:**/Libraries/**.c" }
         flags { "NoPCH" }
-    filter { "files:**/Libraries/glad/**.c" }
+    filter { "files:**/Libraries/**.cpp" }
         flags { "NoPCH" }
-    filter { "files:**/Libraries/glfw/**.cpp" }
-        flags { "NoPCH" }
-    filter { "files:**/Libraries/glm/**.cpp" }
-        flags { "NoPCH" }
-    filter { "files:**/Libraries/miniaudio/**.c" }
-        flags { "NoPCH" }
-    filter { "files:**/Libraries/stb_image/**.cpp" }
-        flags { "NoPCH" }
-
     filter {}
 
     filter { "configurations:Debug" }
-		links {
-			"assimp_debug",
-			"zlib_debug",
-			"glad_debug",
-			"glfw3",
-			"glm_debug",
-		}
+        links { "assimp_debug", "zlib_debug", "glad_debug", "glfw3", "glm_debug" }
 
-	filter { "configurations:Dist" }
-		links {
-			"assimp_dist",
-			"zlib_dist",
-			"glad_dist",
-			"glfw3",
-			"glm_dist",
-		}
+    filter { "configurations:Dist" }
+        links { "assimp_dist", "zlib_dist", "glad_dist", "glfw3", "glm_dist" }
 
-	filter { "configurations:Release" }
-		links {
-			"assimp_release",
-			"zlib_release",
-			"glad_release",
-			"glfw3",
-			"glm_release",
-		}
+    filter { "configurations:Release" }
+        links { "assimp_release", "zlib_release", "glad_release", "glfw3", "glm_release" }
 
     filter "system:windows"
         systemversion "latest"
-
         buildoptions { "/FS", "/MP" }
-
-        defines
-        {
-            "PLATFORM_WINDOWS"
-        }
+        defines { "PLATFORM_WINDOWS" }
