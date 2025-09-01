@@ -21,7 +21,7 @@ namespace Shinkiro::Platform
         CleanUp();
     }
 
-    bool Window::Initialize( const char * title, int height, int width )
+    bool Window::Initialize( const std::string & title, const std::string & version, const std::string build_type, int height, int width )
     {
         m_Height = height;
         m_Width  = width;
@@ -39,7 +39,7 @@ namespace Shinkiro::Platform
         glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE );
         glfwWindowHint( GLFW_RESIZABLE, GL_FALSE );
 
-        m_Window.reset( glfwCreateWindow( m_Width, m_Height, m_Title, nullptr, nullptr ) );
+        m_Window.reset( glfwCreateWindow( m_Width, m_Height, m_Title.c_str(), nullptr, nullptr ) );
         if ( !m_Window )
         {
             SHNK_CORE_ERROR( "Failed to create the GLFW window" );
@@ -66,8 +66,9 @@ namespace Shinkiro::Platform
         glEnable( GL_BLEND );
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
-        SetWindowIcon();
         CenterWindow();
+        SetWindowIcon();
+        LoadLogo();
 
         InitializeImGui();
 
@@ -112,7 +113,16 @@ namespace Shinkiro::Platform
         {
             case Core::AppState::LOADING:
                 {
-                    RenderImGui();
+                    BeginImGuiFrame();
+                    glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+                    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+                    {
+                        RenderImGui();
+                    }
+
+                    EndImGuiFrame();
+                    SwapBuffers();
 
                     std::this_thread::sleep_for( std::chrono::seconds( 3 ) );
 
@@ -147,12 +157,7 @@ namespace Shinkiro::Platform
 
     void Window::RenderImGui()
     {
-        BeginImGuiFrame();
-
         {
-            glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
-            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
             ImGui::SetNextWindowPos( ImVec2( 0, 0 ) );
             ImGui::SetNextWindowSize( ImGui::GetIO().DisplaySize );
             ImGui::Begin( "LoadingScreen", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground );
@@ -161,54 +166,41 @@ namespace Shinkiro::Platform
             float windowHeight = ImGui::GetWindowSize().y;
 
             // Calculate total height of all elements for vertical centering
-            float titleTextHeight   = ImGui::CalcTextSize( m_Title ).y;
-            float loadingTextHeight = ImGui::CalcTextSize( "Loading..." ).y;
-            // float totalContentHeight = m_iconHeight + titleTextHeight + loadingTextHeight + ImGui::GetStyle().ItemSpacing.y * 2;
+            float titleTextHeight    = ImGui::CalcTextSize( m_Title.c_str() ).y;
+            float loadingTextHeight  = ImGui::CalcTextSize( "Loading..." ).y;
+            float totalContentHeight = m_LogoHeight + titleTextHeight + loadingTextHeight + ImGui::GetStyle().ItemSpacing.y * 2;
 
-            // ImGui::SetCursorPosY( ( windowHeight - totalContentHeight ) * 0.5f );
+            ImGui::SetCursorPosY( ( windowHeight - totalContentHeight ) * 0.5f );
 
-            // // 1. Icon
-            // if ( m_iconTextureID != 0 )
-            // {
-            //     ImGui::SetCursorPosX( ( windowWidth - m_iconWidth ) * 0.5f );
-            //     ImGui::Image( ( intptr_t ) m_iconTextureID, ImVec2( ( float ) m_iconWidth, ( float ) m_iconHeight ) );
-            // }
+            if ( m_LogoTextureID != 0 )
+            {
+                ImGui::SetCursorPosX( ( windowWidth - m_LogoWidth ) * 0.5f );
+                ImGui::Image( ( intptr_t ) m_LogoTextureID, ImVec2( ( float ) m_LogoWidth, ( float ) m_LogoHeight ) );
+            }
 
-            // 2. Application Title
-            float titleTextWidth = ImGui::CalcTextSize( m_Title ).x;
-            ImGui::SetCursorPosX( ( windowWidth - titleTextWidth ) * 0.5f );
-            ImGui::Text( "%s", m_Title );
-
-            // 3. "Loading..." text
             float loadingTextWidth = ImGui::CalcTextSize( "Loading..." ).x;
             ImGui::SetCursorPosX( ( windowWidth - loadingTextWidth ) * 0.5f );
             ImGui::Text( "Loading..." );
 
             ImGui::End();
-
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
-            glfwSwapBuffers( GetGLFWWindow() );
-
-            // if ( m_assetsLoaded )
-            // {
-            //     loadInitialAssets();
-
-            //     loadSelectableObjects();
-            //     // loadModels();
-
-            //     m_state = AppState::RUNNING;
-            // }
-            // else
-            // {
-            //     m_assetsLoaded = true;
-            // }
         }
 
-        EndImGuiFrame();
+        // if ( m_assetsLoaded )
+        // {
+        //     loadInitialAssets();
+
+        //     loadSelectableObjects();
+        //     // loadModels();
+
+        //     m_state = AppState::RUNNING;
+        // }
+        // else
+        // {
+        //     m_assetsLoaded = true;
+        // }
     }
 
-    void Window::InitializeImGui()
+    bool Window::InitializeImGui()
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -223,13 +215,17 @@ namespace Shinkiro::Platform
         ImGui_ImplOpenGL3_Init( "#version 330" );
 
         SHNK_CORE_INFO( "Dear ImGui initialized successfully." );
+
+        return true;
     }
 
-    void Window::ShutdownImGui()
+    bool Window::ShutdownImGui()
     {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
+
+        return true;
     }
 
     void Window::BeginImGuiFrame()
@@ -250,7 +246,7 @@ namespace Shinkiro::Platform
         m_Title = title;
         if ( m_Window )
         {
-            glfwSetWindowTitle( m_Window.get(), m_Title );
+            glfwSetWindowTitle( m_Window.get(), m_Title.c_str() );
         }
     }
 
@@ -305,9 +301,63 @@ namespace Shinkiro::Platform
         }
     }
 
+    void Window::LoadLogo()
+    {
+        const auto ShinkiroLogo = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Textures/Shinkiro/LogoTest.png" );
+
+        int logoWidth, logoHeight, channels;
+
+        unsigned char * m_ShinkiroLogo = stbi_load_from_memory(
+            ShinkiroLogo.data(),
+            static_cast<int>( ShinkiroLogo.size() ),
+            &logoWidth,
+            &logoHeight,
+            &channels,
+            4
+        );
+
+        if ( m_ShinkiroLogo != nullptr )
+        {
+            m_LogoHeight = logoHeight / 4;
+            m_LogoWidth  = logoWidth / 4;
+
+            unsigned char * resizedLogo = new unsigned char[m_LogoWidth * m_LogoHeight * 4];
+
+            stbir_resize_uint8(
+                m_ShinkiroLogo,
+                logoWidth,
+                logoHeight,
+                0,
+                resizedLogo,
+                m_LogoWidth,
+                m_LogoHeight,
+                0,
+                4
+            );
+
+            glGenTextures( 1, &m_LogoTextureID );
+            glBindTexture( GL_TEXTURE_2D, m_LogoTextureID );
+
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, m_LogoWidth, m_LogoHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, resizedLogo );
+            glGenerateMipmap( GL_TEXTURE_2D );
+
+            delete[] resizedLogo;
+            stbi_image_free( m_ShinkiroLogo );
+        }
+        else
+        {
+            SHNK_CORE_ERROR( "Failed to load logo from memory: {0}", stbi_failure_reason() );
+        }
+    }
+
     void Window::SetWindowIcon()
     {
-        const auto ShinkiroWindowIcon = Shinkiro::Core::App->GetBundleManager().GetAssetData( "ShinkiroWindowIcon.png" );
+        const auto ShinkiroWindowIcon = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Textures/Shinkiro/LogoMiniSmall.png" );
 
         int iconWidth, iconHeight, channels;
 
@@ -322,10 +372,24 @@ namespace Shinkiro::Platform
 
         if ( m_WindowIcon != nullptr )
         {
+            m_IconHeight = iconHeight;
+            m_IconWidth  = iconWidth;
+
             GLFWimage images[1];
             images[0].width  = iconWidth;
             images[0].height = iconHeight;
             images[0].pixels = m_WindowIcon;
+
+            glGenTextures( 1, &m_IconTextureID );
+            glBindTexture( GL_TEXTURE_2D, m_IconTextureID );
+
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+            glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, m_IconWidth, m_IconHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_WindowIcon );
+            glGenerateMipmap( GL_TEXTURE_2D );
 
             glfwSetWindowIcon( GetGLFWWindow(), 1, images );
 

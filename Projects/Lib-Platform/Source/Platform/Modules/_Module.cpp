@@ -18,12 +18,27 @@ namespace Shinkiro::Platform
         return true;
     }
 
-    bool Module::Initialize( const char * title, int height, int width )
+    bool Module::Initialize( const std::string & title, const std::string & version, const std::string build_type, int height, int width )
     {
         return true;
     }
 
     bool Module::Start()
+    {
+        return true;
+    }
+
+    bool Module::CleanUp()
+    {
+        return true;
+    }
+
+    bool Module::InitializeImGui()
+    {
+        return true;
+    }
+
+    bool Module::ShutdownImGui()
     {
         return true;
     }
@@ -41,11 +56,6 @@ namespace Shinkiro::Platform
     Shinkiro::Core::UpdateStatus Module::PostUpdate()
     {
         return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
-    }
-
-    bool Module::CleanUp()
-    {
-        return true;
     }
 
     std::string Module::UpdateStatusToString( Shinkiro::Core::UpdateStatus updateStatus )

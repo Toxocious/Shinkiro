@@ -29,7 +29,7 @@ namespace Shinkiro::Platform
         Window( bool enabled = true );
         ~Window();
 
-        bool Initialize( const char * title, int height, int width );
+        bool Initialize( const std::string & title, const std::string & version, const std::string build_type, int height, int width );
         bool Start() override;
         bool CleanUp() override;
 
@@ -44,6 +44,7 @@ namespace Shinkiro::Platform
         void SetTitle( const char * title );
         void SetSize( int width, int height );
         void SetPosition( int x, int y );
+        void LoadLogo();
         void SetWindowIcon();
         void CenterWindow();
 
@@ -56,8 +57,8 @@ namespace Shinkiro::Platform
         void BeginImGuiFrame();
         void EndImGuiFrame();
         void RenderImGui();
-        void ShutdownImGui();
-        void InitializeImGui();
+        bool ShutdownImGui() override;
+        bool InitializeImGui() override;
 
         // Callbacks
         static void SetMouseCallbacks( GLFWwindow * window, double xposIn, double yposIn );
@@ -98,14 +99,23 @@ namespace Shinkiro::Platform
     private:
         std::unique_ptr<GLFWwindow, decltype( &glfwDestroyWindow )> m_Window;
 
-        stbi_uc * m_WindowIcon = nullptr;
-        glm::vec2 m_MousePos   = glm::vec2( 0.0f, 0.0f );
+        glm::vec2 m_MousePos = glm::vec2( 0.0f, 0.0f );
 
-        const char * m_Title;
-        int          m_Width;
-        int          m_Height;
-        int          m_X { 0 };
-        int          m_Y { 0 };
+        std::string m_Title;
+        int         m_Width;
+        int         m_Height;
+        int         m_X { 0 };
+        int         m_Y { 0 };
+
+        stbi_uc * m_ShinkiroLogo  = nullptr;
+        GLuint    m_LogoTextureID = 0;
+        int       m_LogoWidth     = 0;
+        int       m_LogoHeight    = 0;
+
+        stbi_uc * m_WindowIcon    = nullptr;
+        GLuint    m_IconTextureID = 0;
+        int       m_IconWidth     = 0;
+        int       m_IconHeight    = 0;
 
         float m_DeltaTime  = 0;
         float m_LastTime   = 0;

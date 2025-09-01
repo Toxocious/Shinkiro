@@ -26,10 +26,12 @@ namespace Shinkiro::Platform
         /**
          * @brief Initialize - specifically, the Window module - when the application starts.
          * @param title The title of the window
+         * @param version The version of the application
+         * @param build_type The build type (e.g., Debug, Release)
          * @param height The height of the window
          * @param width The width of the window
          */
-        virtual bool Initialize( const char * title, int height, int width );
+        virtual bool Initialize( const std::string & title, const std::string & version, const std::string build_type, int height, int width );
 
         /**
          * @brief Start the module. This is called once when the application starts, after Initialize
@@ -42,6 +44,16 @@ namespace Shinkiro::Platform
          * @return True if the module cleaned up successfully, false otherwise
          */
         virtual bool CleanUp();
+
+        /**
+         * @brief Initialize the ImGui context of the module if it exists. Not all modules will have ImGui contexts.
+         */
+        virtual bool InitializeImGui();
+
+        /**
+         * @brief Shutdown the ImGui context of the module if it exists. Not all modules will have ImGui contexts.
+         */
+        virtual bool ShutdownImGui();
 
         /**
          * @brief Any pre-update logic for the module. This is called once per frame, before Update()

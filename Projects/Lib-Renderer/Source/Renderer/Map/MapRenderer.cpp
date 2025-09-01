@@ -17,12 +17,6 @@ namespace Shinkiro::Renderer
 
     MapRenderer::~MapRenderer()
     {
-        glDeleteVertexArrays( 1, &m_CubeVAO );
-        glDeleteBuffers( 1, &m_CubeVBO );
-
-        glDeleteVertexArrays( 1, &m_SkyboxVAO );
-        glDeleteBuffers( 1, &m_SkyboxVBO );
-        glDeleteTextures( 1, &m_cubemapTexture );
     }
 
     bool MapRenderer::Initialize()
@@ -160,6 +154,16 @@ namespace Shinkiro::Renderer
         return true;
     }
 
+    void MapRenderer::Shutdown()
+    {
+        glDeleteVertexArrays( 1, &m_CubeVAO );
+        glDeleteBuffers( 1, &m_CubeVBO );
+
+        glDeleteVertexArrays( 1, &m_SkyboxVAO );
+        glDeleteBuffers( 1, &m_SkyboxVBO );
+        glDeleteTextures( 1, &m_cubemapTexture );
+    }
+
     void MapRenderer::DrawHighlight( int x, int y, float layer_y_offset, const glm::mat4 & view, const glm::mat4 & projection )
     {
         m_MapTileHighlighterShader->Use();
@@ -223,6 +227,19 @@ namespace Shinkiro::Renderer
         }
 
         stbi_set_flip_vertically_on_load( false );
+    }
+
+    void MapRenderer::UnloadTilesetTextures( const MapData & mapData )
+    {
+        for ( const auto & tileset : mapData.tilesets )
+        {
+            if ( tileset.textureID != 0 )
+            {
+                glDeleteTextures( 1, &tileset.textureID );
+            }
+        }
+
+        SHNK_CORE_INFO( "Unloaded textures for map: {}", mapData.name );
     }
 
     const Tileset * MapRenderer::FindTilesetForGid( int gid, const std::vector<Tileset> & tilesets ) const

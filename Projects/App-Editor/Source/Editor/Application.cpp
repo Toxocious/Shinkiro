@@ -62,19 +62,19 @@ namespace Shinkiro
 
             if ( p_Module->m_Name == "Window" )
             {
-                std::string windowTitle = name + " v" + version;
+                std::string windowTitle = name;
 
 #if defined( SHINKIRO_DEBUG )
-                windowTitle += " [DEBUG]";
+                std::string buildType = "[DEBUG]";
 #elif defined( SHINKIRO_RELEASE )
-                windowTitle += " [RELEASE]";
+                std::string buildType = " [RELEASE]";
 #elif defined( SHINKIRO_DIST )
-                windowTitle += " [DIST]";
+                std::string buildType = " [DIST]";
 #else
-                windowTitle += " [UNKNOWN]";
+                std::string buildType = " [UNKNOWN]";
 #endif
 
-                p_Module->Initialize( windowTitle.c_str(), height, width );
+                p_Module->Initialize( windowTitle.c_str(), version, buildType, height, width );
             }
             else
             {
@@ -116,10 +116,14 @@ namespace Shinkiro
     {
         SHNK_CORE_TRACE( "Cleaning up the application and its modules" );
         {
+            m_MapManager.Shutdown();
+
             for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
             {
                 auto p_Module = ( *module );
                 SHNK_CORE_TRACE( "Cleaning module '{0}'", p_Module->m_Name.c_str() );
+
+                p_Module->ShutdownImGui();
                 p_Module->CleanUp();
             }
 

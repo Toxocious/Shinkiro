@@ -1,5 +1,5 @@
-#ifndef SHINKIRO_RENDERER_MAP_MANAGER_H
-#define SHINKIRO_RENDERER_MAP_MANAGER_H
+#ifndef SHINKIRO_RENDERER_MAP_RENDERER_H
+#define SHINKIRO_RENDERER_MAP_RENDERER_H
 
 #include <Renderer/Camera/Camera.h>
 #include <Renderer/Map/MapParser.h>
@@ -38,10 +38,21 @@ namespace Shinkiro::Renderer
         bool Initialize();
 
         /**
+         * @brief Shuts down the map renderer and cleans up OpenGL resources.
+         */
+        void Shutdown();
+
+        /**
          * @brief Loads tileset textures.
          * @param mapData The parsed map data containing tileset information.
          */
         void LoadTilesetTextures( MapData & mapData );
+
+        /**
+         * @brief Unloads tileset textures for a given map.
+         * @param mapData The map data whose textures should be unloaded.
+         */
+        void UnloadTilesetTextures( const MapData & mapData );
 
         /**
          * @brief Finds the appropriate tileset for a given GID
