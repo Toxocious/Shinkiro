@@ -21,6 +21,7 @@ namespace Shinkiro::Audio
 namespace Shinkiro::Renderer
 {
     class MapManager;
+    class Camera;
 }
 
 namespace Shinkiro::Platform
@@ -72,6 +73,11 @@ namespace Shinkiro::Core
          * @brief Returns a ref to the Map Manager
          */
         virtual Renderer::MapManager & GetMapManager() = 0;
+
+        /**
+         * @brief Returns a ref to the Camera
+         */
+        virtual Renderer::Camera & GetCamera() = 0;
 
         /**
          * @brief Returns a pointer to the active window

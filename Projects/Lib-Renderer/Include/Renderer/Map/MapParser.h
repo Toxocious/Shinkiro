@@ -155,6 +155,13 @@ namespace Shinkiro::Renderer
         MapData Parse( const char * filename );
 
         /**
+         * @brief Parses the specified map from memory.
+         * @param filename The byte data of the map.
+         * @return A MapData struct containing the parsed map information or an empty MapData on failure.
+         */
+        MapData ParseFromMemory( const void * data, size_t size, const char * sourcePath );
+
+        /**
          * @brief Saves the current map data to a .tmx file.
          * @param mapData The MapData struct containing the map information to save.
          * @param filename The path to the .tmx file where the map data will be saved.

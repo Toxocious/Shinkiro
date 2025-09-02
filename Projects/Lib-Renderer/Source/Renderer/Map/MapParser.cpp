@@ -2,30 +2,34 @@
 
 #include <Renderer/Map/MapParser.h>
 
+#include <Core/IApplication.h>
+
+#include <Asset/AssetBundleManager.h>
+
 #include <Log/Log.h>
 
 namespace Shinkiro::Renderer
 {
-    MapData MapParser::Parse( const char * filename )
+    MapData MapParser::Parse( const char * filePath )
     {
         using namespace tinyxml2;
 
         MapData               mapData;
         tinyxml2::XMLDocument doc;
 
-        if ( doc.LoadFile( filename ) != XML_SUCCESS )
+        if ( doc.LoadFile( filePath ) != XML_SUCCESS )
         {
-            SHNK_CORE_ERROR( "Error loading map TMX file: {}", filename );
+            SHNK_CORE_ERROR( "Error loading map TMX file: {}", filePath );
             return mapData;
         }
 
-        m_FilePath   = filename;
-        mapData.name = std::filesystem::path( filename ).stem().string();
+        m_FilePath   = filePath;
+        mapData.name = std::filesystem::path( filePath ).stem().string();
 
         XMLElement * mapElement = doc.RootElement();
         if ( !mapElement )
         {
-            SHNK_CORE_ERROR( "Error: Could not find root <map> element in {}", filename );
+            SHNK_CORE_ERROR( "Error: Could not find root <map> element in {}", filePath );
             return mapData;
         }
 
@@ -65,12 +69,15 @@ namespace Shinkiro::Renderer
                     {
                         mapData.properties[propName] = std::string( propValueStr );
                     }
-
-                    SHNK_CORE_TRACE( "Parsed map property: '{}' (type: {})", propName, type );
                 }
             }
         }
 
+        SHNK_CORE_INFO( "Map Loaded From File: {}", filePath );
+        SHNK_CORE_INFO( "Map Name: {}", mapData.name );
+        SHNK_CORE_INFO( "Parsed {} Map Properties.", mapData.properties.size() );
+        SHNK_CORE_INFO( "Parsed {} Layers.", mapData.layers.size() );
+        SHNK_CORE_INFO( "Parsed {} Tilesets.", mapData.tilesets.size() );
         SHNK_CORE_INFO( "Map Parsed: {}x{} tiles.", mapData.width, mapData.height );
         SHNK_CORE_INFO( "Tile Size: {}x{} pixels.", mapData.tileWidth, mapData.tileHeight );
 
@@ -98,6 +105,113 @@ namespace Shinkiro::Renderer
                 mapData.m_VisibleLayerCount++;
             }
         }
+
+        SHNK_CORE_INFO( "Map Loaded From File: {}", filePath );
+        SHNK_CORE_INFO( "Map Name: {}", mapData.name );
+        SHNK_CORE_INFO( "Parsed {} Map Properties.", mapData.properties.size() );
+        SHNK_CORE_INFO( "Parsed {} Layers.", mapData.layers.size() );
+        SHNK_CORE_INFO( "Parsed {} Tilesets.", mapData.tilesets.size() );
+        SHNK_CORE_INFO( "Map Parsed: {}x{} tiles.", mapData.width, mapData.height );
+        SHNK_CORE_INFO( "Tile Size: {}x{} pixels.", mapData.tileWidth, mapData.tileHeight );
+
+        return mapData;
+    }
+
+    MapData MapParser::ParseFromMemory( const void * data, size_t size, const char * sourcePath )
+    {
+        using namespace tinyxml2;
+
+        MapData               mapData;
+        tinyxml2::XMLDocument doc;
+
+        if ( doc.Parse( reinterpret_cast<const char *>( data ), size ) != XML_SUCCESS )
+        {
+            SHNK_CORE_ERROR( "Error parsing TMX map data from memory: {}", sourcePath ? sourcePath : "<memory>" );
+            return mapData;
+        }
+
+        m_FilePath = sourcePath ? sourcePath : "";
+
+        mapData.name = std::filesystem::path( m_FilePath ).stem().string();
+
+        XMLElement * mapElement = doc.RootElement();
+        if ( !mapElement )
+        {
+            SHNK_CORE_ERROR( "Error: Could not find root <map> element in {}", m_FilePath );
+            return mapData;
+        }
+
+        mapData.width      = mapElement->IntAttribute( "width" );
+        mapData.height     = mapElement->IntAttribute( "height" );
+        mapData.tileWidth  = mapElement->IntAttribute( "tilewidth" );
+        mapData.tileHeight = mapElement->IntAttribute( "tileheight" );
+
+        if ( XMLElement * propertiesElement = mapElement->FirstChildElement( "properties" ) )
+        {
+            for ( XMLElement * propertyElement = propertiesElement->FirstChildElement( "property" );
+                  propertyElement != nullptr;
+                  propertyElement = propertyElement->NextSiblingElement( "property" ) )
+            {
+                const char * propName     = propertyElement->Attribute( "name" );
+                const char * propValueStr = propertyElement->Attribute( "value" );
+                const char * propTypeStr  = propertyElement->Attribute( "type" );
+
+                if ( propName && propValueStr )
+                {
+                    std::string type = propTypeStr ? propTypeStr : "string";
+
+                    if ( type == "int" )
+                    {
+                        mapData.properties[propName] = std::stoi( propValueStr );
+                    }
+                    else if ( type == "float" )
+                    {
+                        mapData.properties[propName] = std::stof( propValueStr );
+                    }
+                    else if ( type == "bool" )
+                    {
+                        mapData.properties[propName] = ( std::string( propValueStr ) == "true" );
+                    }
+                    else
+                    {
+                        mapData.properties[propName] = std::string( propValueStr );
+                    }
+                }
+            }
+        }
+
+        for ( XMLElement * e = mapElement->FirstChildElement(); e != nullptr; e = e->NextSiblingElement() )
+        {
+            std::string value = e->Value();
+            if ( value == "layer" )
+            {
+                if ( auto layerOpt = ParseLayer( e ) )
+                {
+                    mapData.layers.push_back( *layerOpt );
+                }
+            }
+            else if ( value == "tileset" )
+            {
+                mapData.tilesets.push_back( ParseTileset( e ) );
+            }
+        }
+
+        mapData.m_VisibleLayerCount = 0;
+        for ( const auto & layer : mapData.layers )
+        {
+            if ( layer.visible )
+            {
+                mapData.m_VisibleLayerCount++;
+            }
+        }
+
+        SHNK_CORE_INFO( "Map Loaded From Memory: {}", sourcePath );
+        SHNK_CORE_INFO( "Map Name: {}", mapData.name );
+        SHNK_CORE_INFO( "Parsed {} Map Properties.", mapData.properties.size() );
+        SHNK_CORE_INFO( "Parsed {} Layers.", mapData.layers.size() );
+        SHNK_CORE_INFO( "Parsed {} Tilesets.", mapData.tilesets.size() );
+        SHNK_CORE_INFO( "Map Parsed: {}x{} tiles.", mapData.width, mapData.height );
+        SHNK_CORE_INFO( "Tile Size: {}x{} pixels.", mapData.tileWidth, mapData.tileHeight );
 
         return mapData;
     }
@@ -263,12 +377,19 @@ namespace Shinkiro::Renderer
         const char * source = tilesetElement->Attribute( "source" );
         if ( source )
         {
-            std::filesystem::path tsxPath = std::filesystem::path( m_FilePath ).parent_path() / source;
-            tinyxml2::XMLDocument tsxDoc;
+            const auto tsxPath      = std::filesystem::path( source );
+            const auto tsxAssetData = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Maps/" + tsxPath.string() );
 
-            if ( tsxDoc.LoadFile( tsxPath.string().c_str() ) != XML_SUCCESS )
+            if ( tsxAssetData.empty() )
             {
-                SHNK_CORE_ERROR( "Failed to load external tileset: {}", tsxPath.string() );
+                SHNK_CORE_ERROR( "Failed to load external tileset asset: {}", tsxPath.string() );
+                return tileset;
+            }
+
+            XMLDocument tsxDoc;
+            if ( tsxDoc.Parse( reinterpret_cast<const char *>( tsxAssetData.data() ), tsxAssetData.size() ) != XML_SUCCESS )
+            {
+                SHNK_CORE_ERROR( "Failed to parse external tileset: {}", tsxPath.string() );
                 return tileset;
             }
 
@@ -282,18 +403,21 @@ namespace Shinkiro::Renderer
                 XMLElement * imageElement = externalTilesetElement->FirstChildElement( "image" );
                 if ( imageElement )
                 {
-                    // The image source in the TSX is relative to the TSX file itself
-                    const char *          imageSource = imageElement->Attribute( "source" );
-                    std::filesystem::path imagePath   = tsxPath.parent_path() / imageSource;
-                    tileset.imageSource               = imagePath.string();
-                    tileset.imageWidth                = imageElement->IntAttribute( "width" );
-                    tileset.imageHeight               = imageElement->IntAttribute( "height" );
+                    const char * imageSource = imageElement->Attribute( "source" );
+
+                    std::filesystem::path imagePath = tsxPath.parent_path() / std::filesystem::path( imageSource );
+                    tileset.imageSource             = imagePath.generic_string();
+                    tileset.imageWidth              = imageElement->IntAttribute( "width" );
+                    tileset.imageHeight             = imageElement->IntAttribute( "height" );
+                }
+                else
+                {
+                    SHNK_CORE_TRACE( "Warning: External tileset '{}' has no <image> element.", tsxPath.string() );
                 }
             }
         }
         else
         {
-            // Embedded tileset
             tileset.tileWidth  = tilesetElement->IntAttribute( "tilewidth" );
             tileset.tileHeight = tilesetElement->IntAttribute( "tileheight" );
             tileset.columns    = tilesetElement->IntAttribute( "columns" );
@@ -301,16 +425,15 @@ namespace Shinkiro::Renderer
             XMLElement * imageElement = tilesetElement->FirstChildElement( "image" );
             if ( imageElement )
             {
-                // The image source is relative to the TMX file
-                const char *          imageSource = imageElement->Attribute( "source" );
-                std::filesystem::path imagePath   = std::filesystem::path( m_FilePath ).parent_path() / imageSource;
-                tileset.imageSource               = imagePath.string();
-                tileset.imageWidth                = imageElement->IntAttribute( "width" );
-                tileset.imageHeight               = imageElement->IntAttribute( "height" );
+                const char * imageSource = imageElement->Attribute( "source" );
+
+                std::filesystem::path imagePath = std::filesystem::path( m_FilePath ).parent_path() / std::filesystem::path( imageSource );
+                tileset.imageSource             = imagePath.generic_string();
+                tileset.imageWidth              = imageElement->IntAttribute( "width" );
+                tileset.imageHeight             = imageElement->IntAttribute( "height" );
             }
         }
 
-        // Fallback for columns if not specified
         if ( tileset.columns == 0 && tileset.tileWidth > 0 && tileset.imageWidth > 0 )
         {
             tileset.columns = tileset.imageWidth / tileset.tileWidth;
@@ -321,7 +444,17 @@ namespace Shinkiro::Renderer
             tileset.rows = tileset.imageHeight / tileset.tileHeight;
         }
 
-        SHNK_CORE_TRACE( "Tileset Parsed: firstGid={}, tileWidth={}, tileHeight={}, imageSource={}, imageWidth={}, imageHeight={}, columns={}, rows={}", tileset.firstGid, tileset.tileWidth, tileset.tileHeight, tileset.imageSource, tileset.imageWidth, tileset.imageHeight, tileset.columns, tileset.rows );
+        // SHNK_CORE_TRACE(
+        //     "Tileset Parsed: firstGid={}, tileWidth={}, tileHeight={}, imageSource={}, imageWidth={}, imageHeight={}, columns={}, rows={}",
+        //     tileset.firstGid,
+        //     tileset.tileWidth,
+        //     tileset.tileHeight,
+        //     tileset.imageSource,
+        //     tileset.imageWidth,
+        //     tileset.imageHeight,
+        //     tileset.columns,
+        //     tileset.rows
+        // );
 
         return tileset;
     }
@@ -343,7 +476,7 @@ namespace Shinkiro::Renderer
         layer.width  = layerElement->IntAttribute( "width" );
         layer.height = layerElement->IntAttribute( "height" );
 
-        SHNK_CORE_INFO( "Parsing Layer: name={}, width={}, height={}, visible={}", layer.name, layer.width, layer.height, layer.visible );
+        // SHNK_CORE_INFO( "Parsing Layer: name={}, width={}, height={}, visible={}", layer.name, layer.width, layer.height, layer.visible );
 
         // Find the <data> element within the <layer>
         XMLElement * dataElement = layerElement->FirstChildElement( "data" );

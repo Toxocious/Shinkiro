@@ -6,6 +6,13 @@
 
 #include <Asset/AssetBundleManager.h>
 
+// #include <Renderer/Camera/Camera.h>
+// #include <Renderer/Map/MapManager.h>
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include <chrono>
 #include <thread>
 
@@ -52,7 +59,7 @@ namespace Shinkiro::Platform
 
         if ( !gladLoadGLLoader( ( GLADloadproc ) glfwGetProcAddress ) )
         {
-            std::cerr << "Failed to initialize GLAD" << std::endl;
+            SHNK_CORE_ERROR( "Failed to initialize GLAD" );
             return false;
         }
 
@@ -71,6 +78,15 @@ namespace Shinkiro::Platform
         LoadLogo();
 
         InitializeImGui();
+
+        {
+            // Shinkiro::Core::App->GetMapManager().LoadMap( "Maps/DecorTest.tmx" );
+            // Shinkiro::Core::App->GetMapManager().SetActiveMap( "Maps/DecorTest.tmx" );
+            // if ( GetMapManager().LoadMap( "Maps/DecorTest.tmx" ) )
+            // {
+            // GetMapManager().SetActiveMap( "Maps/DecorTest.tmx" );
+            // }
+        }
 
         return true;
     }
@@ -124,7 +140,7 @@ namespace Shinkiro::Platform
                     EndImGuiFrame();
                     SwapBuffers();
 
-                    std::this_thread::sleep_for( std::chrono::seconds( 3 ) );
+                    std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
 
                     Shinkiro::Core::App->m_AppState = Core::AppState::RUNNING;
 
@@ -151,8 +167,18 @@ namespace Shinkiro::Platform
 
     void Window::Render()
     {
-        glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
-        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        if ( m_RenderCallback )
+        {
+            m_RenderCallback();
+        }
+
+        // glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+        // glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+        // auto & mapManager = Shinkiro::Core::App->GetMapManager();
+        // auto & camera     = Shinkiro::Core::App->GetCamera();
+
+        // mapManager.Render( camera, m_Width, m_Height );
     }
 
     void Window::RenderImGui()

@@ -14,10 +14,12 @@ project "Lib-Renderer"
     files
     {
         "%{wks.location}/Libraries/glad/include/**.h",
-        "%{wks.location}/Libraries/glad/src/glad.c",
+        -- "%{wks.location}/Libraries/glad/src/glad.c",
         "%{wks.location}/Libraries/glfw/include/**.h",
         "%{wks.location}/Libraries/glm/include/**.hpp",
         "%{wks.location}/Libraries/glm/include/**.inl",
+        "%{wks.location}/Libraries/imgui/include/**.h",
+		-- "%{wks.location}/Libraries/imgui/include/**.cpp",
         "%{wks.location}/Libraries/stb_image/include/**.h",
         "%{wks.location}/Libraries/stb_image/include/**.cpp",
 
@@ -32,6 +34,7 @@ project "Lib-Renderer"
         "%{wks.location}/Libraries/glad/include",
         "%{wks.location}/Libraries/glfw/include",
         "%{wks.location}/Libraries/glm/include",
+        "%{wks.location}/Libraries/imgui/include",
         "%{wks.location}/Libraries/stb_image/include",
         "%{wks.location}/Libraries/spdlog/include",
 
@@ -74,7 +77,7 @@ project "Lib-Renderer"
     defines
     {
         "CORE_RENDERER_EXPORTS",
-        "ASSIMP_BUILD_NO_EXPORT" -- Explicitly define for static linking
+        "ASSIMP_BUILD_NO_EXPORT"
     }
 
     filter { "files:**/Libraries/**.c" }

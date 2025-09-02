@@ -15,9 +15,7 @@
 
 #    include <stb_image/stb_image.h>
 
-#    include <imgui.h>
-#    include <imgui_impl_glfw.h>
-#    include <imgui_impl_opengl3.h>
+#    include <functional>
 
 void SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods );
 
@@ -96,8 +94,15 @@ namespace Shinkiro::Platform
             m_MousePos = MousePosition;
         }
 
+        inline void SetRenderCallback( const std::function<void()> & callback )
+        {
+            m_RenderCallback = callback;
+        }
+
     private:
         std::unique_ptr<GLFWwindow, decltype( &glfwDestroyWindow )> m_Window;
+
+        std::function<void()> m_RenderCallback;
 
         glm::vec2 m_MousePos = glm::vec2( 0.0f, 0.0f );
 

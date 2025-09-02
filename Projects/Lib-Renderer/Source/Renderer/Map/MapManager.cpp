@@ -1,8 +1,13 @@
 #include <Renderer/_Common.h>
 
-#include <Core/Util/FileSystem.h>
-#include <Log/Log.h>
 #include <Renderer/Map/MapManager.h>
+
+#include <Core/IApplication.h>
+#include <Core/Util/FileSystem.h>
+
+#include <Asset/AssetBundleManager.h>
+
+#include <Log/Log.h>
 
 namespace Shinkiro::Renderer
 {
@@ -17,30 +22,39 @@ namespace Shinkiro::Renderer
 
     bool MapManager::Initialize()
     {
-        SHNK_CORE_INFO( "Initializing Map Manager..." );
+        SHNK_CORE_INFO( "Initializing Map Manager" );
         return m_Renderer->Initialize();
     }
 
     void MapManager::Shutdown()
     {
-        SHNK_CORE_INFO( "Shutting down Map Manager..." );
+        SHNK_CORE_INFO( "Shutting down Map Manager" );
         ClearCache();
         m_Renderer->Shutdown();
     }
 
     bool MapManager::LoadMap( const std::string & mapPath )
     {
+        const auto MapAssetData = Shinkiro::Core::App->GetBundleManager().GetAssetData( mapPath );
+
+        if ( MapAssetData.empty() )
+        {
+            SHNK_CORE_ERROR( "Failed to load map asset data: {}", mapPath );
+            return false;
+        }
+
         std::filesystem::path path( mapPath );
         std::string           mapName = path.stem().string();
 
-        if ( m_CachedMaps.contains( mapName ) )
+        if ( m_CachedMaps.contains( mapPath ) )
         {
-            SHNK_CORE_INFO( "Map '{}' is already cached.", mapName );
+            SHNK_CORE_INFO( "Map '{}' is already cached.", mapPath );
             return true;
         }
 
-        SHNK_CORE_INFO( "Parsing and caching new map: {}", mapName );
-        MapData mapData = m_Parser.Parse( mapPath.c_str() );
+        SHNK_CORE_INFO( "Parsing and caching new map: {}", mapPath );
+
+        MapData mapData = m_Parser.ParseFromMemory( MapAssetData.data(), MapAssetData.size(), mapPath.c_str() );
         if ( mapData.name.empty() )
         {
             SHNK_CORE_ERROR( "Failed to parse map file: {}", mapPath );
@@ -48,22 +62,22 @@ namespace Shinkiro::Renderer
         }
 
         m_Renderer->LoadTilesetTextures( mapData );
-        m_CachedMaps[mapName] = std::move( mapData );
+        m_CachedMaps[mapPath] = std::move( mapData );
 
         return true;
     }
 
-    void MapManager::SetActiveMap( const std::string & mapName )
+    void MapManager::SetActiveMap( const std::string & mapPath )
     {
-        auto it = m_CachedMaps.find( mapName );
+        auto it = m_CachedMaps.find( mapPath );
         if ( it != m_CachedMaps.end() )
         {
             m_ActiveMap = &it->second;
-            SHNK_CORE_INFO( "Active map set to: {}", mapName );
+            SHNK_CORE_INFO( "Active map set to: {}", mapPath );
         }
         else
         {
-            SHNK_CORE_ERROR( "Failed to set active map. Map '{}' not found.", mapName );
+            SHNK_CORE_ERROR( "Failed to set active map. Map '{}' not found.", mapPath );
         }
     }
 
@@ -76,21 +90,21 @@ namespace Shinkiro::Renderer
         }
     }
 
-    void MapManager::EvictFromCache( const std::string & mapName )
+    void MapManager::EvictFromCache( const std::string & mapPath )
     {
-        auto it = m_CachedMaps.find( mapName );
+        auto it = m_CachedMaps.find( mapPath );
         if ( it == m_CachedMaps.end() )
         {
-            SHNK_CORE_WARN( "Attempted to evict non-existent map '{}' from cache.", mapName );
+            SHNK_CORE_WARN( "Attempted to evict non-existent map '{}' from cache.", mapPath );
             return;
         }
 
-        if ( m_ActiveMap && m_ActiveMap->name == mapName )
+        if ( m_ActiveMap && m_ActiveMap->name == mapPath )
         {
             m_ActiveMap = nullptr;
         }
 
-        SHNK_CORE_INFO( "Evicting map '{}' from cache.", mapName );
+        SHNK_CORE_INFO( "Evicting map '{}' from cache.", mapPath );
         m_Renderer->UnloadTilesetTextures( it->second );
         m_CachedMaps.erase( it );
     }
@@ -116,8 +130,8 @@ namespace Shinkiro::Renderer
         glm::mat4 view       = camera.GetViewMatrix();
         glm::mat4 projection = camera.GetProjectionMatrix( screenWidth, screenHeight );
 
-        m_Renderer->DrawMap( *m_ActiveMap, camera, view, projection );
-        m_Renderer->DrawGrid( m_ActiveMap->width, m_ActiveMap->height, 0.0f, view, projection );
+        // m_Renderer->DrawMap( *m_ActiveMap, camera, view, projection );
+        // m_Renderer->DrawGrid( m_ActiveMap->width, m_ActiveMap->height, 0.0f, view, projection );
         m_Renderer->DrawSkybox( view, projection );
     }
 

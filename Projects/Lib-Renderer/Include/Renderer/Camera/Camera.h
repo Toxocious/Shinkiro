@@ -3,6 +3,8 @@
 #ifndef SHINKIRO_RENDERER_CAMERA_H
 #    define SHINKIRO_RENDERER_CAMERA_H
 
+#    include <Renderer/_Defs.h>
+
 #    include <Renderer/Camera/Frustum.h>
 
 #    include <glad/glad.h>
@@ -30,7 +32,7 @@ namespace Shinkiro::Renderer
     /**
      * @brief Camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
      */
-    class Camera
+    class RENDER_API Camera
     {
     public:
         /**

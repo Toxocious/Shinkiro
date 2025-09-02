@@ -5,6 +5,8 @@
 
 #include <chrono>
 
+#include <Platform/GL.h>
+
 Shinkiro::Application * App = nullptr;
 
 namespace Shinkiro
@@ -38,6 +40,11 @@ namespace Shinkiro
         return m_MapManager;
     }
 
+    Renderer::Camera & Application::GetCamera()
+    {
+        return m_Camera;
+    }
+
     Platform::Window * Application::GetWindow()
     {
         return m_Window;
@@ -57,6 +64,8 @@ namespace Shinkiro
         // Initialize all of our modules.
         for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
         {
+            bool moduleInitialized = false;
+
             auto p_Module = ( *module );
             SHNK_CORE_TRACE( "Initializing module '{0}'", p_Module->m_Name.c_str() );
 
@@ -74,13 +83,39 @@ namespace Shinkiro
                 std::string buildType = " [UNKNOWN]";
 #endif
 
-                p_Module->Initialize( windowTitle.c_str(), version, buildType, height, width );
+                moduleInitialized = p_Module->Initialize( windowTitle.c_str(), version, buildType, height, width );
             }
             else
             {
-                p_Module->Initialize();
+                moduleInitialized = p_Module->Initialize();
+            }
+
+            if ( !moduleInitialized )
+            {
+                SHNK_CORE_ERROR( "Failed to initialize module: {}", p_Module->m_Name );
+                return false;
+            }
+            else
+            {
+                SHNK_CORE_INFO( "Module '{0}' initialized successfully", p_Module->m_Name.c_str() );
             }
         }
+
+        m_Window->SetRenderCallback( [this]()
+                                     {
+                                         // This is the rendering logic that will be executed by Window::Render()
+                                         Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+                                         Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+                                         m_MapManager.Render( m_Camera, m_Width, m_Height );
+
+                                         //  m_Window->BeginImGuiFrame();
+                                         // m_Window->RenderImGui();
+                                         //  m_Window->EndImGuiFrame();
+                                     } );
+
+        // Initialize the Map Manager.
+        m_MapManager.Initialize();
 
         return true;
     }
@@ -95,6 +130,11 @@ namespace Shinkiro
             auto p_Module = ( *module );
             SHNK_CORE_TRACE( "Starting module '{0}'", p_Module->m_Name.c_str() );
             p_Module->Start();
+        }
+
+        if ( GetMapManager().LoadMap( "Maps/DecorTest.tmx" ) )
+        {
+            GetMapManager().SetActiveMap( "Maps/DecorTest.tmx" );
         }
 
         {
@@ -156,6 +196,18 @@ namespace Shinkiro
                     return status;
                 }
             }
+        }
+
+        // Render Loop
+        {
+            // glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+            // glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+            // m_MapManager.Render( m_Camera, m_Width, m_Height );
+
+            // m_Window->BeginImGuiFrame();
+            // m_Window->RenderImGui();
+            // m_Window->EndImGuiFrame();
         }
 
         // Update

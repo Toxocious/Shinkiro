@@ -94,6 +94,12 @@ namespace Shinkiro
         Shinkiro::Renderer::MapManager & GetMapManager() override;
 
         /**
+         * @brief Get the application's Camera
+         * @return A reference to the Camera
+         */
+        Shinkiro::Renderer::Camera & GetCamera() override;
+
+        /**
          * @brief Get the window module of the application
          * @return A pointer to the window module
          */
@@ -103,6 +109,7 @@ namespace Shinkiro
         Shinkiro::Renderer::MapManager      m_MapManager;
         Shinkiro::Asset::AssetBundleManager m_BundleManager;
         Shinkiro::Audio::AudioManager       m_AudioManager;
+        Shinkiro::Renderer::Camera          m_Camera;
 
     public:
         Shinkiro::Platform::Window * m_Window = nullptr;

@@ -36,7 +36,6 @@ project "Lib-Core"
     files
     {
         "%{wks.location}/Libraries/glad/include/**.h",
-		"%{wks.location}/Libraries/glad/src/glad.c",
 
 		"%{wks.location}/Libraries/glfw/include/**.h",
 

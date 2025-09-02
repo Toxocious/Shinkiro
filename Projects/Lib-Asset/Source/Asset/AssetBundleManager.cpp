@@ -231,7 +231,7 @@ namespace Shinkiro::Asset
             }
         }
 
-        SHNK_CORE_TRACE( "Loaded '{0}' in {1} ms", assetName, std::chrono::duration<float, std::milli>( std::chrono::high_resolution_clock::now() - start ).count() );
+        SHNK_CORE_TRACE( "Loaded '{0}' in {1} ms ({2} bytes)", assetName, std::chrono::duration<float, std::milli>( std::chrono::high_resolution_clock::now() - start ).count(), finalData.size() );
 
         auto [emplacedIt, success] = m_AssetCache.emplace( assetName, std::move( finalData ) );
         return emplacedIt->second;

@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
@@ -41,6 +42,35 @@ namespace Shinkiro::Renderer
          * @brief Shuts down the map renderer and cleans up OpenGL resources.
          */
         void Shutdown();
+
+        /**
+         * @brief Initialized the map tile shader.
+         * @return True on success, false on failure.
+         */
+        bool InitializeMapTileShader();
+
+        /**
+         * @brief Initializes the map tile highlighter shader.
+         * @return True on success, false on failure.
+         */
+        bool InitializeMapTileHighlighterShader();
+
+        /**
+         * @brief Initializes the map grid shader.
+         * @return True on success, false on failure.
+         */
+        bool InitializeMapGridShader();
+
+        /**
+         * @brief Initializes the map skybox shader.
+         * @return True on success, false on failure.
+         */
+        bool InitializeMapSkyboxShader();
+
+        /**
+         * @brief Loads initial assets required for rendering.
+         */
+        void LoadInitialAssets();
 
         /**
          * @brief Loads tileset textures.
@@ -118,19 +148,20 @@ namespace Shinkiro::Renderer
 
         // Map Tile Shader
         std::unique_ptr<Shader> m_MapTileShader;
-
-        unsigned int m_CubeVAO = 0;
-        unsigned int m_CubeVBO = 0;
+        unsigned int            m_CubeVAO = 0;
+        unsigned int            m_CubeVBO = 0;
 
         // Map Tile Highlighting Shader
         std::unique_ptr<Shader> m_MapTileHighlighterShader;
 
+        // Map Grid Shader
+        std::unique_ptr<Shader> m_MapGridShader;
+
         // Map Skybox Shader
         std::unique_ptr<Shader> m_MapSkyboxShader;
-
-        unsigned int m_SkyboxVAO      = 0;
-        unsigned int m_SkyboxVBO      = 0;
-        unsigned int m_cubemapTexture = 0;
+        unsigned int            m_SkyboxVAO      = 0;
+        unsigned int            m_SkyboxVBO      = 0;
+        unsigned int            m_cubemapTexture = 0;
 
     private:
         static constexpr float m_SkyboxVertices[] = {

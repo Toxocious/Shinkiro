@@ -4,7 +4,12 @@
 
 #include <Core/IApplication.h>
 
+#include <Platform/GL.h>
+#include <Platform/Modules/Window.h>
+
 #include <Asset/AssetBundleManager.h>
+
+#include <glad/glad.h>
 
 namespace Shinkiro::Renderer
 {
@@ -15,6 +20,8 @@ namespace Shinkiro::Renderer
         {
             SHNK_CORE_ERROR( "Failed to create shader program from '{}' and '{}'", vertexPath, fragmentPath );
         }
+
+        Shinkiro::Platform::OpenGL::Initialize( Shinkiro::Core::App->GetWindow()->GetGLFWWindow() );
     }
 
     unsigned int Shader::CreateShaderProgram( const std::string & vertexPath, const std::string & fragmentPath )
@@ -33,64 +40,80 @@ namespace Shinkiro::Renderer
             return 0;
         }
 
-        std::string vertexSource( reinterpret_cast<const char *>( vertexBytes.data() ), vertexBytes.size() );
-        std::string fragmentSource( reinterpret_cast<const char *>( fragmentBytes.data() ), fragmentBytes.size() );
+        std::string vertexSource(
+            reinterpret_cast<const char *>( vertexBytes.data() ),
+            ( vertexBytes.size() > 0 && vertexBytes.back() == 0 ) ? vertexBytes.size() - 1 : vertexBytes.size()
+        );
 
-        auto compileShader = []( GLenum type, const std::string & source ) -> unsigned int
+        std::string fragmentSource(
+            reinterpret_cast<const char *>( fragmentBytes.data() ),
+            ( fragmentBytes.size() > 0 && fragmentBytes.back() == 0 ) ? fragmentBytes.size() - 1 : fragmentBytes.size()
+        );
+
+        auto compileShader = [this]( const std::string & shaderPath, GLenum type, const std::string & source ) -> unsigned int
         {
-            unsigned int shader = glCreateShader( type );
-            const char * src    = source.c_str();
-            glShaderSource( shader, 1, &src, nullptr );
-            glCompileShader( shader );
+            unsigned int shader = Shinkiro::Platform::OpenGL::glCreateShader( type );
+            if ( shader == 0 )
+            {
+                SHNK_CORE_ERROR( "Shinkiro::Platform::OpenGL::glCreateShader failed for type {}", type );
+                return 0;
+            }
+
+            const char * src = source.c_str();
+            Shinkiro::Platform::OpenGL::glShaderSource( shader, 1, &src, nullptr );
+            Shinkiro::Platform::OpenGL::glCompileShader( shader );
 
             int success = 0;
-            glGetShaderiv( shader, GL_COMPILE_STATUS, &success );
+            Shinkiro::Platform::OpenGL::glGetShaderiv( shader, GL_COMPILE_STATUS, &success );
             if ( !success )
             {
                 char infoLog[512];
-                glGetShaderInfoLog( shader, 512, nullptr, infoLog );
+                Shinkiro::Platform::OpenGL::glGetShaderInfoLog( shader, 512, nullptr, infoLog );
+
                 const char * shaderType = ( type == GL_VERTEX_SHADER ) ? "VERTEX" : "FRAGMENT";
-                SHNK_CORE_ERROR( "ERROR::SHADER::{}::COMPILATION_FAILED\n{}", shaderType, infoLog );
-                glDeleteShader( shader );
+                SHNK_CORE_ERROR( "Failed to compile shader '{}' (type = {}) {}", shaderPath, shaderType, infoLog );
+
+                Shinkiro::Platform::OpenGL::glDeleteShader( shader );
                 return 0;
             }
 
             return shader;
         };
 
-        unsigned int vertexShader = compileShader( GL_VERTEX_SHADER, vertexSource );
+        unsigned int vertexShader = compileShader( vertexPath, GL_VERTEX_SHADER, vertexSource );
         if ( vertexShader == 0 )
         {
+            Shinkiro::Platform::OpenGL::glDeleteShader( vertexShader );
             return 0;
         }
 
-        unsigned int fragmentShader = compileShader( GL_FRAGMENT_SHADER, fragmentSource );
+        unsigned int fragmentShader = compileShader( fragmentPath, GL_FRAGMENT_SHADER, fragmentSource );
         if ( fragmentShader == 0 )
         {
-            glDeleteShader( vertexShader );
+            Shinkiro::Platform::OpenGL::glDeleteShader( fragmentShader );
             return 0;
         }
 
-        unsigned int shaderProgram = glCreateProgram();
-        glAttachShader( shaderProgram, vertexShader );
-        glAttachShader( shaderProgram, fragmentShader );
-        glLinkProgram( shaderProgram );
+        unsigned int shaderProgram = Shinkiro::Platform::OpenGL::glCreateProgram();
+        Shinkiro::Platform::OpenGL::glAttachShader( shaderProgram, vertexShader );
+        Shinkiro::Platform::OpenGL::glAttachShader( shaderProgram, fragmentShader );
+        Shinkiro::Platform::OpenGL::glLinkProgram( shaderProgram );
 
         int success = 0;
-        glGetProgramiv( shaderProgram, GL_LINK_STATUS, &success );
+        Shinkiro::Platform::OpenGL::glGetProgramiv( shaderProgram, GL_LINK_STATUS, &success );
         if ( !success )
         {
             char infoLog[512];
-            glGetProgramInfoLog( shaderProgram, 512, nullptr, infoLog );
-            SHNK_CORE_ERROR( "ERROR::SHADER::PROGRAM::LINKING_FAILED\n{}", infoLog );
-            glDeleteShader( vertexShader );
-            glDeleteShader( fragmentShader );
-            glDeleteProgram( shaderProgram );
+            Shinkiro::Platform::OpenGL::glGetProgramInfoLog( shaderProgram, 512, nullptr, infoLog );
+            SHNK_CORE_ERROR( "Failed to link program shader '{}' -> {}", shaderProgram, infoLog );
+            Shinkiro::Platform::OpenGL::glDeleteShader( vertexShader );
+            Shinkiro::Platform::OpenGL::glDeleteShader( fragmentShader );
+            Shinkiro::Platform::OpenGL::glDeleteProgram( shaderProgram );
             return 0;
         }
 
-        glDeleteShader( vertexShader );
-        glDeleteShader( fragmentShader );
+        Shinkiro::Platform::OpenGL::glDeleteShader( vertexShader );
+        Shinkiro::Platform::OpenGL::glDeleteShader( fragmentShader );
 
         return shaderProgram;
     }
