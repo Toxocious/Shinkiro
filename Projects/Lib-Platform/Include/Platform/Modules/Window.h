@@ -61,6 +61,7 @@ namespace Shinkiro::Platform
         // Callbacks
         static void SetMouseCallbacks( GLFWwindow * window, double xposIn, double yposIn );
         static void SetMouseWheelCallbacks( GLFWwindow * window, double xOffset, double yOffset );
+        static void SetMouseButtonCallbacks( GLFWwindow * window, int button, int action, int mods );
         static void SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods );
 
         // Getters
@@ -94,17 +95,45 @@ namespace Shinkiro::Platform
             m_MousePos = MousePosition;
         }
 
+        inline glm::vec2 GetLastMousePos() const
+        {
+            return m_LastMousePos;
+        }
+
+        inline bool IsFirstMouse() const
+        {
+            return m_FirstMouse;
+        }
+
+        inline void SetFirstMouse( bool first )
+        {
+            m_FirstMouse = first;
+        }
+
+        inline void SetLastMousePos( glm::vec2 pos )
+        {
+            m_LastMousePos = pos;
+        }
+
         inline void SetRenderCallback( const std::function<void()> & callback )
         {
             m_RenderCallback = callback;
         }
 
+        inline void SetInputCallback( const std::function<void( float )> & callback )
+        {
+            m_InputCallback = callback;
+        }
+
     private:
         std::unique_ptr<GLFWwindow, decltype( &glfwDestroyWindow )> m_Window;
 
-        std::function<void()> m_RenderCallback;
+        std::function<void()>        m_RenderCallback;
+        std::function<void( float )> m_InputCallback;
 
-        glm::vec2 m_MousePos = glm::vec2( 0.0f, 0.0f );
+        glm::vec2 m_MousePos     = glm::vec2( 0.0f, 0.0f );
+        glm::vec2 m_LastMousePos = glm::vec2( 0.0f, 0.0f );
+        bool      m_FirstMouse   = true;
 
         std::string m_Title;
         int         m_Width;

@@ -2,12 +2,11 @@
 
 #include <Platform/Modules/Window.h>
 
+#include <Platform/InputHandler.h>
+
 #include <Core/IApplication.h>
 
 #include <Asset/AssetBundleManager.h>
-
-// #include <Renderer/Camera/Camera.h>
-// #include <Renderer/Map/MapManager.h>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -66,6 +65,7 @@ namespace Shinkiro::Platform
         glfwSetKeyCallback( GetGLFWWindow(), SetKeyCallbacks );
         glfwSetCursorPosCallback( GetGLFWWindow(), SetMouseCallbacks );
         glfwSetScrollCallback( GetGLFWWindow(), SetMouseWheelCallbacks );
+        glfwSetMouseButtonCallback( GetGLFWWindow(), SetMouseButtonCallbacks ); // <-- ADD THIS
         glfwSetInputMode( GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL );
 
         glEnable( GL_DEPTH_TEST );
@@ -78,15 +78,6 @@ namespace Shinkiro::Platform
         LoadLogo();
 
         InitializeImGui();
-
-        {
-            // Shinkiro::Core::App->GetMapManager().LoadMap( "Maps/DecorTest.tmx" );
-            // Shinkiro::Core::App->GetMapManager().SetActiveMap( "Maps/DecorTest.tmx" );
-            // if ( GetMapManager().LoadMap( "Maps/DecorTest.tmx" ) )
-            // {
-            // GetMapManager().SetActiveMap( "Maps/DecorTest.tmx" );
-            // }
-        }
 
         return true;
     }
@@ -106,6 +97,10 @@ namespace Shinkiro::Platform
 
     Shinkiro::Core::UpdateStatus Window::PreUpdate()
     {
+        PollEvents();
+
+        Shinkiro::Platform::InputHandler::Get().Update();
+
         float currentTime = ( float ) glfwGetTime();
         m_DeltaTime       = currentTime - m_LastTime;
         m_LastTime        = currentTime;
@@ -114,6 +109,11 @@ namespace Shinkiro::Platform
         double xpos, ypos;
         glfwGetCursorPos( GetGLFWWindow(), &xpos, &ypos );
         SetMousePos( glm::vec2( xpos, ypos ) );
+
+        if ( m_InputCallback )
+        {
+            m_InputCallback( m_DeltaTime );
+        }
 
         return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
@@ -160,7 +160,6 @@ namespace Shinkiro::Platform
     Shinkiro::Core::UpdateStatus Window::PostUpdate()
     {
         SwapBuffers();
-        PollEvents();
 
         return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
@@ -171,14 +170,6 @@ namespace Shinkiro::Platform
         {
             m_RenderCallback();
         }
-
-        // glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
-        // glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-        // auto & mapManager = Shinkiro::Core::App->GetMapManager();
-        // auto & camera     = Shinkiro::Core::App->GetCamera();
-
-        // mapManager.Render( camera, m_Width, m_Height );
     }
 
     void Window::RenderImGui()
@@ -311,12 +302,17 @@ namespace Shinkiro::Platform
         return glfwPollEvents();
     }
 
+    void Window::SetMouseCallbacks( GLFWwindow * window, double xposIn, double yposIn )
+    {
+    }
+
     void Window::SetMouseWheelCallbacks( GLFWwindow * window, double xOffset, double yOffset )
     {
     }
 
-    void Window::SetMouseCallbacks( GLFWwindow * window, double xposIn, double yposIn )
+    void Window::SetMouseButtonCallbacks( GLFWwindow * window, int button, int action, int mods )
     {
+        InputHandler::Get().MouseButtonCallback( button, action, mods );
     }
 
     void Window::SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods )
@@ -325,6 +321,8 @@ namespace Shinkiro::Platform
         {
             glfwSetWindowShouldClose( window, GLFW_TRUE );
         }
+
+        InputHandler::Get().KeyCallback( key, scancode, action, mods );
     }
 
     void Window::LoadLogo()
@@ -427,7 +425,6 @@ namespace Shinkiro::Platform
         }
     }
 
-    // Center the window
     void Window::CenterWindow()
     {
         int window_width, window_height;

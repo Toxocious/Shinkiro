@@ -24,6 +24,7 @@ namespace Shinkiro::Platform
 {
     class Module;
     class Window;
+    class InputHandler;
 }
 
 namespace Shinkiro
@@ -100,6 +101,12 @@ namespace Shinkiro
         Shinkiro::Renderer::Camera & GetCamera() override;
 
         /**
+         * @brief Get the application's InputHandler
+         * @return A reference to the InputHandler
+         */
+        Shinkiro::Platform::InputHandler * GetInputHandler() override;
+
+        /**
          * @brief Get the window module of the application
          * @return A pointer to the window module
          */
@@ -112,7 +119,8 @@ namespace Shinkiro
         Shinkiro::Renderer::Camera          m_Camera;
 
     public:
-        Shinkiro::Platform::Window * m_Window = nullptr;
+        Shinkiro::Platform::InputHandler * m_InputHandler = nullptr;
+        Shinkiro::Platform::Window *       m_Window       = nullptr;
 
     private:
         std::vector<Shinkiro::Platform::Module *> m_Modules;

@@ -2,6 +2,8 @@
 
 #include <Renderer/Camera/Camera.h>
 
+#include <Log/Log.h>
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/intersect.hpp>
@@ -24,24 +26,30 @@ namespace Shinkiro::Renderer
         float velocity = m_MovementSpeed * deltaTime;
         if ( direction == FORWARD )
         {
+            SHNK_CORE_INFO( "Moving camera forward by {}", velocity );
             m_Position += m_Front * velocity;
         }
         if ( direction == BACKWARD )
         {
+            SHNK_CORE_INFO( "Moving camera backward by {}", velocity );
             m_Position -= m_Front * velocity;
         }
         if ( direction == LEFT )
         {
+            SHNK_CORE_INFO( "Moving camera left by {}", velocity );
             m_Position -= m_Right * velocity;
         }
         if ( direction == RIGHT )
         {
+            SHNK_CORE_INFO( "Moving camera right by {}", velocity );
             m_Position += m_Right * velocity;
         }
     }
 
     void Camera::ProcessMouseMovement( float xoffset, float yoffset, GLboolean constrainPitch )
     {
+        SHNK_CORE_INFO( "Processing mouse movement: xoffset={}, yoffset={}", xoffset, yoffset );
+
         xoffset *= m_MouseSensitivity;
         yoffset *= m_MouseSensitivity;
 
@@ -139,5 +147,82 @@ namespace Shinkiro::Renderer
         }
 
         return glm::vec3( 0.0f );
+    }
+
+    const glm::mat4 Camera::SetProjection( const glm::mat4 & projection )
+    {
+        m_Projection = projection;
+        return m_Projection;
+    }
+
+    const glm::vec3 & Camera::GetPosition() const
+    {
+        return m_Position;
+    }
+
+    const glm::vec3 Camera::SetPosition( const glm::vec3 & position )
+    {
+        m_Position = position;
+        return m_Position;
+    }
+
+    const glm::vec3 & Camera::GetFront() const
+    {
+        return m_Front;
+    }
+
+    const glm::vec3 & Camera::GetUp() const
+    {
+        return m_Up;
+    }
+
+    const glm::vec3 Camera::SetUp( const glm::vec3 & up )
+    {
+        m_WorldUp = up;
+        updateCameraVectors();
+        return m_WorldUp;
+    }
+
+    float Camera::GetPitch() const
+    {
+        return m_Pitch;
+    }
+
+    const float Camera::SetPitch( float pitch )
+    {
+        m_Pitch = pitch;
+        updateCameraVectors();
+        return m_Pitch;
+    }
+
+    float Camera::GetYaw() const
+    {
+        return m_Yaw;
+    }
+
+    const float Camera::SetYaw( float yaw )
+    {
+        m_Yaw = yaw;
+        updateCameraVectors();
+        return m_Yaw;
+    }
+
+    float Camera::GetZoom() const
+    {
+        return m_Zoom;
+    }
+
+    const float Camera::SetZoom( float zoom )
+    {
+        m_Zoom = zoom;
+        if ( m_Zoom < 1.0f )
+        {
+            m_Zoom = 1.0f;
+        }
+        if ( m_Zoom > 45.0f )
+        {
+            m_Zoom = 45.0f;
+        }
+        return m_Zoom;
     }
 }

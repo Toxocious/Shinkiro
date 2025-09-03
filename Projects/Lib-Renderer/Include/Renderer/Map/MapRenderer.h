@@ -127,6 +127,11 @@ namespace Shinkiro::Renderer
         void DrawGrid( int mapWidth, int mapHeight, float layer_y_offset, const glm::mat4 & view, const glm::mat4 & projection );
 
     public:
+        void SetMapData( MapData & mapData )
+        {
+            m_MapData = &mapData;
+        }
+
         int GetRenderedTileCount() const
         {
             return m_RenderedTileCount;
@@ -141,6 +146,8 @@ namespace Shinkiro::Renderer
         unsigned int LoadCubemap( std::vector<std::string> faces );
 
     private:
+        MapData * m_MapData = nullptr;
+
         int m_RenderedTileCount = 0;
 
         int  m_VisibleLayerCount = 0;

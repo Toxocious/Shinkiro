@@ -43,6 +43,44 @@ namespace Shinkiro::Platform
          */
         bool IsKeyJustReleased( int keyCode ) const;
 
+        /**
+         * @brief Check if a mouse button is currently pressed
+         * @param button The mouse button code to check (e.g., GLFW_MOUSE_BUTTON_LEFT)
+         * @return True if the button is pressed, false otherwise
+         */
+        bool IsMouseButtonPressed( int button ) const;
+
+        /**
+         * @brief Check if a mouse button was just pressed this frame
+         * @param button The mouse button code to check
+         * @return True if the button was just pressed, false otherwise
+         */
+        bool IsMouseButtonJustPressed( int button ) const;
+
+        /**
+         * @brief Check if a mouse button was just released this frame
+         * @param button The mouse button code to check
+         * @return True if the button was just released, false otherwise
+         */
+        bool IsMouseButtonJustReleased( int button ) const;
+
+        /**
+         * @brief Callback for key events
+         * @param key The key code
+         * @param scancode The system-specific scancode
+         * @param action The action (press, release, repeat)
+         * @param mods Modifier keys (shift, ctrl, alt)
+         */
+        void KeyCallback( int key, int scancode, int action, int mods );
+
+        /**
+         * @brief Callback for mouse button events
+         * @param button The mouse button
+         * @param action The action (press, release)
+         * @param mods Modifier keys (shift, ctrl, alt)
+         */
+        void MouseButtonCallback( int button, int action, int mods );
+
     private:
         InputHandler()                                   = default;
         ~InputHandler()                                  = default;

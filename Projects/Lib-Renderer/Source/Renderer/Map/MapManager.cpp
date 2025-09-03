@@ -61,6 +61,7 @@ namespace Shinkiro::Renderer
             return false;
         }
 
+        m_Renderer->SetMapData( mapData );
         m_Renderer->LoadTilesetTextures( mapData );
         m_CachedMaps[mapPath] = std::move( mapData );
 
@@ -130,7 +131,7 @@ namespace Shinkiro::Renderer
         glm::mat4 view       = camera.GetViewMatrix();
         glm::mat4 projection = camera.GetProjectionMatrix( screenWidth, screenHeight );
 
-        // m_Renderer->DrawMap( *m_ActiveMap, camera, view, projection );
+        m_Renderer->DrawMap( *m_ActiveMap, camera, view, projection );
         // m_Renderer->DrawGrid( m_ActiveMap->width, m_ActiveMap->height, 0.0f, view, projection );
         m_Renderer->DrawSkybox( view, projection );
     }

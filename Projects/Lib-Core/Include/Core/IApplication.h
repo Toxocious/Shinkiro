@@ -27,6 +27,7 @@ namespace Shinkiro::Renderer
 namespace Shinkiro::Platform
 {
     class Window;
+    class InputHandler;
 }
 
 namespace Shinkiro::Core
@@ -78,6 +79,11 @@ namespace Shinkiro::Core
          * @brief Returns a ref to the Camera
          */
         virtual Renderer::Camera & GetCamera() = 0;
+
+        /**
+         * @brief Returns a ref to the InputHandler
+         */
+        virtual Platform::InputHandler * GetInputHandler() = 0;
 
         /**
          * @brief Returns a pointer to the active window

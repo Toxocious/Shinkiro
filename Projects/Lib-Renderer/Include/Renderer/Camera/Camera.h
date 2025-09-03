@@ -105,26 +105,25 @@ namespace Shinkiro::Renderer
         std::pair<glm::vec3, glm::vec3> GetMouseRay( float mouseX, float mouseY, int screenWidth, int screenHeight ) const;
 
     public:
-        const glm::vec3 & GetPosition() const
-        {
-            return m_Position;
-        }
-
-        float GetYaw() const
-        {
-            return m_Yaw;
-        }
-
-        float GetPitch() const
-        {
-            return m_Pitch;
-        }
+        const glm::mat4   SetProjection( const glm::mat4 & projection );
+        const glm::vec3 & GetPosition() const;
+        const glm::vec3   SetPosition( const glm::vec3 & position );
+        const glm::vec3 & GetFront() const;
+        const glm::vec3 & GetUp() const;
+        const glm::vec3   SetUp( const glm::vec3 & up );
+        float             GetPitch() const;
+        const float       SetPitch( float pitch );
+        float             GetYaw() const;
+        const float       SetYaw( float yaw );
+        float             GetZoom() const;
+        const float       SetZoom( float zoom );
 
     public:
         // Frustrum
         Frustum m_Frustum;
 
         // Camera Attributes
+        glm::mat4 m_Projection;
         glm::vec3 m_Position;
         glm::vec3 m_Front;
         glm::vec3 m_Up;

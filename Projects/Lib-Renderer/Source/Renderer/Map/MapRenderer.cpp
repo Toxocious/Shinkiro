@@ -48,25 +48,9 @@ namespace Shinkiro::Renderer
 
     bool MapRenderer::InitializeMapTileHighlighterShader()
     {
-        const auto MapTileHighlightVertexShader = Shinkiro::Core::App->GetBundleManager().GetAssetData(
-            "Shaders/MapTileHighlight/maptilehighlight.vertex.glsl"
-        );
-        const auto MapTileFragmentShader = Shinkiro::Core::App->GetBundleManager().GetAssetData(
-            "Shaders/MapTileHighlight/maptilehighlight.fragment.glsl"
-        );
-
-        std::string MapTileVertexSource(
-            reinterpret_cast<const char *>( MapTileHighlightVertexShader.data() ),
-            MapTileHighlightVertexShader.size()
-        );
-        std::string MapTileFragmentSource(
-            reinterpret_cast<const char *>( MapTileFragmentShader.data() ),
-            MapTileFragmentShader.size()
-        );
-
         m_MapTileHighlighterShader = std::make_unique<Shader>(
-            MapTileVertexSource,
-            MapTileFragmentSource
+            "Shaders/MapTileHighlight/maptilehighlight.vertex.glsl",
+            "Shaders/MapTileHighlight/maptilehighlight.fragment.glsl"
         );
 
         if ( m_MapTileHighlighterShader->GetID() == 0 )
@@ -82,19 +66,19 @@ namespace Shinkiro::Renderer
         m_MapTileHighlighterShader->SetVec4( "highlightColor", glm::vec4( 1.0f, 1.0f, 0.0f, 1.0f ) );
 
         // Setup vertex data
-        glGenVertexArrays( 1, &m_CubeVAO );
-        glGenBuffers( 1, &m_CubeVBO );
-        glBindVertexArray( m_CubeVAO );
-        glBindBuffer( GL_ARRAY_BUFFER, m_CubeVBO );
-        glBufferData( GL_ARRAY_BUFFER, sizeof( m_TileVertices ), m_TileVertices, GL_STATIC_DRAW );
+        Shinkiro::Platform::OpenGL::glGenVertexArrays( 1, &m_CubeVAO );
+        Shinkiro::Platform::OpenGL::glGenBuffers( 1, &m_CubeVBO );
+        Shinkiro::Platform::OpenGL::glBindVertexArray( m_CubeVAO );
+        Shinkiro::Platform::OpenGL::glBindBuffer( GL_ARRAY_BUFFER, m_CubeVBO );
+        Shinkiro::Platform::OpenGL::glBufferData( GL_ARRAY_BUFFER, sizeof( m_TileVertices ), m_TileVertices, GL_STATIC_DRAW );
 
         // Position attribute
-        glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof( float ), ( void * ) 0 );
-        glEnableVertexAttribArray( 0 );
+        Shinkiro::Platform::OpenGL::glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof( float ), ( void * ) 0 );
+        Shinkiro::Platform::OpenGL::glEnableVertexAttribArray( 0 );
 
         // Texture coord attribute
-        glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof( float ), ( void * ) ( 3 * sizeof( float ) ) );
-        glEnableVertexAttribArray( 1 );
+        Shinkiro::Platform::OpenGL::glVertexAttribPointer( 1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof( float ), ( void * ) ( 3 * sizeof( float ) ) );
+        Shinkiro::Platform::OpenGL::glEnableVertexAttribArray( 1 );
 
         return true;
     }
@@ -144,7 +128,7 @@ namespace Shinkiro::Renderer
         Shinkiro::Platform::OpenGL::Initialize( Shinkiro::Core::App->GetWindow()->GetGLFWWindow() );
 
         InitializeMapTileShader();
-        // InitializeMapTileHighlighterShader();
+        InitializeMapTileHighlighterShader();
         InitializeMapSkyboxShader();
 
         Shinkiro::Platform::OpenGL::glBindVertexArray( 0 );
@@ -192,45 +176,33 @@ namespace Shinkiro::Renderer
 
     void MapRenderer::LoadInitialAssets()
     {
-        // const auto InitialMap = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Maps/DecorTest.tmx" );
-        // if ( InitialMap.empty() )
-        // {
-        //     SHNK_CORE_ERROR( "Failed to load initial map asset 'Maps/DecorTest.tmx'!" );
-        //     return;
-        // }
-
-        // //
-
-        // std::filesystem::path exeDir  = Ephemeral::GetExecutableDirectory();
-        // const auto            mapPath = exeDir / "Assets" / "Maps" / "DecorTest.tmx";
-
-        // mapData = parser.parse( mapPath.string().c_str() );
-
-        // if ( mapData.width == 0 )
-        // {
-        //     EPH_CORE_ERROR( "Failed to parse map data from {}", mapPath.string() );
-        //     glfwSetWindowShouldClose( window, true );
-        //     return;
-        // }
-
-        // if ( !mapRenderer.init() )
-        // {
-        //     EPH_CORE_ERROR( "Failed to initialize renderer" );
-        //     glfwSetWindowShouldClose( window, true );
-        //     return;
-        // }
-
-        // float     targetX = mapData.width / 2.0f;
-        // float     targetZ = mapData.height / 2.0f;
+        // float     targetX = m_MapData->width / 2.0f;
+        // float     targetZ = m_MapData->height / 2.0f;
         // glm::vec3 targetPosition( targetX, 0.0f, targetZ );
         // glm::vec3 cameraPosition( targetX, 30.0f, targetZ + 30.0f );
         // glm::vec3 direction = glm::normalize( targetPosition - cameraPosition );
         // float     pitch     = glm::degrees( asin( direction.y ) );
         // float     yaw       = glm::degrees( atan2( direction.z, direction.x ) );
-        // m_camera            = Camera( cameraPosition, glm::vec3( 0.0f, 1.0f, 0.0f ), yaw, pitch );
-        // m_projection        = glm::perspective( glm::radians( m_camera.Zoom ), ( float ) m_width / ( float ) m_height, 0.1f, 1000.0f );
 
-        // mapRenderer.loadTilesetTextures( mapData );
+        // auto & camera = Shinkiro::Core::App->GetCamera();
+        // camera.SetPosition( cameraPosition );
+        // camera.SetUp( glm::vec3( 0.0f, 1.0f, 0.0f ) );
+        // camera.SetPitch( pitch );
+        // camera.SetYaw( yaw );
+        // camera.SetProjection( glm::perspective( glm::radians( camera.GetZoom() ), ( float ) 1366 / ( float ) 768, 0.1f, 1000.0f ) );
+
+        //
+
+        auto & camera = Shinkiro::Core::App->GetCamera();
+
+        float targetX = m_MapData->width / 2.0f;
+        float targetZ = m_MapData->height / 2.0f;
+
+        // m_camera.Position = glm::vec3( targetX, 40.0f, targetZ );
+        camera.SetPosition( glm::vec3( targetX, 40.0f, targetZ ) );
+        camera.SetPitch( -89.9f );
+        camera.SetYaw( -90.0f );
+        camera.updateCameraVectors();
     }
 
     void MapRenderer::LoadTilesetTextures( MapData & mapData )
@@ -348,14 +320,23 @@ namespace Shinkiro::Renderer
                         continue;
                     }
 
-                    const Tileset * currentTileset = nullptr;
-                    for ( size_t i = mapData.tilesets.size() - 1; i >= 0; --i )
+                    // const Tileset * currentTileset = nullptr;
+                    // for ( size_t i = mapData.tilesets.size() - 1; i >= 0; --i )
+                    // {
+                    //     if ( gid >= mapData.tilesets[i].firstGid )
+                    //     {
+                    //         currentTileset = &mapData.tilesets[i];
+                    //         break;
+                    //     }
+                    // }
+                    const Tileset * currentTileset = FindTilesetForGid( gid, mapData.tilesets );
+                    if ( !currentTileset || currentTileset->columns == 0 || currentTileset->imageWidth == 0 || currentTileset->imageHeight == 0 )
                     {
-                        if ( gid >= mapData.tilesets[i].firstGid )
+                        if ( currentTileset )
                         {
-                            currentTileset = &mapData.tilesets[i];
-                            break;
+                            SHNK_CORE_WARN( "Tileset with firstGid {} has invalid data. Skipping tile.", currentTileset->firstGid );
                         }
+                        continue;
                     }
 
                     if ( !currentTileset || currentTileset->columns == 0 || currentTileset->imageWidth == 0 || currentTileset->imageHeight == 0 )
@@ -400,6 +381,8 @@ namespace Shinkiro::Renderer
 
             layer_y_offset += 1.0f;
         }
+
+        SHNK_CORE_INFO( "Rendered {} tiles for map: {}", m_RenderedTileCount, mapData.name );
 
         Shinkiro::Platform::OpenGL::glBindVertexArray( 0 );
     }
