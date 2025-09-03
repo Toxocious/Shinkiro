@@ -70,6 +70,16 @@ namespace Shinkiro::Platform
             return m_Window.get();
         }
 
+        inline const int GetHeight() const
+        {
+            return m_Height;
+        }
+
+        inline const int GetWidth() const
+        {
+            return m_Width;
+        }
+
         glm::ivec2 GetSize() const
         {
             return { m_Width, m_Height };

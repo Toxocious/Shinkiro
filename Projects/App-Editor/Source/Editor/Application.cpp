@@ -115,7 +115,7 @@ namespace Shinkiro
                                          Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
                                          Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-                                         m_MapManager.Render( camera, m_Width, m_Height );
+                                         m_MapManager.Render( camera, m_Window->GetWidth(), m_Window->GetHeight() );
 
                                          //  m_Window->BeginImGuiFrame();
                                          // m_Window->RenderImGui();
@@ -127,25 +127,31 @@ namespace Shinkiro
                                         auto & camera = GetCamera();
 
                                         // Keyboard movement
+                                        float currentSpeed = camera.GetMovementSpeed();
+                                        if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( GLFW_KEY_LEFT_SHIFT ) )
+                                        {
+                                            currentSpeed *= 3.0;
+                                        }
+
                                         if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'W' ) )
                                         {
                                             SHNK_CORE_TRACE( "Processing keyboard input: W" );
-                                            camera.ProcessKeyboard( Shinkiro::Renderer::FORWARD, deltaTime );
+                                            camera.ProcessKeyboard( Shinkiro::Renderer::FORWARD, currentSpeed * deltaTime );
                                         }
                                         if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'S' ) )
                                         {
                                             SHNK_CORE_TRACE( "Processing keyboard input: W" );
-                                            camera.ProcessKeyboard( Shinkiro::Renderer::BACKWARD, deltaTime );
+                                            camera.ProcessKeyboard( Shinkiro::Renderer::BACKWARD, currentSpeed * deltaTime );
                                         }
                                         if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'A' ) )
                                         {
                                             SHNK_CORE_TRACE( "Processing keyboard input: W" );
-                                            camera.ProcessKeyboard( Shinkiro::Renderer::LEFT, deltaTime );
+                                            camera.ProcessKeyboard( Shinkiro::Renderer::LEFT, currentSpeed * deltaTime );
                                         }
                                         if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'D' ) )
                                         {
                                             SHNK_CORE_TRACE( "Processing keyboard input: W" );
-                                            camera.ProcessKeyboard( Shinkiro::Renderer::RIGHT, deltaTime );
+                                            camera.ProcessKeyboard( Shinkiro::Renderer::RIGHT, currentSpeed * deltaTime );
                                         }
 
                                         // Mouse rotation (only when right mouse button is held)
@@ -198,20 +204,6 @@ namespace Shinkiro
         if ( GetMapManager().LoadMap( "Maps/DecorTest.tmx" ) )
         {
             GetMapManager().SetActiveMap( "Maps/DecorTest.tmx" );
-
-            auto * activeMap = GetMapManager().GetActiveMap();
-            if ( activeMap )
-            {
-                float targetX = activeMap->width / 2.0f;
-                float targetZ = activeMap->height / 2.0f;
-
-                glm::vec3 cameraPosition( targetX, 30.0f, targetZ );
-
-                float yaw   = -90.0f;
-                float pitch = -90.0f;
-
-                m_Camera = Shinkiro::Renderer::Camera( cameraPosition, glm::vec3( 0.0f, 1.0f, 0.0f ), yaw, pitch );
-            }
         }
 
         {

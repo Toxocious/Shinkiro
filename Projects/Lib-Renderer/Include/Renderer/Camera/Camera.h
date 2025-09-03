@@ -105,6 +105,10 @@ namespace Shinkiro::Renderer
         std::pair<glm::vec3, glm::vec3> GetMouseRay( float mouseX, float mouseY, int screenWidth, int screenHeight ) const;
 
     public:
+        const Frustum & GetFrustum() const;
+
+        const float GetMovementSpeed() const;
+
         const glm::mat4   SetProjection( const glm::mat4 & projection );
         const glm::vec3 & GetPosition() const;
         const glm::vec3   SetPosition( const glm::vec3 & position );
@@ -118,7 +122,7 @@ namespace Shinkiro::Renderer
         float             GetZoom() const;
         const float       SetZoom( float zoom );
 
-    public:
+    private:
         // Frustrum
         Frustum m_Frustum;
 

@@ -176,33 +176,36 @@ namespace Shinkiro::Renderer
 
     void MapRenderer::LoadInitialAssets()
     {
-        // float     targetX = m_MapData->width / 2.0f;
-        // float     targetZ = m_MapData->height / 2.0f;
-        // glm::vec3 targetPosition( targetX, 0.0f, targetZ );
-        // glm::vec3 cameraPosition( targetX, 30.0f, targetZ + 30.0f );
-        // glm::vec3 direction = glm::normalize( targetPosition - cameraPosition );
-        // float     pitch     = glm::degrees( asin( direction.y ) );
-        // float     yaw       = glm::degrees( atan2( direction.z, direction.x ) );
+        SHNK_CORE_TRACE( "Initializing map camera from map data" );
 
-        // auto & camera = Shinkiro::Core::App->GetCamera();
-        // camera.SetPosition( cameraPosition );
-        // camera.SetUp( glm::vec3( 0.0f, 1.0f, 0.0f ) );
-        // camera.SetPitch( pitch );
-        // camera.SetYaw( yaw );
-        // camera.SetProjection( glm::perspective( glm::radians( camera.GetZoom() ), ( float ) 1366 / ( float ) 768, 0.1f, 1000.0f ) );
+        float     targetX = m_MapData->width / 2.0f;
+        float     targetZ = m_MapData->height / 2.0f;
+        glm::vec3 targetPosition( targetX, 0.0f, targetZ );
+        glm::vec3 cameraPosition( targetX, 30.0f, targetZ + 30.0f );
+        glm::vec3 direction = glm::normalize( targetPosition - cameraPosition );
+        float     pitch     = glm::degrees( asin( direction.y ) );
+        float     yaw       = glm::degrees( atan2( direction.z, direction.x ) );
+
+        auto & camera = Shinkiro::Core::App->GetCamera();
+        camera.SetPosition( cameraPosition );
+        camera.SetUp( glm::vec3( 0.0f, 1.0f, 0.0f ) );
+        camera.SetPitch( pitch );
+        camera.SetYaw( yaw );
+        camera.SetProjection( glm::perspective( glm::radians( camera.GetZoom() ), ( float ) 1920 / ( float ) 1080, 0.1f, 1000.0f ) );
+        camera.updateCameraVectors();
 
         //
 
-        auto & camera = Shinkiro::Core::App->GetCamera();
+        // auto & camera = Shinkiro::Core::App->GetCamera();
 
-        float targetX = m_MapData->width / 2.0f;
-        float targetZ = m_MapData->height / 2.0f;
+        // float targetX = m_MapData->width / 2.0f;
+        // float targetZ = m_MapData->height / 2.0f;
 
-        // m_camera.Position = glm::vec3( targetX, 40.0f, targetZ );
-        camera.SetPosition( glm::vec3( targetX, 40.0f, targetZ ) );
-        camera.SetPitch( -89.9f );
-        camera.SetYaw( -90.0f );
-        camera.updateCameraVectors();
+        // camera.SetPosition( glm::vec3( targetX, 40.0f, targetZ ) );
+        // camera.SetPitch( -89.9f );
+        // camera.SetYaw( -90.0f );
+        // camera.SetProjection( glm::perspective( glm::radians( camera.GetZoom() ), ( float ) 1366 / ( float ) 768, 0.1f, 1000.0f ) );
+        // camera.updateCameraVectors();
     }
 
     void MapRenderer::LoadTilesetTextures( MapData & mapData )
@@ -315,20 +318,11 @@ namespace Shinkiro::Renderer
                     }
 
                     glm::vec3 tileCenter = { float( x ), layer_y_offset, float( y ) };
-                    if ( !camera.m_Frustum.IsSphereInFrustum( tileCenter, tileBoundingRadius ) )
+                    if ( !camera.GetFrustum().IsSphereInFrustum( tileCenter, tileBoundingRadius ) )
                     {
                         continue;
                     }
 
-                    // const Tileset * currentTileset = nullptr;
-                    // for ( size_t i = mapData.tilesets.size() - 1; i >= 0; --i )
-                    // {
-                    //     if ( gid >= mapData.tilesets[i].firstGid )
-                    //     {
-                    //         currentTileset = &mapData.tilesets[i];
-                    //         break;
-                    //     }
-                    // }
                     const Tileset * currentTileset = FindTilesetForGid( gid, mapData.tilesets );
                     if ( !currentTileset || currentTileset->columns == 0 || currentTileset->imageWidth == 0 || currentTileset->imageHeight == 0 )
                     {

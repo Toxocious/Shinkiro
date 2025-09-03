@@ -6,7 +6,7 @@
 
 int main()
 {
-    const GLuint WIDTH = 1366, HEIGHT = 768;
+    const GLuint WIDTH = 1920, HEIGHT = 1080;
     const char * APPLICATION_TITLE   = "Shinkiro Map Editor";
     const char * APPLICATION_VERSION = SHINKIRO_VERSION;
 

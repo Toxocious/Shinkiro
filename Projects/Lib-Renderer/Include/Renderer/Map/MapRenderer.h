@@ -130,6 +130,7 @@ namespace Shinkiro::Renderer
         void SetMapData( MapData & mapData )
         {
             m_MapData = &mapData;
+            LoadInitialAssets();
         }
 
         int GetRenderedTileCount() const

@@ -149,6 +149,16 @@ namespace Shinkiro::Renderer
         return glm::vec3( 0.0f );
     }
 
+    const float Camera::GetMovementSpeed() const
+    {
+        return m_MovementSpeed;
+    }
+
+    const Frustum & Camera::GetFrustum() const
+    {
+        return m_Frustum;
+    }
+
     const glm::mat4 Camera::SetProjection( const glm::mat4 & projection )
     {
         m_Projection = projection;
