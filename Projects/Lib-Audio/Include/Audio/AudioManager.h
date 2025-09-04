@@ -5,8 +5,6 @@
 
 #    include <Audio/_Defs.h>
 
-#    include <miniaudio/miniaudio.h>
-
 #    include <atomic>
 #    include <mutex>
 #    include <queue>
@@ -27,6 +25,11 @@ namespace Shinkiro::Audio
     public:
         AudioManager();
         ~AudioManager();
+
+        AudioManager( const AudioManager & )             = delete;
+        AudioManager & operator=( const AudioManager & ) = delete;
+        AudioManager( AudioManager && )                  = delete;
+        AudioManager & operator=( AudioManager && )      = delete;
 
     public:
         /**
@@ -71,18 +74,9 @@ namespace Shinkiro::Audio
         void WorkerLoop();
 
     private:
-        ma_engine m_Engine;
+        struct AudioImpl;
 
-        std::thread             m_Thread;
-        std::mutex              m_QueueMutex;
-        std::condition_variable m_CV;
-        std::queue<SoundData>   m_Queue;
-        std::atomic<bool>       m_Running = false;
-
-        std::vector<uint8_t> m_OSTData;
-        ma_sound             m_OSTSound {};
-        ma_decoder           m_OSTDecoder {};
-        bool                 m_OSTPlaying = false;
+        std::unique_ptr<AudioImpl> m_Impl;
     };
 }
 
