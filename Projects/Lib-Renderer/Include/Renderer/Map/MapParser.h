@@ -138,6 +138,26 @@ namespace Shinkiro::Renderer
 
             m_VisibleLayerCount++;
         }
+
+        /**
+         * @brief Gets a specific map property by name.
+         * @tparam T The expected type of the property (std::string, int, float, or bool).
+         * @param name The name of the property to retrieve.
+         * @return An std::optional containing the property value if found and of the correct type, otherwise std::nullopt.
+         */
+        template <typename T>
+        std::optional<T> GetProperty( const std::string & name ) const
+        {
+            auto it = properties.find( name );
+            if ( it != properties.end() )
+            {
+                if ( std::holds_alternative<T>( it->second ) )
+                {
+                    return std::get<T>( it->second );
+                }
+            }
+            return std::nullopt;
+        }
     };
 
     /**
