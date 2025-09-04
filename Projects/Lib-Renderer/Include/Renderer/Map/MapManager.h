@@ -51,6 +51,11 @@ namespace Shinkiro::Renderer
         bool LoadMap( const std::string & mapPath );
 
         /**
+         * @brief Loads the BGM for the map.
+         */
+        void LoadBGM();
+
+        /**
          * @brief Sets the active map by name.
          * @param mapName The name of the map to set as active.
          */

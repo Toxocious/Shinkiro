@@ -6,6 +6,7 @@
 #include <Core/Util/FileSystem.h>
 
 #include <Asset/AssetBundleManager.h>
+#include <Audio/AudioManager.h>
 
 #include <Log/Log.h>
 
@@ -65,7 +66,34 @@ namespace Shinkiro::Renderer
         m_Renderer->LoadTilesetTextures( mapData );
         m_CachedMaps[mapPath] = std::move( mapData );
 
+        SetActiveMap( mapPath );
+        LoadBGM();
+
         return true;
+    }
+
+    void MapManager::LoadBGM()
+    {
+        if ( !m_ActiveMap )
+        {
+            return;
+        }
+
+        if ( auto mapOST = m_ActiveMap->GetProperty<std::string>( "MapMusic" ) )
+        {
+            const auto bgmData = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Audio/BGM/" + *mapOST );
+            if ( !bgmData.empty() )
+            {
+                SHNK_CORE_INFO( "Loaded map BGM: '{}'", *mapOST );
+
+                Shinkiro::Core::App->GetAudioManager().PlayOST( bgmData );
+                Shinkiro::Core::App->GetAudioManager().SetOSTVolume( 0.1f );
+            }
+            else
+            {
+                SHNK_CORE_WARN( "Map OST asset not found: {}", *mapOST );
+            }
+        }
     }
 
     void MapManager::SetActiveMap( const std::string & mapPath )

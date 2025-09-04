@@ -201,16 +201,9 @@ namespace Shinkiro
             p_Module->Start();
         }
 
-        if ( GetMapManager().LoadMap( "Maps/DecorTest.tmx" ) )
-        {
-            GetMapManager().SetActiveMap( "Maps/DecorTest.tmx" );
-        }
+        GetMapManager().LoadMap( "Maps/DecorTest.tmx" );
 
         {
-            const auto AtmosphereBGM = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Audio/BGM/Atmosphere-Crystal.wav" );
-            Shinkiro::Core::App->GetAudioManager().PlayOST( AtmosphereBGM );
-            Shinkiro::Core::App->GetAudioManager().SetOSTVolume( 0.1f );
-
             const auto AbsolCry = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Audio/Cries/absol.wav" );
             Shinkiro::Core::App->GetAudioManager().PlaySoundAsync( AbsolCry );
         }
