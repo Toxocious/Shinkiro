@@ -112,6 +112,17 @@ namespace Shinkiro
          */
         Shinkiro::Platform::Window * GetWindow() override;
 
+    private:
+        /**
+         * @brief Sets input callbacks for the application.
+         */
+        void SetInputCallbacks();
+
+        /**
+         * @brief Sets render callbacks for the application.
+         */
+        void SetRenderCallbacks();
+
     public:
         Shinkiro::Renderer::MapManager      m_MapManager;
         Shinkiro::Asset::AssetBundleManager m_BundleManager;

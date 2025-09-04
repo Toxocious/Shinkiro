@@ -23,7 +23,6 @@ namespace Shinkiro::Platform
             return false;
         }
 
-        SHNK_CORE_TRACE( "Checking if key {} is held down.", keyCode );
         return it->second;
     }
 
@@ -35,7 +34,6 @@ namespace Shinkiro::Platform
             return false;
         }
 
-        SHNK_CORE_TRACE( "Checking if key {} was pressed once.", keyCode );
         auto prevIt = m_PreviousKeyStates.find( keyCode );
 
         bool currentState  = currIt->second;
@@ -49,14 +47,10 @@ namespace Shinkiro::Platform
         auto currIt = m_CurrentKeyStates.find( keyCode );
         auto prevIt = m_PreviousKeyStates.find( keyCode );
 
-        // A key can be "just released" even if it's not in the current map (if it was in the previous one).
-        // So we check if it was present in the previous state.
         if ( prevIt == m_PreviousKeyStates.end() )
         {
             return false;
         }
-
-        SHNK_CORE_TRACE( "Checking if key {} was released.", keyCode );
 
         bool currentState  = currIt != m_CurrentKeyStates.end() && currIt->second;
         bool previousState = prevIt->second;
@@ -68,7 +62,6 @@ namespace Shinkiro::Platform
     {
         if ( m_CurrentKeyStates.count( button ) )
         {
-            SHNK_CORE_TRACE( "Checking if mouse button {} is held down.", button );
         }
         return IsKeyPressed( button );
     }
@@ -77,7 +70,6 @@ namespace Shinkiro::Platform
     {
         if ( m_CurrentKeyStates.count( button ) )
         {
-            SHNK_CORE_TRACE( "Checking if mouse button {} was pressed once.", button );
         }
         return IsKeyJustPressed( button );
     }
@@ -86,7 +78,6 @@ namespace Shinkiro::Platform
     {
         if ( m_PreviousKeyStates.count( button ) )
         {
-            SHNK_CORE_TRACE( "Checking if mouse button {} was released.", button );
         }
         return IsKeyJustReleased( button );
     }

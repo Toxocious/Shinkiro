@@ -24,42 +24,6 @@ namespace Shinkiro
         Core::App = nullptr;
     }
 
-    /**
-     * Manager Accessors
-     */
-    Asset::AssetBundleManager & Application::GetBundleManager()
-    {
-        return m_BundleManager;
-    }
-
-    Audio::AudioManager & Application::GetAudioManager()
-    {
-        return m_AudioManager;
-    }
-
-    Renderer::MapManager & Application::GetMapManager()
-    {
-        return m_MapManager;
-    }
-
-    Renderer::Camera & Application::GetCamera()
-    {
-        return m_Camera;
-    }
-
-    Platform::InputHandler * Application::GetInputHandler()
-    {
-        return m_InputHandler;
-    }
-
-    Platform::Window * Application::GetWindow()
-    {
-        return m_Window;
-    }
-
-    /**
-     * Initialize a new application.
-     */
     bool Application::Initialize( const std::string & name, const std::string & version, int height, int width )
     {
         // Create instances of required modules.
@@ -83,9 +47,9 @@ namespace Shinkiro
 #if defined( SHINKIRO_DEBUG )
                 std::string buildType = "[DEBUG]";
 #elif defined( SHINKIRO_RELEASE )
-                std::string buildType = " [RELEASE]";
+                std::string buildType = " [BETA]";
 #elif defined( SHINKIRO_DIST )
-                std::string buildType = " [DIST]";
+                std::string buildType = " [STABLE]";
 #else
                 std::string buildType = " [UNKNOWN]";
 #endif
@@ -108,53 +72,42 @@ namespace Shinkiro
             }
         }
 
-        m_Window->SetRenderCallback( [this]()
-                                     {
-                                         auto & camera = GetCamera();
+        m_MapManager.Initialize();
 
-                                         Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
-                                         Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        return true;
+    }
 
-                                         m_MapManager.Render( camera, m_Window->GetWidth(), m_Window->GetHeight() );
-
-                                         //  m_Window->BeginImGuiFrame();
-                                         // m_Window->RenderImGui();
-                                         //  m_Window->EndImGuiFrame();
-                                     } );
-
+    void Application::SetInputCallbacks()
+    {
         m_Window->SetInputCallback( [this]( float deltaTime )
                                     {
                                         auto & camera = GetCamera();
 
-                                        // Keyboard movement
-                                        float currentSpeed = camera.GetMovementSpeed();
-                                        if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( GLFW_KEY_LEFT_SHIFT ) )
                                         {
-                                            currentSpeed *= 3.0;
+                                            float currentSpeed = camera.GetMovementSpeed();
+                                            if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( GLFW_KEY_LEFT_SHIFT ) )
+                                            {
+                                                currentSpeed *= 3.0;
+                                            }
+
+                                            if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'W' ) )
+                                            {
+                                                camera.ProcessKeyboard( Shinkiro::Renderer::FORWARD, currentSpeed * deltaTime );
+                                            }
+                                            if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'S' ) )
+                                            {
+                                                camera.ProcessKeyboard( Shinkiro::Renderer::BACKWARD, currentSpeed * deltaTime );
+                                            }
+                                            if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'A' ) )
+                                            {
+                                                camera.ProcessKeyboard( Shinkiro::Renderer::LEFT, currentSpeed * deltaTime );
+                                            }
+                                            if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'D' ) )
+                                            {
+                                                camera.ProcessKeyboard( Shinkiro::Renderer::RIGHT, currentSpeed * deltaTime );
+                                            }
                                         }
 
-                                        if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'W' ) )
-                                        {
-                                            SHNK_CORE_TRACE( "Processing keyboard input: W" );
-                                            camera.ProcessKeyboard( Shinkiro::Renderer::FORWARD, currentSpeed * deltaTime );
-                                        }
-                                        if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'S' ) )
-                                        {
-                                            SHNK_CORE_TRACE( "Processing keyboard input: W" );
-                                            camera.ProcessKeyboard( Shinkiro::Renderer::BACKWARD, currentSpeed * deltaTime );
-                                        }
-                                        if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'A' ) )
-                                        {
-                                            SHNK_CORE_TRACE( "Processing keyboard input: W" );
-                                            camera.ProcessKeyboard( Shinkiro::Renderer::LEFT, currentSpeed * deltaTime );
-                                        }
-                                        if ( Shinkiro::Platform::InputHandler::Get().IsKeyPressed( 'D' ) )
-                                        {
-                                            SHNK_CORE_TRACE( "Processing keyboard input: W" );
-                                            camera.ProcessKeyboard( Shinkiro::Renderer::RIGHT, currentSpeed * deltaTime );
-                                        }
-
-                                        // Mouse rotation (only when right mouse button is held)
                                         if ( Shinkiro::Platform::InputHandler::Get().IsMouseButtonPressed( GLFW_MOUSE_BUTTON_RIGHT ) )
                                         {
                                             glfwSetInputMode( m_Window->GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED );
@@ -173,7 +126,6 @@ namespace Shinkiro
 
                                             m_Window->SetLastMousePos( mousePos );
 
-                                            SHNK_CORE_TRACE( "Processing mouse movement." );
                                             camera.ProcessMouseMovement( xoffset, yoffset );
                                         }
                                         else
@@ -182,18 +134,30 @@ namespace Shinkiro
                                             m_Window->SetFirstMouse( true );
                                         }
                                     } );
-
-        // Initialize the Map Manager.
-        m_MapManager.Initialize();
-
-        return true;
     }
 
-    /**
-     * Start the application after initialization.
-     */
+    void Application::SetRenderCallbacks()
+    {
+        m_Window->SetRenderCallback( [this]()
+                                     {
+                                         auto & camera = GetCamera();
+
+                                         Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+                                         Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+                                         m_MapManager.Render( camera, m_Window->GetWidth(), m_Window->GetHeight() );
+
+                                         //  m_Window->BeginImGuiFrame();
+                                         // m_Window->RenderImGui();
+                                         //  m_Window->EndImGuiFrame();
+                                     } );
+    }
+
     bool Application::Start()
     {
+        SetInputCallbacks();
+        SetRenderCallbacks();
+
         for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
         {
             auto p_Module = ( *module );
@@ -211,9 +175,6 @@ namespace Shinkiro
         return true;
     }
 
-    /**
-     * Clean up and shutdown the application.
-     */
     bool Application::CleanUp()
     {
         SHNK_CORE_TRACE( "Cleaning up the application and its modules" );
@@ -238,9 +199,6 @@ namespace Shinkiro
         return true;
     }
 
-    /**
-     * Update loop.
-     */
     Shinkiro::Core::UpdateStatus Application::Update()
     {
         Shinkiro::Core::UpdateStatus status = Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
@@ -291,5 +249,38 @@ namespace Shinkiro
         }
 
         return status;
+    }
+
+    /**
+     * Manager Accessors
+     */
+    Asset::AssetBundleManager & Application::GetBundleManager()
+    {
+        return m_BundleManager;
+    }
+
+    Audio::AudioManager & Application::GetAudioManager()
+    {
+        return m_AudioManager;
+    }
+
+    Renderer::MapManager & Application::GetMapManager()
+    {
+        return m_MapManager;
+    }
+
+    Renderer::Camera & Application::GetCamera()
+    {
+        return m_Camera;
+    }
+
+    Platform::InputHandler * Application::GetInputHandler()
+    {
+        return m_InputHandler;
+    }
+
+    Platform::Window * Application::GetWindow()
+    {
+        return m_Window;
     }
 }
