@@ -65,7 +65,7 @@ namespace Shinkiro::Platform
         glfwSetKeyCallback( GetGLFWWindow(), SetKeyCallbacks );
         glfwSetCursorPosCallback( GetGLFWWindow(), SetMouseCallbacks );
         glfwSetScrollCallback( GetGLFWWindow(), SetMouseWheelCallbacks );
-        glfwSetMouseButtonCallback( GetGLFWWindow(), SetMouseButtonCallbacks ); // <-- ADD THIS
+        glfwSetMouseButtonCallback( GetGLFWWindow(), SetMouseButtonCallbacks );
         glfwSetInputMode( GetGLFWWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL );
 
         glEnable( GL_DEPTH_TEST );
@@ -125,34 +125,7 @@ namespace Shinkiro::Platform
             return Shinkiro::Core::UpdateStatus::UPDATE_STOP;
         }
 
-        switch ( Shinkiro::Core::App->m_AppState )
-        {
-            case Core::AppState::LOADING:
-                {
-                    BeginImGuiFrame();
-                    glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
-                    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-                    {
-                        RenderImGui();
-                    }
-
-                    EndImGuiFrame();
-                    SwapBuffers();
-
-                    std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
-
-                    Shinkiro::Core::App->m_AppState = Core::AppState::RUNNING;
-
-                    break;
-                }
-
-            case Core::AppState::RUNNING:
-                {
-                    Render();
-                    break;
-                }
-        }
+        Render();
 
         return Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
     }
@@ -201,20 +174,6 @@ namespace Shinkiro::Platform
 
             ImGui::End();
         }
-
-        // if ( m_assetsLoaded )
-        // {
-        //     loadInitialAssets();
-
-        //     loadSelectableObjects();
-        //     // loadModels();
-
-        //     m_state = AppState::RUNNING;
-        // }
-        // else
-        // {
-        //     m_assetsLoaded = true;
-        // }
     }
 
     bool Window::InitializeImGui()

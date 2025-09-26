@@ -73,14 +73,6 @@ namespace Shinkiro::Renderer
             }
         }
 
-        SHNK_CORE_INFO( "Map Loaded From File: {}", filePath );
-        SHNK_CORE_INFO( "Map Name: {}", mapData.name );
-        SHNK_CORE_INFO( "Parsed {} Map Properties.", mapData.properties.size() );
-        SHNK_CORE_INFO( "Parsed {} Layers.", mapData.layers.size() );
-        SHNK_CORE_INFO( "Parsed {} Tilesets.", mapData.tilesets.size() );
-        SHNK_CORE_INFO( "Map Parsed: {}x{} tiles.", mapData.width, mapData.height );
-        SHNK_CORE_INFO( "Tile Size: {}x{} pixels.", mapData.tileWidth, mapData.tileHeight );
-
         for ( XMLElement * e = mapElement->FirstChildElement(); e != nullptr; e = e->NextSiblingElement() )
         {
             std::string value = e->Value();
@@ -107,12 +99,8 @@ namespace Shinkiro::Renderer
         }
 
         SHNK_CORE_INFO( "Map Loaded From File: {}", filePath );
-        SHNK_CORE_INFO( "Map Name: {}", mapData.name );
-        SHNK_CORE_INFO( "Parsed {} Map Properties.", mapData.properties.size() );
-        SHNK_CORE_INFO( "Parsed {} Layers.", mapData.layers.size() );
-        SHNK_CORE_INFO( "Parsed {} Tilesets.", mapData.tilesets.size() );
-        SHNK_CORE_INFO( "Map Parsed: {}x{} tiles.", mapData.width, mapData.height );
-        SHNK_CORE_INFO( "Tile Size: {}x{} pixels.", mapData.tileWidth, mapData.tileHeight );
+        SHNK_CORE_INFO( "Map Name: {} / {}x{} tiles / Tile Size: {}x{} px", mapData.name, mapData.width, mapData.height, mapData.tileWidth, mapData.tileHeight );
+        SHNK_CORE_INFO( "Map Data: {} Properties / {} Layers / {} Tilesets", mapData.properties.size(), mapData.layers.size(), mapData.tilesets.size() );
 
         return mapData;
     }
@@ -206,12 +194,8 @@ namespace Shinkiro::Renderer
         }
 
         SHNK_CORE_INFO( "Map Loaded From Memory: {}", sourcePath );
-        SHNK_CORE_INFO( "Map Name: {}", mapData.name );
-        SHNK_CORE_INFO( "Parsed {} Map Properties.", mapData.properties.size() );
-        SHNK_CORE_INFO( "Parsed {} Layers.", mapData.layers.size() );
-        SHNK_CORE_INFO( "Parsed {} Tilesets.", mapData.tilesets.size() );
-        SHNK_CORE_INFO( "Map Parsed: {}x{} tiles.", mapData.width, mapData.height );
-        SHNK_CORE_INFO( "Tile Size: {}x{} pixels.", mapData.tileWidth, mapData.tileHeight );
+        SHNK_CORE_INFO( "Map Name: {} / {}x{} tiles / Tile Size: {}x{} px", mapData.name, mapData.width, mapData.height, mapData.tileWidth, mapData.tileHeight );
+        SHNK_CORE_INFO( "Map Data: {} Properties / {} Layers / {} Tilesets", mapData.properties.size(), mapData.layers.size(), mapData.tilesets.size() );
 
         return mapData;
     }

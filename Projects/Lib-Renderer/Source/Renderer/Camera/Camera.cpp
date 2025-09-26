@@ -26,22 +26,18 @@ namespace Shinkiro::Renderer
         float velocity = m_MovementSpeed * deltaTime;
         if ( direction == FORWARD )
         {
-            SHNK_CORE_INFO( "Moving camera forward by {}", velocity );
             m_Position += m_Front * velocity;
         }
         if ( direction == BACKWARD )
         {
-            SHNK_CORE_INFO( "Moving camera backward by {}", velocity );
             m_Position -= m_Front * velocity;
         }
         if ( direction == LEFT )
         {
-            SHNK_CORE_INFO( "Moving camera left by {}", velocity );
             m_Position -= m_Right * velocity;
         }
         if ( direction == RIGHT )
         {
-            SHNK_CORE_INFO( "Moving camera right by {}", velocity );
             m_Position += m_Right * velocity;
         }
     }

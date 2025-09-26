@@ -140,16 +140,41 @@ namespace Shinkiro
     {
         m_Window->SetRenderCallback( [this]()
                                      {
-                                         auto & camera = GetCamera();
+                                         switch ( Shinkiro::Core::App->m_AppState )
+                                         {
+                                             case Core::AppState::LOADING:
+                                                 {
+                                                     m_Window->BeginImGuiFrame();
 
-                                         Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
-                                         Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+                                                     Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+                                                     Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-                                         m_MapManager.Render( camera, m_Window->GetWidth(), m_Window->GetHeight() );
+                                                     {
+                                                         m_Window->RenderImGui();
+                                                     }
 
-                                         //  m_Window->BeginImGuiFrame();
-                                         // m_Window->RenderImGui();
-                                         //  m_Window->EndImGuiFrame();
+                                                     m_Window->EndImGuiFrame();
+                                                     m_Window->SwapBuffers();
+
+                                                     std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
+
+                                                     Shinkiro::Core::App->m_AppState = Core::AppState::RUNNING;
+
+                                                     break;
+                                                 }
+
+                                             case Core::AppState::RUNNING:
+                                                 {
+                                                     auto & camera = GetCamera();
+
+                                                     Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+                                                     Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+                                                     m_MapManager.Render( camera, m_Window->GetWidth(), m_Window->GetHeight() );
+
+                                                     break;
+                                                 }
+                                         }
                                      } );
     }
 

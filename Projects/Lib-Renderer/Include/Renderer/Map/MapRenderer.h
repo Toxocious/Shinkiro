@@ -70,7 +70,7 @@ namespace Shinkiro::Renderer
         /**
          * @brief Loads initial assets required for rendering.
          */
-        void LoadInitialAssets();
+        void InitializeAndSetCamera();
 
         /**
          * @brief Loads tileset textures.
@@ -130,7 +130,7 @@ namespace Shinkiro::Renderer
         void SetMapData( MapData & mapData )
         {
             m_MapData = &mapData;
-            LoadInitialAssets();
+            InitializeAndSetCamera();
         }
 
         int GetRenderedTileCount() const

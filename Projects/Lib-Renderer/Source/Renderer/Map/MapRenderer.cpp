@@ -39,7 +39,6 @@ namespace Shinkiro::Renderer
         m_MapTileShader->SetMat4( "model", glm::mat4( 1.0f ) );
         m_MapTileShader->SetMat4( "view", glm::mat4( 1.0f ) );
         m_MapTileShader->SetMat4( "projection", glm::mat4( 1.0f ) );
-        m_MapTileShader->SetVec3( "objectColor", glm::vec3( 1.0f, 1.0f, 1.0f ) );
         m_MapTileShader->SetVec2( "uvOffset", glm::vec2( 0.0f ) );
         m_MapTileShader->SetVec2( "uvScale", glm::vec2( 1.0f ) );
 
@@ -174,10 +173,8 @@ namespace Shinkiro::Renderer
         Shinkiro::Platform::OpenGL::glDisable( GL_BLEND );
     }
 
-    void MapRenderer::LoadInitialAssets()
+    void MapRenderer::InitializeAndSetCamera()
     {
-        SHNK_CORE_TRACE( "Initializing map camera from map data" );
-
         float     targetX = m_MapData->width / 2.0f;
         float     targetZ = m_MapData->height / 2.0f;
         glm::vec3 targetPosition( targetX, 0.0f, targetZ );
@@ -193,19 +190,6 @@ namespace Shinkiro::Renderer
         camera.SetYaw( yaw );
         camera.SetProjection( glm::perspective( glm::radians( camera.GetZoom() ), ( float ) 1920 / ( float ) 1080, 0.1f, 1000.0f ) );
         camera.updateCameraVectors();
-
-        //
-
-        // auto & camera = Shinkiro::Core::App->GetCamera();
-
-        // float targetX = m_MapData->width / 2.0f;
-        // float targetZ = m_MapData->height / 2.0f;
-
-        // camera.SetPosition( glm::vec3( targetX, 40.0f, targetZ ) );
-        // camera.SetPitch( -89.9f );
-        // camera.SetYaw( -90.0f );
-        // camera.SetProjection( glm::perspective( glm::radians( camera.GetZoom() ), ( float ) 1366 / ( float ) 768, 0.1f, 1000.0f ) );
-        // camera.updateCameraVectors();
     }
 
     void MapRenderer::LoadTilesetTextures( MapData & mapData )
@@ -375,8 +359,6 @@ namespace Shinkiro::Renderer
 
             layer_y_offset += 1.0f;
         }
-
-        SHNK_CORE_INFO( "Rendered {} tiles for map: {}", m_RenderedTileCount, mapData.name );
 
         Shinkiro::Platform::OpenGL::glBindVertexArray( 0 );
     }
