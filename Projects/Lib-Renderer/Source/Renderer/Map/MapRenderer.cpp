@@ -3,7 +3,6 @@
 #include <Renderer/Map/MapRenderer.h>
 
 #include <Core/IApplication.h>
-#include <Core/Util/FileSystem.h>
 
 #include <Platform/GL.h>
 #include <Platform/Modules/Window.h>
