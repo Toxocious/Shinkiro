@@ -41,7 +41,6 @@ project "Lib-Renderer"
         "%{wks.location}/Projects/Lib-Asset/Include",
         "%{wks.location}/Projects/Lib-Audio/Include",
         "%{wks.location}/Projects/Lib-Core/Include",
-        "%{wks.location}/Projects/Lib-Logger/Include",
         "%{wks.location}/Projects/Lib-Platform/Include",
 
         "./Include",
@@ -61,7 +60,6 @@ project "Lib-Renderer"
         "Lib-Audio",
         "Lib-Asset",
         "Lib-Core",
-        "Lib-Logger",
         "Lib-Platform",
     }
 
@@ -70,7 +68,6 @@ project "Lib-Renderer"
         "Lib-Audio",
         "Lib-Asset",
         "Lib-Core",
-        "Lib-Logger",
         "Lib-Platform",
     }
 

@@ -1,7 +1,7 @@
 #ifndef SHINKIRO_RENDERER_SHADER_H
 #define SHINKIRO_RENDERER_SHADER_H
 
-#include <Log/Log.h>
+#include <Core/Util/Log.h>
 
 #include <Platform/GL.h>
 

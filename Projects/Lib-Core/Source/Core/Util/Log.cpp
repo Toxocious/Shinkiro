@@ -1,6 +1,6 @@
-#include <Log/_Common.h>
+#include <Core/_Common.h>
 
-#include <Log/Log.h>
+#include <Core/Util/Log.h>
 
 namespace Shinkiro::Logger
 {

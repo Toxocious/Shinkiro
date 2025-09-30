@@ -5,7 +5,7 @@
 
 #    include <Asset/_Defs.h>
 
-#    include <Log/Log.h>
+#    include <Core/Util/Log.h>
 
 namespace Shinkiro::Asset
 {

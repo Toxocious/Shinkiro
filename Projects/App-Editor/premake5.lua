@@ -26,7 +26,6 @@ project "Editor"
         "%{wks.location}/Projects/Lib-Asset/Include",
         "%{wks.location}/Projects/Lib-Audio/Include",
         "%{wks.location}/Projects/Lib-Core/Include",
-        "%{wks.location}/Projects/Lib-Logger/Include",
         "%{wks.location}/Projects/Lib-Platform/Include",
         "%{wks.location}/Projects/Lib-Renderer/Include",
 
@@ -38,7 +37,6 @@ project "Editor"
         "Lib-Core",
         "Lib-Asset",
         "Lib-Audio",
-        "Lib-Logger",
         "Lib-Platform",
         "Lib-Renderer",
     }
@@ -48,7 +46,6 @@ project "Editor"
         "Lib-Core",
         "Lib-Asset",
         "Lib-Audio",
-        "Lib-Logger",
         "Lib-Platform",
         "Lib-Renderer",
     }
@@ -70,14 +67,11 @@ project "Editor"
         -- Copy required DLLs for tools
         copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. AssetPackerBinaryDir),
         copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. AssetUnpackerBinaryDir),
-        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. AssetPackerBinaryDir),
-        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. AssetUnpackerBinaryDir),
 
         -- Copy all Lib-* DLLs to the Editor executable directory
         copy_if_needed("%{wks.location}" .. _G.CorePath, "%{wks.location}" .. EditorBinaryDir),
         copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. EditorBinaryDir),
         copy_if_needed("%{wks.location}" .. _G.CoreAudioPath, "%{wks.location}" .. EditorBinaryDir),
-        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. EditorBinaryDir),
         copy_if_needed("%{wks.location}" .. _G.CoreRendererPath, "%{wks.location}" .. EditorBinaryDir),
         copy_if_needed("%{wks.location}" .. _G.CorePlatformPath, "%{wks.location}" .. EditorBinaryDir),
     }

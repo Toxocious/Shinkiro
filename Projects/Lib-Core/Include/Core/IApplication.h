@@ -15,11 +15,6 @@ namespace Shinkiro::Asset
     class AssetBundleManager;
 }
 
-// namespace Shinkiro::Audio
-// {
-//     class AudioManager;
-// }
-
 namespace Shinkiro::Renderer
 {
     class MapManager;
@@ -70,7 +65,6 @@ namespace Shinkiro::Core
         /**
          * @brief Returns a ref to the Audio Manager
          */
-        // virtual Audio::AudioManager & GetAudioManager() = 0;
         virtual Audio::IAudioManager & GetAudioManager() = 0;
 
         /**

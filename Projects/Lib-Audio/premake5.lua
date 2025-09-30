@@ -16,7 +16,6 @@ project "Lib-Audio"
         "%{wks.location}/Libraries/miniaudio/include",
         "%{wks.location}/Libraries/spdlog/include",
 
-        "%{wks.location}/Projects/Lib-Logger/Include",
         "%{wks.location}/Projects/Lib-Core/Include",
 
         "./Include",
@@ -29,7 +28,7 @@ project "Lib-Audio"
 
         "%{wks.location}/Libraries/spdlog/include/**.h",
 
-        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
+        "%{wks.location}/Projects/Lib-Core/Include/Core/Util/Log.h",
         "%{wks.location}/Projects/Lib-Core/Include/Core/Interfaces/AudioManagerInterface.h",
 
         "**.h",
@@ -45,13 +44,11 @@ project "Lib-Audio"
     links
     {
         "Lib-Core",
-        "Lib-Logger",
     }
 
     dependson
     {
         "Lib-Core",
-        "Lib-Logger",
     }
 
     defines

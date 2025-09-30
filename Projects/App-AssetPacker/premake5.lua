@@ -13,7 +13,7 @@ project "AssetPacker"
     files
     {
         "%{wks.location}/Projects/Lib-Asset/Include/**.h",
-        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
+        "%{wks.location}/Projects/Lib-Core/Include/**.h",
 
         "**.h",
         "**.hpp",
@@ -23,7 +23,7 @@ project "AssetPacker"
     includedirs
     {
         "%{wks.location}/Projects/Lib-Asset/Include",
-        "%{wks.location}/Projects/Lib-Logger/Include",
+        "%{wks.location}/Projects/Lib-Core/Include",
 
         "./Include",
     }
@@ -31,13 +31,13 @@ project "AssetPacker"
     links
     {
         "Lib-Asset",
-        "Lib-Logger",
+        "Lib-Core",
     }
 
     dependson
     {
         "Lib-Asset",
-        "Lib-Logger",
+        "Lib-Core",
     }
 
     prebuildcommands {
@@ -50,7 +50,7 @@ project "AssetPacker"
 
         -- Copy all Lib-* DLLs to the Asset Packer executable directory
         copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. AssetPackerBinaryDir),
-        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. AssetPackerBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CorePath, "%{wks.location}" .. AssetPackerBinaryDir),
     }
 
     filter { "system:windows" }

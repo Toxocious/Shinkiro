@@ -3,12 +3,12 @@
 #ifndef SHINKIRO_CORE_ASSERT_H
 #    define SHINKIRO_CORE_ASSERT_H
 
-#    include <Log/_Defs.h>
+#    include <Core/_Defs.h>
 
-#    include <Log/_Common.h>
+#    include <Core/_Common.h>
 
-#    include <Log/Log.h>
-#    include <Log/Util/Macro.h>
+#    include <Core/Util/Log.h>
+#    include <Core/Util/Macro.h>
 
 #    ifdef SHINKIRO_ENABLE_ASSERTS
 #        define SHINKIRO_INTERNAL_ASSERT_IMPL( type, check, msg, ... ) \

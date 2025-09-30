@@ -18,7 +18,7 @@ project "Lib-Asset"
 
 		"%{wks.location}/Libraries/zstd/include/**.h",
 
-        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
+        "%{wks.location}/Projects/Lib-Core/Include/**.h",
 
         "**.h",
         "**.hpp",
@@ -32,7 +32,7 @@ project "Lib-Asset"
 
 		"%{wks.location}/Libraries/zstd/include",
 
-        "%{wks.location}/Projects/Lib-Logger/Include",
+        "%{wks.location}/Projects/Lib-Core/Include",
 
         "./Include",
     }
@@ -45,12 +45,12 @@ project "Lib-Asset"
 
     links
     {
-        "Lib-Logger",
+        "Lib-Core",
     }
 
     dependson
     {
-        "Lib-Logger",
+        "Lib-Core",
     }
 
     defines

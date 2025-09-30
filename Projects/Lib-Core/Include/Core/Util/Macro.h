@@ -3,9 +3,9 @@
 #ifndef SHINKIRO_CORE_MACRO_H
 #    define SHINKIRO_CORE_MACRO_H
 
-#    include <Log/_Defs.h>
+#    include <Core/_Defs.h>
 
-#    include <Log/_Common.h>
+#    include <Core/_Common.h>
 
 #    ifdef SHINKIRO_DEBUG
 #        if defined( SHINKIRO_PLATFORM_WINDOWS )
@@ -50,7 +50,7 @@ namespace Shinkiro::Logger
     }
 }
 
-#    include <Log/Log.h>
-#    include <Log/Util/Assert.h>
+#    include <Core/Util/Assert.h>
+#    include <Core/Util/Log.h>
 
 #endif

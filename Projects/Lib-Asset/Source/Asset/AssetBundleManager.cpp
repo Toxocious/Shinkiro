@@ -7,7 +7,7 @@
 
 #include <Asset/AssetBundleManager.h>
 
-#include <Log/Log.h>
+#include <Core/Util/Log.h>
 
 namespace Shinkiro::Asset
 {

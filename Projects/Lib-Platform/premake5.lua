@@ -33,7 +33,6 @@ project "Lib-Platform"
         "%{wks.location}/Projects/Lib-Asset/Include/**.h",
         "%{wks.location}/Projects/Lib-Audio/Include/**.h",
         "%{wks.location}/Projects/Lib-Core/Include/**.h",
-        "%{wks.location}/Projects/Lib-Logger/Include/**.h",
 
         "**.h",
         "**.hpp",
@@ -53,7 +52,6 @@ project "Lib-Platform"
         "%{wks.location}/Projects/Lib-Asset/Include",
         "%{wks.location}/Projects/Lib-Audio/Include",
         "%{wks.location}/Projects/Lib-Core/Include",
-        "%{wks.location}/Projects/Lib-Logger/Include",
 
         "./Include",
     }
@@ -72,7 +70,6 @@ project "Lib-Platform"
         "Lib-Audio",
         "Lib-Asset",
         "Lib-Core",
-        "Lib-Logger",
     }
 
     dependson
@@ -80,7 +77,6 @@ project "Lib-Platform"
         "Lib-Audio",
         "Lib-Asset",
         "Lib-Core",
-        "Lib-Logger",
     }
 
     defines

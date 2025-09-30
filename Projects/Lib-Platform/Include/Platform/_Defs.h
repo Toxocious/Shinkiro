@@ -24,7 +24,8 @@
 
 #ifndef SHINKIRO_LOGGER_HEADERS
 #    define SHINKIRO_LOGGER_HEADERS
-#    include <Log/Log.h>
-#    include <Log/Util/Assert.h>
-#    include <Log/Util/Macro.h>
+#    include <Core/Util/Log.h>
+
+#    include <Core/Util/Assert.h>
+#    include <Core/Util/Macro.h>
 #endif

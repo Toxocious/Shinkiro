@@ -41,7 +41,7 @@ project "AssetUnpacker"
     postbuildcommands {
         -- Copy all Lib-* DLLs to the Asset Unpacker executable directory
         copy_if_needed("%{wks.location}" .. _G.CoreAssetPath, "%{wks.location}" .. AssetUnpackerBinaryDir),
-        copy_if_needed("%{wks.location}" .. _G.CoreLoggerPath, "%{wks.location}" .. AssetUnpackerBinaryDir),
+        copy_if_needed("%{wks.location}" .. _G.CorePath, "%{wks.location}" .. AssetUnpackerBinaryDir),
     }
 
     filter { "system:windows" }
