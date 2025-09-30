@@ -8,13 +8,14 @@
 
 #    include <Core/Interfaces/AssetBundleManagerInterface.h>
 #    include <Core/Interfaces/AudioManagerInterface.h>
+#    include <Core/Interfaces/CameraInterface.h>
 
 #    include <string>
 
 namespace Shinkiro::Renderer
 {
     class MapManager;
-    class Camera;
+    // class Camera;
 }
 
 namespace Shinkiro::Platform
@@ -64,14 +65,14 @@ namespace Shinkiro::Core
         virtual Audio::IAudioManager & GetAudioManager() = 0;
 
         /**
+         * @brief Returns a ref to the Camera
+         */
+        virtual Renderer::ICamera & GetCamera() = 0;
+
+        /**
          * @brief Returns a ref to the Map Manager
          */
         virtual Renderer::MapManager & GetMapManager() = 0;
-
-        /**
-         * @brief Returns a ref to the Camera
-         */
-        virtual Renderer::Camera & GetCamera() = 0;
 
         /**
          * @brief Returns a ref to the InputHandler

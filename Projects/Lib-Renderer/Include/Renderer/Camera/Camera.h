@@ -7,6 +7,8 @@
 
 #    include <Renderer/Camera/Frustum.h>
 
+#    include <Core/Interfaces/CameraInterface.h>
+
 #    include <glad/glad.h>
 #    include <glm/glm.hpp>
 #    include <glm/gtc/matrix_transform.hpp>
@@ -32,7 +34,7 @@ namespace Shinkiro::Renderer
     /**
      * @brief Camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
      */
-    class RENDER_API Camera
+    class RENDER_API Camera : public ICamera
     {
     public:
         /**
@@ -44,12 +46,14 @@ namespace Shinkiro::Renderer
          */
         Camera( glm::vec3 position = glm::vec3( 0.0f, 0.0f, 0.0f ), glm::vec3 up = glm::vec3( 0.0f, 1.0f, 0.0f ), float yaw = YAW, float pitch = PITCH );
 
+        ~Camera() override;
+
         /**
          * @brief Processes input received from any keyboard-like input system
          * @param direction The direction of movement
          * @param deltaTime The time difference between the current and last frame
          */
-        void ProcessKeyboard( Camera_Movement direction, float deltaTime );
+        void ProcessKeyboard( Camera_Movement direction, float deltaTime ) override;
 
         /**
          * @brief Processes input received from a mouse input system
@@ -57,7 +61,7 @@ namespace Shinkiro::Renderer
          * @param yoffset The offset in the y direction
          * @param constrainPitch Whether to constrain the pitch angle to prevent screen flipping
          */
-        void ProcessMouseMovement( float xoffset, float yoffset, GLboolean constrainPitch = true );
+        void ProcessMouseMovement( float xoffset, float yoffset, bool constrainPitch = true ) override;
 
         /**
          * @brief Processes input received from a mouse scroll-wheel event
@@ -91,7 +95,7 @@ namespace Shinkiro::Renderer
         /**
          * @brief Updates the camera's front, right, and up vectors based on the current yaw and pitch angles
          */
-        void updateCameraVectors();
+        void updateCameraVectors() override;
 
     private:
         /**
@@ -109,18 +113,19 @@ namespace Shinkiro::Renderer
 
         const float GetMovementSpeed() const;
 
-        const glm::mat4   SetProjection( const glm::mat4 & projection );
-        const glm::vec3 & GetPosition() const;
-        const glm::vec3   SetPosition( const glm::vec3 & position );
         const glm::vec3 & GetFront() const;
+        float             GetPitch() const override;
+        const glm::vec3 & GetPosition() const override;
         const glm::vec3 & GetUp() const;
-        const glm::vec3   SetUp( const glm::vec3 & up );
-        float             GetPitch() const;
-        const float       SetPitch( float pitch );
-        float             GetYaw() const;
-        const float       SetYaw( float yaw );
-        float             GetZoom() const;
-        const float       SetZoom( float zoom );
+        float             GetYaw() const override;
+        float             GetZoom() const override;
+
+        const glm::mat4 SetProjection( const glm::mat4 & projection ) override;
+        const glm::vec3 SetPosition( const glm::vec3 & position ) override;
+        const glm::vec3 SetUp( const glm::vec3 & up ) override;
+        const float     SetPitch( float pitch ) override;
+        const float     SetYaw( float yaw ) override;
+        const float     SetZoom( float zoom ) override;
 
     private:
         // Frustrum

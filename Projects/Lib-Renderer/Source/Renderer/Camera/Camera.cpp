@@ -21,6 +21,8 @@ namespace Shinkiro::Renderer
         updateCameraVectors();
     }
 
+    Camera::~Camera() = default;
+
     void Camera::ProcessKeyboard( Camera_Movement direction, float deltaTime )
     {
         float velocity = m_MovementSpeed * deltaTime;
@@ -42,7 +44,7 @@ namespace Shinkiro::Renderer
         }
     }
 
-    void Camera::ProcessMouseMovement( float xoffset, float yoffset, GLboolean constrainPitch )
+    void Camera::ProcessMouseMovement( float xoffset, float yoffset, bool constrainPitch )
     {
         SHNK_CORE_INFO( "Processing mouse movement: xoffset={}, yoffset={}", xoffset, yoffset );
 

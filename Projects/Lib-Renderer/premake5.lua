@@ -73,7 +73,7 @@ project "Lib-Renderer"
 
     defines
     {
-        "CORE_RENDERER_EXPORTS",
+        "SHINKIRO_RENDERER_EXPORTS",
         "ASSIMP_BUILD_NO_EXPORT"
     }
 
