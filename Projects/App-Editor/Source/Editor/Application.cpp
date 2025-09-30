@@ -14,8 +14,10 @@ Shinkiro::Application * App = nullptr;
 namespace Shinkiro
 {
     Application::Application()
-        : m_BundleManager( "assets.bundle" ), m_AudioManager(), m_MapManager()
+        : m_BundleManager( "assets.bundle" ), m_MapManager()
     {
+        m_AudioManager = Shinkiro::Audio::CreateAudioManager();
+
         Core::App = this;
     }
 
@@ -194,7 +196,8 @@ namespace Shinkiro
 
         {
             const auto AbsolCry = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Audio/Cries/absol.wav" );
-            Shinkiro::Core::App->GetAudioManager().PlaySoundAsync( AbsolCry );
+            // Shinkiro::Core::App->GetAudioManager().PlaySoundAsync( AbsolCry );
+            m_AudioManager->PlaySoundAsync( AbsolCry );
         }
 
         return true;
@@ -284,9 +287,14 @@ namespace Shinkiro
         return m_BundleManager;
     }
 
-    Audio::AudioManager & Application::GetAudioManager()
+    // Audio::AudioManager & Application::GetAudioManager()
+    // {
+    //     return m_AudioManager;
+    // }
+
+    Audio::IAudioManager & Application::GetAudioManager()
     {
-        return m_AudioManager;
+        return *m_AudioManager;
     }
 
     Renderer::MapManager & Application::GetMapManager()

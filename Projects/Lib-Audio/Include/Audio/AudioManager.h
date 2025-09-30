@@ -1,9 +1,11 @@
 #pragma once
 
-#ifndef SHINKIRO_AUDIO_AUDIOHANDLER_H
-#    define SHINKIRO_AUDIO_AUDIOHANDLER_H
+#ifndef SHINKIRO_AUDIO_AUDIOMANAGER_H
+#    define SHINKIRO_AUDIO_AUDIOMANAGER_H
 
 #    include <Audio/_Defs.h>
+
+#    include <Core/Interfaces/AudioManagerInterface.h>
 
 #    include <atomic>
 #    include <mutex>
@@ -20,11 +22,11 @@ namespace Shinkiro::Audio
         bool                 loop       = false;
     };
 
-    class AUDIO_API AudioManager
+    class AUDIO_API AudioManager : public IAudioManager
     {
     public:
         AudioManager();
-        ~AudioManager();
+        ~AudioManager() override;
 
         AudioManager( const AudioManager & )             = delete;
         AudioManager & operator=( const AudioManager & ) = delete;
@@ -38,34 +40,34 @@ namespace Shinkiro::Audio
          * @param durationMs The duration to play the sound in milliseconds.
          * @param loop Whether to loop the sound.
          */
-        void PlaySoundAsync( std::vector<uint8_t> data, int durationMs = 1500, bool loop = false );
+        void PlaySoundAsync( std::vector<uint8_t> data, int durationMs = 1500, bool loop = false ) override;
 
         /**
          * @brief Plays the original soundtrack (OST) in the background. Allows async sounds to be played over it.
          * @param data The sound data as a byte vector.
          */
-        void PlayOST( std::vector<uint8_t> data );
+        void PlayOST( std::vector<uint8_t> data ) override;
 
         /**
          * @brief Sets the volume for the original soundtrack (OST).
          * @param volume The volume level (0.0 to 1.0).
          */
-        void SetOSTVolume( float volume );
+        void SetOSTVolume( float volume ) override;
 
         /**
          * @brief Stops the original soundtrack (OST).
          */
-        void StopOST();
+        void StopOST() override;
 
         /**
          * @brief Stops all currently playing sounds.
          */
-        void StopAll();
+        void StopAll() override;
 
         /**
          * @brief Shuts down the audio manager and cleans up resources. Stops all sounds if any are playing.
          */
-        void Shutdown();
+        void Shutdown() override;
 
     private:
         /**

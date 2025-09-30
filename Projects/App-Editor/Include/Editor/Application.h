@@ -11,7 +11,8 @@
 
 #    include <Asset/AssetBundleManager.h>
 
-#    include <Audio/AudioManager.h>
+// #    include <Audio/AudioManager.h>
+#    include <Audio/AudioManagerFactory.h>
 
 #    include <Renderer/Map/MapManager.h>
 
@@ -86,7 +87,8 @@ namespace Shinkiro
          * @brief Get the application's Audio Manager
          * @return A reference to the Audio Manager
          */
-        Shinkiro::Audio::AudioManager & GetAudioManager() override;
+        // Shinkiro::Audio::AudioManager & GetAudioManager() override;
+        Shinkiro::Audio::IAudioManager & GetAudioManager() override;
 
         /**
          * @brief Get the application's Map Renderer Manager
@@ -124,10 +126,11 @@ namespace Shinkiro
         void SetRenderCallbacks();
 
     public:
-        Shinkiro::Renderer::MapManager      m_MapManager;
-        Shinkiro::Asset::AssetBundleManager m_BundleManager;
-        Shinkiro::Audio::AudioManager       m_AudioManager;
-        Shinkiro::Renderer::Camera          m_Camera;
+        Shinkiro::Renderer::MapManager                  m_MapManager;
+        Shinkiro::Asset::AssetBundleManager             m_BundleManager;
+        // Shinkiro::Audio::AudioManager       m_AudioManager;
+        std::unique_ptr<Shinkiro::Audio::IAudioManager> m_AudioManager;
+        Shinkiro::Renderer::Camera                      m_Camera;
 
     public:
         Shinkiro::Platform::InputHandler * m_InputHandler = nullptr;
