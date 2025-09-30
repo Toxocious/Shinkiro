@@ -13,10 +13,10 @@ project "Lib-Asset"
 
     files
     {
-        "%{wks.location}/Libraries/stb_image/include/**.h",
+        -- "%{wks.location}/Libraries/stb_image/include/**.h",
         "%{wks.location}/Libraries/stb_image/include/**.cpp",
 
-		"%{wks.location}/Libraries/zstd/include/**.h",
+		-- "%{wks.location}/Libraries/zstd/include/**.h",
 
         "%{wks.location}/Projects/Lib-Core/Include/**.h",
 

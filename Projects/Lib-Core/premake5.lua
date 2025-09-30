@@ -33,21 +33,21 @@ project "Lib-Core"
 
     files
     {
-        "%{wks.location}/Libraries/glad/include/**.h",
+        -- "%{wks.location}/Libraries/glad/include/**.h",
 
-		"%{wks.location}/Libraries/glfw/include/**.h",
+		-- "%{wks.location}/Libraries/glfw/include/**.h",
 
-        "%{wks.location}/Libraries/glm/include/**.hpp",
-		"%{wks.location}/Libraries/glm/include/**.inl",
+        -- "%{wks.location}/Libraries/glm/include/**.hpp",
+		-- "%{wks.location}/Libraries/glm/include/**.inl",
 
-        "%{wks.location}/Libraries/miniaudio/include/**.h",
-        "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
+        -- "%{wks.location}/Libraries/miniaudio/include/**.h",
+        -- "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
 
-        "%{wks.location}/Libraries/stb_image/include/**.h",
-		"%{wks.location}/Libraries/stb_image/include/**.cpp",
+        -- "%{wks.location}/Libraries/stb_image/include/**.h",
+		-- "%{wks.location}/Libraries/stb_image/include/**.cpp",
 
-        "%{wks.location}/Libraries/spdlog/include/**.h",
-		"%{wks.location}/Libraries/spdlog/include/**.cpp",
+        -- "%{wks.location}/Libraries/spdlog/include/**.h",
+		-- "%{wks.location}/Libraries/spdlog/include/**.cpp",
 
         "**.h",
         "**.hpp",

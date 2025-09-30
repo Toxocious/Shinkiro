@@ -17,8 +17,8 @@ namespace Shinkiro::Renderer
     class CORE_API ICamera
     {
     public:
-        ICamera();
-        virtual ~ICamera();
+        ICamera()          = default;
+        virtual ~ICamera() = default;
 
         // Setters
         virtual const glm::mat4 SetProjection( const glm::mat4 & projection ) = 0;

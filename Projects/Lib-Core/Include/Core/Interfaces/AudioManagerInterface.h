@@ -16,8 +16,8 @@ namespace Shinkiro::Audio
     class CORE_API IAudioManager
     {
     public:
-        IAudioManager();
-        virtual ~IAudioManager();
+        IAudioManager()          = default;
+        virtual ~IAudioManager() = default;
 
         virtual void PlaySoundAsync( std::vector<uint8_t> data, int durationMs = 1500, bool loop = false ) = 0;
         virtual void PlayOST( std::vector<uint8_t> data )                                                  = 0;

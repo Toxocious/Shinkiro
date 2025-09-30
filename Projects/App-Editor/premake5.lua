@@ -12,8 +12,8 @@ project "Editor"
 
     files
     {
-        "%{wks.location}/Libraries/miniaudio/include/**.h",
-        "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
+        -- "%{wks.location}/Libraries/miniaudio/include/**.h",
+        -- "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
 
         "**.h",
         "**.hpp",

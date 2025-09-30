@@ -46,6 +46,7 @@
             "command": "msbuild.exe",
             "args": [
                 "\"./Shinkiro.sln\"",
+                "-m",
                 "-p:Configuration=Debug",
                 "-p:Platform=x64",
             ],
@@ -63,6 +64,7 @@
             "command": "msbuild.exe",
             "args": [
                 "\"./Shinkiro.sln\"",
+                "-m",
                 "-p:Configuration=Release",
                 "-p:Platform=x64",
             ],
@@ -80,6 +82,7 @@
             "command": "msbuild.exe",
             "args": [
                 "\"./Shinkiro.sln\"",
+                "-m",
                 "-p:Configuration=Dist",
                 "-p:Platform=x64",
             ],

@@ -23,10 +23,10 @@ project "Lib-Audio"
 
     files
     {
-        "%{wks.location}/Libraries/miniaudio/include/**.h",
+        -- "%{wks.location}/Libraries/miniaudio/include/**.h",
         "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
 
-        "%{wks.location}/Libraries/spdlog/include/**.h",
+        -- "%{wks.location}/Libraries/spdlog/include/**.h",
 
         "%{wks.location}/Projects/Lib-Core/Include/Core/Util/Log.h",
         "%{wks.location}/Projects/Lib-Core/Include/Core/Interfaces/AudioManagerInterface.h",

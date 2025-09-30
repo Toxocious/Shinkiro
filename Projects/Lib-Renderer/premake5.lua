@@ -13,14 +13,18 @@ project "Lib-Renderer"
 
     files
     {
-        "%{wks.location}/Libraries/glad/include/**.h",
+        -- "%{wks.location}/Libraries/glad/include/**.h",
         -- "%{wks.location}/Libraries/glad/src/glad.c",
-        "%{wks.location}/Libraries/glfw/include/**.h",
-        "%{wks.location}/Libraries/glm/include/**.hpp",
-        "%{wks.location}/Libraries/glm/include/**.inl",
-        "%{wks.location}/Libraries/imgui/include/**.h",
+
+        -- "%{wks.location}/Libraries/glfw/include/**.h",
+
+        -- "%{wks.location}/Libraries/glm/include/**.hpp",
+        -- "%{wks.location}/Libraries/glm/include/**.inl",
+
+        -- "%{wks.location}/Libraries/imgui/include/**.h",
 		-- "%{wks.location}/Libraries/imgui/include/**.cpp",
-        "%{wks.location}/Libraries/stb_image/include/**.h",
+
+        -- "%{wks.location}/Libraries/stb_image/include/**.h",
         "%{wks.location}/Libraries/stb_image/include/**.cpp",
 
         "**.h",

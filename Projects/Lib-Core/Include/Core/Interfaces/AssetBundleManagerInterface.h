@@ -17,8 +17,8 @@ namespace Shinkiro::Asset
     class CORE_API IAssetBundleManager
     {
     public:
-        IAssetBundleManager();
-        virtual ~IAssetBundleManager();
+        IAssetBundleManager()          = default;
+        virtual ~IAssetBundleManager() = default;
 
         // Lifecycle / loading
         virtual void SetExtractionPath( const std::filesystem::path & path ) = 0;
