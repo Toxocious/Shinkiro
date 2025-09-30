@@ -12,6 +12,9 @@ project "AssetUnpacker"
 
     files
     {
+        "%{wks.location}/Projects/Lib-Asset/Include/**.h",
+        "%{wks.location}/Projects/Lib-Core/Include/**.h",
+
         "**.h",
         "**.hpp",
         "**.cpp"
@@ -19,7 +22,8 @@ project "AssetUnpacker"
 
     includedirs
     {
-        "../Lib-Asset/Include",
+        "%{wks.location}/Projects/Lib-Asset/Include",
+        "%{wks.location}/Projects/Lib-Core/Include",
 
         "./Include",
     }
@@ -27,11 +31,13 @@ project "AssetUnpacker"
     links
     {
         "Lib-Asset",
+        "Lib-Core",
     }
 
     dependson
     {
         "Lib-Asset",
+        "Lib-Core",
     }
 
     prebuildcommands {

@@ -5,6 +5,8 @@
 
 #    include <Asset/_Defs.h>
 
+#    include <Core/Interfaces/AssetBundleManagerInterface.h>
+
 #    include <filesystem>
 #    include <map>
 #    include <string>
@@ -33,7 +35,7 @@ namespace Shinkiro::Asset
         }
     };
 
-    class ASSET_API AssetBundleManager
+    class ASSET_API AssetBundleManager : public IAssetBundleManager
     {
     public:
         /**
@@ -47,32 +49,32 @@ namespace Shinkiro::Asset
          * @brief Set the extraction path for unpacked assets.
          * @param path The directory where assets will be extracted.
          */
-        void SetExtractionPath( const std::filesystem::path & path );
+        void SetExtractionPath( const std::filesystem::path & path ) override;
 
         /**
          * @brief Load the asset bundle header and asset entries from the bundle file.
          * @return True if the bundle was loaded successfully, false otherwise.
          */
-        bool LoadBundleInfo();
+        bool LoadBundleInfo() override;
 
         /**
          * @brief Load all assets from the asset bundle into memory.
          * @throws std::runtime_error if any asset is not found or the bundle cannot be opened.
          */
-        void LoadAssetsIntoMemory();
+        void LoadAssetsIntoMemory() override;
 
         /**
          * @brief Get a list of all asset names in the bundle.
          * @return A vector of asset names.
          */
-        std::vector<std::string> GetAssetList();
+        std::vector<std::string> GetAssetList() override;
 
         /**
          * @brief Get the data for a specific asset by name.
          * @param assetName The name of the asset to retrieve.
          * @return A reference to the vector containing the asset data in bytes.
          */
-        const std::vector<uint8_t> & GetAssetData( const std::string & assetName );
+        const std::vector<uint8_t> & GetAssetData( const std::string & assetName ) override;
 
         /**
          * @brief Extract a specific asset to memory.
@@ -80,7 +82,7 @@ namespace Shinkiro::Asset
          * @return A vector containing the asset data.
          * @throws std::runtime_error if the asset is not found or the bundle cannot be opened.
          */
-        std::vector<uint8_t> ExtractAssetToMemory( const std::string & assetName );
+        std::vector<uint8_t> ExtractAssetToMemory( const std::string & assetName ) override;
 
         /**
          * @brief Extract a specific asset to a file.
@@ -88,13 +90,13 @@ namespace Shinkiro::Asset
          * @return The path to the extracted file.
          * @throws std::runtime_error if the asset is not found or the output file cannot be created.
          */
-        std::filesystem::path ExtractAssetToFile( const std::string & assetName );
+        std::filesystem::path ExtractAssetToFile( const std::string & assetName ) override;
 
         /**
          * @brief Extract all assets in the bundle to files.
          * @return A map of asset names to their extracted file paths.
          */
-        std::map<std::string, std::filesystem::path> ExtractAllAssets();
+        std::map<std::string, std::filesystem::path> ExtractAllAssets() override;
 
         /**
          * @brief Create an asset bundle from a directory of files.
@@ -109,7 +111,7 @@ namespace Shinkiro::Asset
          * @brief Get the path to the asset bundle file.
          * @return The file path to the asset bundle.
          */
-        std::filesystem::path GetBundlePath() const
+        std::filesystem::path GetBundlePath() const override
         {
             return m_BundlePath;
         }
@@ -118,7 +120,7 @@ namespace Shinkiro::Asset
          * @brief Get the name of the asset bundle.
          * @return The name of the asset bundle.
          */
-        std::string GetBundleName() const
+        std::string GetBundleName() const override
         {
             return m_BundleName;
         }

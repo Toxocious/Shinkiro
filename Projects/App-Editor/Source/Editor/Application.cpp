@@ -14,9 +14,10 @@ Shinkiro::Application * App = nullptr;
 namespace Shinkiro
 {
     Application::Application()
-        : m_BundleManager( "assets.bundle" ), m_MapManager()
+        : m_MapManager()
     {
-        m_AudioManager = Shinkiro::Audio::CreateAudioManager();
+        m_AudioManager  = Shinkiro::Audio::CreateAudioManager();
+        m_BundleManager = Shinkiro::Asset::CreateAssetBundleManager( "assets.bundle" );
 
         Core::App = this;
     }
@@ -282,15 +283,10 @@ namespace Shinkiro
     /**
      * Manager Accessors
      */
-    Asset::AssetBundleManager & Application::GetBundleManager()
+    Asset::IAssetBundleManager & Application::GetBundleManager()
     {
-        return m_BundleManager;
+        return *m_BundleManager;
     }
-
-    // Audio::AudioManager & Application::GetAudioManager()
-    // {
-    //     return m_AudioManager;
-    // }
 
     Audio::IAudioManager & Application::GetAudioManager()
     {

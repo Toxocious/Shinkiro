@@ -6,14 +6,10 @@
 
 #    include <Core/Util/UpdateStatus.h>
 
+#    include <Core/Interfaces/AssetBundleManagerInterface.h>
 #    include <Core/Interfaces/AudioManagerInterface.h>
 
 #    include <string>
-
-namespace Shinkiro::Asset
-{
-    class AssetBundleManager;
-}
 
 namespace Shinkiro::Renderer
 {
@@ -60,7 +56,7 @@ namespace Shinkiro::Core
         /**
          * @brief Returns a ref to the Bundle Manager
          */
-        virtual Asset::AssetBundleManager & GetBundleManager() = 0;
+        virtual Asset::IAssetBundleManager & GetBundleManager() = 0;
 
         /**
          * @brief Returns a ref to the Audio Manager

@@ -9,9 +9,8 @@
 
 #    include <Core/Util/UpdateStatus.h>
 
-#    include <Asset/AssetBundleManager.h>
+#    include <Asset/AssetBundleManagerFactory.h>
 
-// #    include <Audio/AudioManager.h>
 #    include <Audio/AudioManagerFactory.h>
 
 #    include <Renderer/Map/MapManager.h>
@@ -81,7 +80,7 @@ namespace Shinkiro
          * @brief Get the application's Bundle Manager
          * @return A reference to the Bundle Manager
          */
-        Shinkiro::Asset::AssetBundleManager & GetBundleManager() override;
+        Shinkiro::Asset::IAssetBundleManager & GetBundleManager() override;
 
         /**
          * @brief Get the application's Audio Manager
@@ -126,11 +125,13 @@ namespace Shinkiro
         void SetRenderCallbacks();
 
     public:
-        Shinkiro::Renderer::MapManager                  m_MapManager;
-        Shinkiro::Asset::AssetBundleManager             m_BundleManager;
-        // Shinkiro::Audio::AudioManager       m_AudioManager;
+        Shinkiro::Renderer::MapManager m_MapManager;
+
+        std::unique_ptr<Shinkiro::Asset::IAssetBundleManager> m_BundleManager;
+
         std::unique_ptr<Shinkiro::Audio::IAudioManager> m_AudioManager;
-        Shinkiro::Renderer::Camera                      m_Camera;
+
+        Shinkiro::Renderer::Camera m_Camera;
 
     public:
         Shinkiro::Platform::InputHandler * m_InputHandler = nullptr;
