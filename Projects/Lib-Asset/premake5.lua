@@ -28,7 +28,6 @@ project "Lib-Asset"
     includedirs
     {
         "%{wks.location}/Libraries/stb_image/include",
-        "%{wks.location}/Libraries/spdlog/include",
 
 		"%{wks.location}/Libraries/zstd/include",
 
@@ -39,7 +38,6 @@ project "Lib-Asset"
 
     libdirs
     {
-		"%{wks.location}/Libraries/spdlog/lib",
         "%{wks.location}/Libraries/zstd/lib",
     }
 

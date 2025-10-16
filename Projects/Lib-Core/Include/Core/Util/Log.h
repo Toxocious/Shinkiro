@@ -7,6 +7,16 @@
 
 #    include <Core/Util/Macro.h>
 
+#    include <chrono>
+#    include <ctime>
+#    include <format>
+#    include <fstream>
+#    include <iomanip>
+#    include <iostream>
+#    include <mutex>
+#    include <sstream>
+#    include <string_view>
+
 #    if defined _WIN32
 #        ifndef NOMINMAX
 #            define NOMINMAX
@@ -31,52 +41,122 @@
 #        endif
 #    endif
 
-#    ifndef SHINKIRO_IMPL_SPDLOG
-#        define SHINKIRO_IMPL_SPDLOG
-#        pragma warning( push, 0 )
-#        ifdef SHINKIRO_DEBUG
-#            pragma comment( lib, "spdlogd" )
-#        else
-#            pragma comment( lib, "spdlog" )
-#        endif
-
-#        include <spdlog/spdlog.h>
-
-#        include <spdlog/fmt/ostr.h>
-
-#        include <spdlog/sinks/basic_file_sink.h>
-#        include <spdlog/sinks/stdout_color_sinks.h>
-#        pragma warning( pop )
-#    endif
-
 namespace Shinkiro::Logger
 {
-    class Log
+    enum class CORE_API LogSource
+    {
+        Core,
+        Application
+    };
+
+    enum class CORE_API LogLevel
+    {
+        Trace,
+        Debug,
+        Info,
+        Warn,
+        Error,
+        Critical
+    };
+
+    constexpr std::string_view ToString( LogLevel level ) noexcept
+    {
+        switch ( level )
+        {
+            case LogLevel::Trace:
+                return "TRACE";
+            case LogLevel::Debug:
+                return "DEBUG";
+            case LogLevel::Info:
+                return "INFO";
+            case LogLevel::Warn:
+                return "WARN";
+            case LogLevel::Error:
+                return "ERROR";
+            case LogLevel::Critical:
+                return "CRITICAL";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    class CORE_API Log
     {
     public:
-        CORE_API static void Initialize();
+        static void Initialize();
 
-        CORE_API static Ref<spdlog::logger> & GetCoreLogger();
-        CORE_API static Ref<spdlog::logger> & GetApplicationLogger();
+        template <typename... Args>
+        void WriteLog( LogSource source, LogLevel level, std::string_view fmt, Args &&... args )
+        {
+            const auto now  = std::chrono::system_clock::now();
+            const auto time = std::chrono::system_clock::to_time_t( now );
+            std::tm    tm {};
+
+#    if defined( _WIN32 )
+            localtime_s( &tm, &time );
+#    else
+            localtime_r( &time, &tm );
+#    endif
+
+            std::ostringstream oss;
+            oss << std::put_time( &tm, "%H:%M:%S" );
+
+            std::string formatted;
+            if constexpr ( sizeof...( Args ) == 0 )
+            {
+                formatted = std::string( fmt );
+            }
+            else
+            {
+                formatted = std::vformat( fmt, std::make_format_args( args... ) );
+            }
+
+            std::lock_guard lock( m_Mutex );
+            std::cout << "[" << oss.str() << "] "
+                      << "[" << ( source == LogSource::Core ? "SHINKIRO" : "APPLICATION" ) << "] "
+                      << "[" << ToString( level ) << "] "
+                      << formatted << "\n";
+
+#    ifdef _DEBUG
+            if ( s_LogFile )
+            {
+                s_LogFile << "[" << oss.str() << "] "
+                          << "[" << ( source == LogSource::Core ? "SHINKIRO" : "APPLICATION" ) << "] "
+                          << "[" << ToString( level ) << "] "
+                          << formatted << "\n";
+                s_LogFile.flush();
+            }
+#    endif
+        }
+
+    public:
+        static Ref<Log> & GetCoreLogger();
+        static Ref<Log> & GetAppLogger();
 
     private:
-        static Ref<spdlog::logger> s_CoreLogger;
-        static Ref<spdlog::logger> s_ApplicationLogger;
+        std::mutex m_Mutex;
+
+        static Ref<Log> s_CoreLogger;
+        static Ref<Log> s_AppLogger;
+
+#    ifdef _DEBUG
+        static inline std::ofstream s_LogFile;
+#    endif
     };
 }
 
-// DLL log macros
-#    define SHNK_CORE_TRACE( ... )    ::Shinkiro::Logger::Log::GetCoreLogger()->trace( __VA_ARGS__ )
-#    define SHNK_CORE_INFO( ... )     ::Shinkiro::Logger::Log::GetCoreLogger()->info( __VA_ARGS__ )
-#    define SHNK_CORE_WARN( ... )     ::Shinkiro::Logger::Log::GetCoreLogger()->warn( __VA_ARGS__ )
-#    define SHNK_CORE_ERROR( ... )    ::Shinkiro::Logger::Log::GetCoreLogger()->error( __VA_ARGS__ )
-#    define SHNK_CORE_CRITICAL( ... ) ::Shinkiro::Logger::Log::GetCoreLogger()->critical( __VA_ARGS__ )
+#    define SHNK_CORE_TRACE( fmt, ... )    ::Shinkiro::Logger::Log::GetCoreLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Core, ::Shinkiro::Logger::LogLevel::Trace, fmt, __VA_ARGS__ )
+#    define SHNK_CORE_DEBUG( fmt, ... )    ::Shinkiro::Logger::Log::GetCoreLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Core, ::Shinkiro::Logger::LogLevel::Debug, fmt, __VA_ARGS__ )
+#    define SHNK_CORE_INFO( fmt, ... )     ::Shinkiro::Logger::Log::GetCoreLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Core, ::Shinkiro::Logger::LogLevel::Info, fmt, __VA_ARGS__ )
+#    define SHNK_CORE_WARN( fmt, ... )     ::Shinkiro::Logger::Log::GetCoreLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Core, ::Shinkiro::Logger::LogLevel::Warn, fmt, __VA_ARGS__ )
+#    define SHNK_CORE_ERROR( fmt, ... )    ::Shinkiro::Logger::Log::GetCoreLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Core, ::Shinkiro::Logger::LogLevel::Error, fmt, __VA_ARGS__ )
+#    define SHNK_CORE_CRITICAL( fmt, ... ) ::Shinkiro::Logger::Log::GetCoreLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Core, ::Shinkiro::Logger::LogLevel::Critical, fmt, __VA_ARGS__ )
 
-// Application log macros
-#    define SHNK_TRACE( ... )    ::Shinkiro::Logger::Log::GetApplicationLogger()->trace( __VA_ARGS__ )
-#    define SHNK_INFO( ... )     ::Shinkiro::Logger::Log::GetApplicationLogger()->info( __VA_ARGS__ )
-#    define SHNK_WARN( ... )     ::Shinkiro::Logger::Log::GetApplicationLogger()->warn( __VA_ARGS__ )
-#    define SHNK_ERROR( ... )    ::Shinkiro::Logger::Log::GetApplicationLogger()->error( __VA_ARGS__ )
-#    define SHNK_CRITICAL( ... ) ::Shinkiro::Logger::Log::GetApplicationLogger()->critical( __VA_ARGS__ )
+#    define SHNK_TRACE( fmt, ... )    ::Shinkiro::Logger::Log::GetAppLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Application, ::Shinkiro::Logger::LogLevel::Trace, fmt, __VA_ARGS__ )
+#    define SHNK_DEBUG( fmt, ... )    ::Shinkiro::Logger::Log::GetAppLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Application, ::Shinkiro::Logger::LogLevel::Debug, fmt, __VA_ARGS__ )
+#    define SHNK_INFO( fmt, ... )     ::Shinkiro::Logger::Log::GetAppLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Application, ::Shinkiro::Logger::LogLevel::Info, fmt, __VA_ARGS__ )
+#    define SHNK_WARN( fmt, ... )     ::Shinkiro::Logger::Log::GetAppLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Application, ::Shinkiro::Logger::LogLevel::Warn, fmt, __VA_ARGS__ )
+#    define SHNK_ERROR( fmt, ... )    ::Shinkiro::Logger::Log::GetAppLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Application, ::Shinkiro::Logger::LogLevel::Error, fmt, __VA_ARGS__ )
+#    define SHNK_CRITICAL( fmt, ... ) ::Shinkiro::Logger::Log::GetAppLogger().get()->WriteLog( ::Shinkiro::Logger::LogSource::Application, ::Shinkiro::Logger::LogLevel::Critical, fmt, __VA_ARGS__ )
 
 #endif

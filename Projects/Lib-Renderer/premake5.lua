@@ -40,7 +40,6 @@ project "Lib-Renderer"
         "%{wks.location}/Libraries/glm/include",
         "%{wks.location}/Libraries/imgui/include",
         "%{wks.location}/Libraries/stb_image/include",
-        "%{wks.location}/Libraries/spdlog/include",
 
         "%{wks.location}/Projects/Lib-Asset/Include",
         "%{wks.location}/Projects/Lib-Audio/Include",
@@ -56,7 +55,6 @@ project "Lib-Renderer"
         "%{wks.location}/Libraries/glad/lib",
         "%{wks.location}/Libraries/glfw/lib",
         "%{wks.location}/Libraries/glm/lib",
-        "%{wks.location}/Libraries/spdlog/lib",
     }
 
     links

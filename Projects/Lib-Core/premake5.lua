@@ -26,8 +26,6 @@ project "Lib-Core"
 
         "%{wks.location}/Libraries/stb_image/include",
 
-        "%{wks.location}/Libraries/spdlog/include",
-
         "./Include",
     }
 
@@ -46,9 +44,6 @@ project "Lib-Core"
         -- "%{wks.location}/Libraries/stb_image/include/**.h",
 		-- "%{wks.location}/Libraries/stb_image/include/**.cpp",
 
-        -- "%{wks.location}/Libraries/spdlog/include/**.h",
-		-- "%{wks.location}/Libraries/spdlog/include/**.cpp",
-
         "**.h",
         "**.hpp",
         "**.cpp"
@@ -59,7 +54,6 @@ project "Lib-Core"
         "%{wks.location}/Libraries/glad/lib",
 		"%{wks.location}/Libraries/glfw/lib",
 		"%{wks.location}/Libraries/glm/lib",
-        "%{wks.location}/Libraries/spdlog/lib"
     }
 
     filter { "files:**/Libraries/glad/**.c" }
@@ -72,8 +66,6 @@ project "Lib-Core"
         flags { "NoPCH" }
     filter { "files:**/Libraries/stb_image/**.cpp" }
         flags { "NoPCH" }
-    filter { "files:**/Libraries/spdlog/**.cpp" }
-        flags { "NoPCH" }
 
     filter {}
 
@@ -82,7 +74,6 @@ project "Lib-Core"
 			"glad_debug",
 			"glm_debug",
 			"glfw3",
-			"spdlogd",
 		}
 
 	filter { "configurations:Dist" }
@@ -90,7 +81,6 @@ project "Lib-Core"
 			"glad_dist",
 			"glm_dist",
 			"glfw3",
-			"spdlog",
 		}
 
 	filter { "configurations:Release" }
@@ -98,7 +88,6 @@ project "Lib-Core"
 			"glad_release",
 			"glm_release",
 			"glfw3",
-			"spdlog",
 		}
 
     filter "system:windows"

@@ -30,7 +30,6 @@ function linkDependencies()
         "%{wks.location}/Libraries/glfw/include",
         "%{wks.location}/Libraries/glm/include",
         "%{wks.location}/Libraries/imgui/include",
-        "%{wks.location}/Libraries/spdlog/include",
         "%{wks.location}/Libraries/stb_image/include",
         "%{wks.location}/Libraries/zstd/include",
     }
@@ -41,7 +40,6 @@ function linkDependencies()
         "%{wks.location}/Libraries/glfw/lib",
         "%{wks.location}/Libraries/glm/lib",
         "%{wks.location}/Libraries/imgui/lib",
-        "%{wks.location}/Libraries/spdlog/lib",
         "%{wks.location}/Libraries/zstd/lib",
     }
 
@@ -54,7 +52,6 @@ function linkDependencies()
             "glm_debug",
             "glfw3",
             "imgui_debug",
-            "spdlogd",
             "zstd_static_debug",
         }
 
@@ -66,7 +63,6 @@ function linkDependencies()
             "glm_release",
             "glfw3",
             "imgui_release",
-            "spdlog",
             "zstd_static_release",
         }
 
@@ -78,7 +74,6 @@ function linkDependencies()
             "glm_dist",
             "glfw3",
             "imgui_dist",
-            "spdlog",
             "zstd_static_release",
         }
 
@@ -94,7 +89,6 @@ function includeDependencies()
 		"%{wks.location}/Libraries/glfw/include",
 		"%{wks.location}/Libraries/glm/include",
 		"%{wks.location}/Libraries/imgui/include",
-		"%{wks.location}/Libraries/spdlog/include",
 		"%{wks.location}/Libraries/stb_image/include",
 		"%{wks.location}/Libraries/zstd/include",
 	}
@@ -114,8 +108,6 @@ function includeDependencies()
 
 		"%{wks.location}/Libraries/imgui/include/**.h",
 		"%{wks.location}/Libraries/imgui/include/**.cpp",
-
-		"%{wks.location}/Libraries/spdlog/include/**.h",
 
 		"%{wks.location}/Libraries/stb_image/include/**.h",
 		"%{wks.location}/Libraries/stb_image/include/**.cpp",

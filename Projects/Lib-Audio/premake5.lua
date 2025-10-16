@@ -14,7 +14,6 @@ project "Lib-Audio"
     includedirs
     {
         "%{wks.location}/Libraries/miniaudio/include",
-        "%{wks.location}/Libraries/spdlog/include",
 
         "%{wks.location}/Projects/Lib-Core/Include",
 
@@ -26,7 +25,6 @@ project "Lib-Audio"
         -- "%{wks.location}/Libraries/miniaudio/include/**.h",
         "%{wks.location}/Libraries/miniaudio/src/miniaudio.c",
 
-        -- "%{wks.location}/Libraries/spdlog/include/**.h",
 
         "%{wks.location}/Projects/Lib-Core/Include/Core/Util/Log.h",
         "%{wks.location}/Projects/Lib-Core/Include/Core/Interfaces/AudioManagerInterface.h",
@@ -34,11 +32,6 @@ project "Lib-Audio"
         "**.h",
         "**.hpp",
         "**.cpp",
-    }
-
-    libdirs
-    {
-        "%{wks.location}/Libraries/spdlog/lib",
     }
 
     links

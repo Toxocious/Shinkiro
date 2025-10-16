@@ -4,38 +4,66 @@
 
 namespace Shinkiro::Logger
 {
-    Ref<spdlog::logger> Log::s_CoreLogger;
-    Ref<spdlog::logger> Log::s_ApplicationLogger;
+    Ref<Log> Log::s_CoreLogger;
+    Ref<Log> Log::s_AppLogger;
 
-    Ref<spdlog::logger> & Log::GetCoreLogger()
+    Ref<Log> & Log::GetCoreLogger()
     {
         return s_CoreLogger;
     }
 
-    Ref<spdlog::logger> & Log::GetApplicationLogger()
+    Ref<Log> & Log::GetAppLogger()
     {
-        return s_ApplicationLogger;
+        return s_AppLogger;
     }
 
     void Log::Initialize()
     {
-        std::vector<spdlog::sink_ptr> logSinks;
-        logSinks.emplace_back( std::make_shared<spdlog::sinks::stdout_color_sink_mt>() );
-        logSinks[0]->set_pattern( "%^[%T] %n: %v%$" );
+#ifdef _DEBUG
+        if ( !s_LogFile.is_open() )
+        {
+            // Create "Logs" directory if it doesn't exist
+            std::filesystem::create_directories( "Logs" );
 
-#ifdef SHINKIRO_DEBUG
-        logSinks.emplace_back( std::make_shared<spdlog::sinks::basic_file_sink_mt>( "Shinkiro.log", true ) );
-        logSinks[1]->set_pattern( "[%T] [%l] %n: %v" );
+            // Get local time safely
+            auto        now         = std::chrono::system_clock::now();
+            std::time_t currentTime = std::chrono::system_clock::to_time_t( now );
+            std::tm     localTime {};
+
+#    ifdef _WIN32
+            localtime_s( &localTime, &currentTime );
+#    else
+            localtime_r( &currentTime, &localTime );
+#    endif
+
+            // Build timestamp string
+            std::ostringstream oss;
+            oss << std::put_time( &localTime, "%Y-%m-%d_%H-%M-%S" );
+            std::string timestamp = oss.str();
+
+            // Construct log file path
+            std::string logPath = "Logs/Shinkiro_" + timestamp + ".log";
+
+            // Open log file
+            s_LogFile.open( logPath, std::ios::out | std::ios::app );
+            if ( s_LogFile )
+            {
+                s_LogFile << "__| |______________________________________| |__\n";
+                s_LogFile << " __   ______________________________________   __\n";
+                s_LogFile << "   | | ____  _     _       _    _           | |\n";
+                s_LogFile << "   | |/ ___|| |__ (_)_ __ | | _(_)_ __ ___  | |\n";
+                s_LogFile << "   | |\___ \\| '_ \\| | '_ \\ | |/ / | '__/ _ \\ | |\n";
+                s_LogFile << "   | | ___) | | | | | | | |   <| | | | (_) || |\n";
+                s_LogFile << "   | ||____/|_| |_|_|_| |_|_|\\ _\\ _|_|\\ ___/ | |\n";
+                s_LogFile << " __| |______________________________________| |__\n";
+                s_LogFile << " __   ______________________________________   __\n";
+                s_LogFile << "   | |        " << timestamp << "         | |\n\n";
+                s_LogFile.flush();
+            }
+        }
 #endif
 
-        s_CoreLogger = std::make_shared<spdlog::logger>( "SHINKIRO", begin( logSinks ), end( logSinks ) );
-        spdlog::register_logger( s_CoreLogger );
-        s_CoreLogger->set_level( spdlog::level::trace );
-        s_CoreLogger->flush_on( spdlog::level::trace );
-
-        s_ApplicationLogger = std::make_shared<spdlog::logger>( "APPLICATION", begin( logSinks ), end( logSinks ) );
-        spdlog::register_logger( s_ApplicationLogger );
-        s_ApplicationLogger->set_level( spdlog::level::trace );
-        s_ApplicationLogger->flush_on( spdlog::level::trace );
+        s_CoreLogger = CreateRef<Log>();
+        s_AppLogger  = CreateRef<Log>();
     }
 }

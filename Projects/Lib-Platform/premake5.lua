@@ -47,7 +47,6 @@ project "Lib-Platform"
         "%{wks.location}/Libraries/imgui/include",
         "%{wks.location}/Libraries/miniaudio/include",
         "%{wks.location}/Libraries/stb_image/include",
-        "%{wks.location}/Libraries/spdlog/include",
 
         "%{wks.location}/Projects/Lib-Asset/Include",
         "%{wks.location}/Projects/Lib-Audio/Include",
@@ -62,7 +61,6 @@ project "Lib-Platform"
 		"%{wks.location}/Libraries/glfw/lib",
 		"%{wks.location}/Libraries/glm/lib",
 		"%{wks.location}/Libraries/imgui/lib",
-		"%{wks.location}/Libraries/spdlog/lib",
     }
 
     links

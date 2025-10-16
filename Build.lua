@@ -64,9 +64,9 @@ workspace "Shinkiro"
             "SHINKIRO_DEBUG",
             "SHINKIRO_ENABLE_ASSERTS",
             "SHINKIRO_PLATFORM_WINDOWS",
+
             "ASSIMP_BUILD_NO_EXPORT",
             "ASSIMP_STATIC",
-            "DSPDLOG_COMPILED_LIB",
 
             "_CRT_SECURE_NO_WARNINGS",
             "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
@@ -83,9 +83,9 @@ workspace "Shinkiro"
             "SHINKIRO_RELEASE",
             "SHINKIRO_ENABLE_ASSERTS",
             "SHINKIRO_PLATFORM_WINDOWS",
+
             "ASSIMP_BUILD_NO_EXPORT",
             "ASSIMP_STATIC",
-            "SPDLOG_COMPILED_LIB",
 
             "_CRT_SECURE_NO_WARNINGS",
             "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
@@ -102,9 +102,9 @@ workspace "Shinkiro"
             "SHINKIRO_DIST",
             "SHINKIRO_ENABLE_ASSERTS",
             "SHINKIRO_PLATFORM_WINDOWS",
+
             "ASSIMP_BUILD_NO_EXPORT",
             "ASSIMP_STATIC",
-            "SPDLOG_COMPILED_LIB",
 
             "_CRT_SECURE_NO_WARNINGS",
             "_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING",
