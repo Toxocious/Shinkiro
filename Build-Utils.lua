@@ -30,6 +30,7 @@ function linkDependencies()
         "%{wks.location}/Libraries/glfw/include",
         "%{wks.location}/Libraries/glm/include",
         "%{wks.location}/Libraries/imgui/include",
+        "%{wks.location}/Libraries/lucide/include",
         "%{wks.location}/Libraries/stb_image/include",
         "%{wks.location}/Libraries/zstd/include",
     }
@@ -89,6 +90,7 @@ function includeDependencies()
 		"%{wks.location}/Libraries/glfw/include",
 		"%{wks.location}/Libraries/glm/include",
 		"%{wks.location}/Libraries/imgui/include",
+		"%{wks.location}/Libraries/lucide/include",
 		"%{wks.location}/Libraries/stb_image/include",
 		"%{wks.location}/Libraries/zstd/include",
 	}
@@ -108,6 +110,8 @@ function includeDependencies()
 
 		"%{wks.location}/Libraries/imgui/include/**.h",
 		"%{wks.location}/Libraries/imgui/include/**.cpp",
+
+        "%{wks.location}/Libraries/lucide/include/lucide/IconsLucide.h",
 
 		"%{wks.location}/Libraries/stb_image/include/**.h",
 		"%{wks.location}/Libraries/stb_image/include/**.cpp",

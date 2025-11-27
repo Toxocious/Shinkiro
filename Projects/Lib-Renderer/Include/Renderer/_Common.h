@@ -15,7 +15,7 @@
 #        define SHINKIRO_IMPL_GLFW
 #        include <glfw/glfw3.h>
 
-#        include <gl/GL.h>
+#        include <GL/gl.h>
 #    endif
 
 #    include <glm/glm.hpp>
