@@ -80,12 +80,6 @@ namespace Shinkiro::Platform
         SetWindowIcon();
         LoadLogo();
 
-        // if ( !InitializeImGui() )
-        // {
-        //     SHNK_CORE_ERROR( "Failed to initialize ImGui Layer" );
-        //     return false;
-        // }
-
         return true;
     }
 
@@ -179,8 +173,6 @@ namespace Shinkiro::Platform
 
         if ( !LucideFont.empty() )
         {
-            // ImGui takes ownership of the font data and will free() it.
-            // We must allocate a copy using malloc because the vector will free its own memory.
             int    fontDataSize = static_cast<int>( LucideFont.size() );
             void * fontDataCopy = malloc( fontDataSize );
 
@@ -208,13 +200,11 @@ namespace Shinkiro::Platform
 
     bool Window::ShutdownImGui()
     {
-        // Shutdown GUI Layer first (release textures, etc.)
         if ( m_GuiLayer )
         {
             m_GuiLayer->Shutdown();
         }
 
-        // Shutdown Backends
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();

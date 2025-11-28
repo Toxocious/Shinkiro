@@ -5,6 +5,8 @@
 
 #include <Platform/Modules/Window.h>
 
+#include <Renderer/Map/MapManager.h>
+
 #include <Editor/UI/EditorUI.h>
 
 #include <imgui.h>
@@ -340,25 +342,46 @@ namespace Shinkiro::Editor
 
         if ( ImGui::Begin( "CustomMainMenuBar", nullptr, window_flags ) )
         {
-            EditorGui::RenderButtonDropdown( "File", []()
+            EditorGui::RenderButtonDropdown( "Map", []()
                                              {
-                                                 if ( ImGui::MenuItem( "Save" ) )
+                                                 if ( ImGui::MenuItem( "New Map" ) )
                                                  {
                                                      // Handle save
                                                  }
 
-                                                 if ( ImGui::MenuItem( "Load" ) )
+                                                 ImGui::Spacing();
+                                                 ImGui::Separator();
+                                                 ImGui::Spacing();
+
+                                                 if ( ImGui::MenuItem( "Save Map (Local)" ) )
+                                                 {
+                                                     // Handle load
+                                                 }
+                                                 if ( ImGui::MenuItem( "Load Map (Local)" ) )
                                                  {
                                                      // Handle load
                                                  }
 
+                                                 ImGui::Spacing();
                                                  ImGui::Separator();
+                                                 ImGui::Spacing();
 
-                                                 static bool enabled = false;
-                                                 if ( ImGui::Checkbox( "Enable Feature", &enabled ) )
+                                                 if ( ImGui::MenuItem( "Save Map (Server)" ) )
                                                  {
-                                                     // Handle toggle
+                                                     // Handle load
                                                  }
+                                                 if ( ImGui::MenuItem( "Load Map (Server)" ) )
+                                                 {
+                                                     // Handle load
+                                                 }
+
+                                                 //  ImGui::Separator();
+
+                                                 //  static bool enabled = false;
+                                                 //  if ( ImGui::Checkbox( "Enable Feature", &enabled ) )
+                                                 //  {
+                                                 //      // Handle toggle
+                                                 //  }
                                              } );
 
             ImGui::SameLine();
@@ -378,12 +401,37 @@ namespace Shinkiro::Editor
 
             ImGui::SameLine();
 
-            EditorGui::RenderButtonDropdown( "View", []()
+            EditorGui::RenderButtonDropdown( "Camera", []()
                                              {
-                                                 static bool enabled = false;
-                                                 if ( ImGui::Checkbox( "Show UI", &enabled ) )
+                                                 if ( ImGui::MenuItem( "Default View" ) )
                                                  {
-                                                     // Handle toggle
+                                                     auto   ActiveMapData = Shinkiro::Core::App->GetMapManager().GetActiveMap();
+                                                     auto & ActiveCamera  = Shinkiro::Core::App->GetCamera();
+
+                                                     float     targetX = ActiveMapData->width / 2.0f;
+                                                     float     targetZ = ActiveMapData->height / 2.0f;
+                                                     glm::vec3 targetPosition( targetX, 0.0f, targetZ );
+                                                     glm::vec3 cameraPosition( targetX, 30.0f, targetZ + 30.0f );
+                                                     glm::vec3 direction = glm::normalize( targetPosition - cameraPosition );
+
+                                                     ActiveCamera.SetPosition( cameraPosition );
+                                                     ActiveCamera.SetPitch( glm::degrees( asin( direction.y ) ) );
+                                                     ActiveCamera.SetYaw( glm::degrees( atan2( direction.z, direction.x ) ) );
+                                                     ActiveCamera.updateCameraVectors();
+                                                 }
+
+                                                 if ( ImGui::MenuItem( "Top-Down View" ) )
+                                                 {
+                                                     auto   ActiveMapData = Shinkiro::Core::App->GetMapManager().GetActiveMap();
+                                                     auto & ActiveCamera  = Shinkiro::Core::App->GetCamera();
+
+                                                     float targetX = ActiveMapData->width / 2.0f;
+                                                     float targetZ = ActiveMapData->height / 2.0f;
+
+                                                     ActiveCamera.SetPosition( glm::vec3( targetX, 40.0f, targetZ ) );
+                                                     ActiveCamera.SetPitch( -89.9f );
+                                                     ActiveCamera.SetYaw( -90.0f );
+                                                     ActiveCamera.updateCameraVectors();
                                                  }
                                              } );
 
