@@ -23,6 +23,8 @@ project "Editor"
     includedirs
     {
         "%{wks.location}/Libraries/miniaudio/include",
+        "%{wks.location}/Libraries/lucide/include",
+
         "%{wks.location}/Projects/Lib-Asset/Include",
         "%{wks.location}/Projects/Lib-Audio/Include",
         "%{wks.location}/Projects/Lib-Core/Include",

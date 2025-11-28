@@ -9,6 +9,8 @@
 
 #    include <Core/Util/UpdateStatus.h>
 
+#    include <Core/Interfaces/GuiLayerInterface.h>
+
 #    include <glad/glad.h>
 
 #    include <glm/glm.hpp>
@@ -64,10 +66,15 @@ namespace Shinkiro::Platform
         static void SetMouseButtonCallbacks( GLFWwindow * window, int button, int action, int mods );
         static void SetKeyCallbacks( GLFWwindow * window, int key, int scancode, int action, int mods );
 
-        // Getters
+        // Getters and Setters
         GLFWwindow * GetGLFWWindow()
         {
             return m_Window.get();
+        }
+
+        void SetGuiLayer( Shinkiro::Core::IGuiLayer * guiLayer )
+        {
+            m_GuiLayer = guiLayer;
         }
 
         inline const int GetHeight() const
@@ -137,6 +144,8 @@ namespace Shinkiro::Platform
 
     private:
         std::unique_ptr<GLFWwindow, decltype( &glfwDestroyWindow )> m_Window;
+
+        Shinkiro::Core::IGuiLayer * m_GuiLayer = nullptr;
 
         std::function<void()>        m_RenderCallback;
         std::function<void( float )> m_InputCallback;

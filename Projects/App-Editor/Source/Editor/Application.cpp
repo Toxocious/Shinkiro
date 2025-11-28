@@ -1,4 +1,5 @@
 #include <Editor/Application.h>
+#include <Editor/UI/EditorUI.h>
 
 #include <Platform/InputHandler.h>
 
@@ -29,51 +30,54 @@ namespace Shinkiro
 
     bool Application::Initialize( const std::string & name, const std::string & version, int height, int width )
     {
-        // Create instances of required modules.
-        m_Window = new Shinkiro::Platform::Window();
-
-        // Assign order of execution to modules.
-        m_Modules.push_back( m_Window );
-
-        // Initialize all of our modules.
-        for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
-        {
-            bool moduleInitialized = false;
-
-            auto p_Module = ( *module );
-            SHNK_CORE_TRACE( "Initializing module '{0}'", p_Module->m_Name.c_str() );
-
-            if ( p_Module->m_Name == "Window" )
-            {
-                std::string windowTitle = name;
-
 #if defined( SHINKIRO_DEBUG )
-                std::string buildType = "[DEBUG]";
+        std::string buildType = "[DEBUG]";
 #elif defined( SHINKIRO_RELEASE )
-                std::string buildType = " [BETA]";
+        std::string buildType = " [BETA]";
 #elif defined( SHINKIRO_DIST )
-                std::string buildType = " [STABLE]";
+        std::string buildType = " [STABLE]";
 #else
-                std::string buildType = " [UNKNOWN]";
+        std::string buildType = " [UNKNOWN]";
 #endif
 
-                moduleInitialized = p_Module->Initialize( windowTitle.c_str(), version, buildType, height, width );
-            }
-            else
-            {
-                moduleInitialized = p_Module->Initialize();
-            }
+        // Create instances of required modules.
+        m_Window = new Shinkiro::Platform::Window();
+        m_Window->Initialize( name, version, buildType, height, width );
+        m_Window->SetGuiLayer( new Shinkiro::Editor::EditorGui() );
+        m_Window->InitializeImGui();
 
-            if ( !moduleInitialized )
-            {
-                SHNK_CORE_ERROR( "Failed to initialize module: {}", p_Module->m_Name );
-                return false;
-            }
-            else
-            {
-                SHNK_CORE_INFO( "Module '{0}' initialized successfully", p_Module->m_Name.c_str() );
-            }
-        }
+        // // Assign order of execution to modules.
+        // m_Modules.push_back( m_Window );
+
+        // // Initialize all of our modules.
+        // for ( auto module = m_Modules.begin(); module != m_Modules.end(); ++module )
+        // {
+        //     bool moduleInitialized = false;
+
+        //     auto p_Module = ( *module );
+        //     SHNK_CORE_TRACE( "Initializing module '{0}'", p_Module->m_Name.c_str() );
+
+        //     if ( p_Module->m_Name == "Window" )
+        //     {
+        //         std::string windowTitle = name;
+
+        //         moduleInitialized = p_Module->Initialize( windowTitle.c_str(), version, buildType, height, width );
+        //     }
+        //     else
+        //     {
+        //         moduleInitialized = p_Module->Initialize();
+        //     }
+
+        //     if ( !moduleInitialized )
+        //     {
+        //         SHNK_CORE_ERROR( "Failed to initialize module: {}", p_Module->m_Name );
+        //         return false;
+        //     }
+        //     else
+        //     {
+        //         SHNK_CORE_INFO( "Module '{0}' initialized successfully", p_Module->m_Name.c_str() );
+        //     }
+        // }
 
         m_MapManager.Initialize();
 
@@ -143,40 +147,34 @@ namespace Shinkiro
     {
         m_Window->SetRenderCallback( [this]()
                                      {
+                                         Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
+                                         Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+                                         // 1. Render Background (Map or Clear Color)
                                          switch ( Shinkiro::Core::App->m_AppState )
                                          {
                                              case Core::AppState::LOADING:
                                                  {
-                                                     m_Window->BeginImGuiFrame();
-
-                                                     Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
-                                                     Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-                                                     {
-                                                         m_Window->RenderImGui();
-                                                     }
-
-                                                     m_Window->EndImGuiFrame();
-                                                     m_Window->SwapBuffers();
-
-                                                     std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
-
-                                                     Shinkiro::Core::App->m_AppState = Core::AppState::RUNNING;
-
                                                      break;
                                                  }
 
                                              case Core::AppState::RUNNING:
                                                  {
                                                      auto & camera = GetCamera();
-
-                                                     Shinkiro::Platform::OpenGL::glClearColor( 0.169f, 0.169f, 0.169f, 1.0f );
-                                                     Shinkiro::Platform::OpenGL::glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
                                                      m_MapManager.Render( camera, m_Window->GetWidth(), m_Window->GetHeight() );
-
                                                      break;
                                                  }
+                                         }
+
+                                         // 2. Render UI (ImGui)
+                                         m_Window->BeginImGuiFrame();
+                                         m_Window->RenderImGui();
+                                         m_Window->EndImGuiFrame();
+
+                                         // 4. Logic: Handle State Transition (after presenting)
+                                         if ( Shinkiro::Core::App->m_AppState == Core::AppState::LOADING )
+                                         {
+                                             Shinkiro::Core::App->m_AppState = Core::AppState::RUNNING;
                                          }
                                      } );
     }
@@ -231,6 +229,16 @@ namespace Shinkiro
     Shinkiro::Core::UpdateStatus Application::Update()
     {
         Shinkiro::Core::UpdateStatus status = Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE;
+
+        m_Window->PreUpdate();
+        status = m_Window->Update();
+
+        if ( status != Shinkiro::Core::UpdateStatus::UPDATE_CONTINUE )
+        {
+            return status;
+        }
+
+        m_Window->PostUpdate();
 
         // Pre-Update
         {

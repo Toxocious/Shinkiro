@@ -64,8 +64,7 @@ int main()
                     break;
 
                 case Shinkiro::ApplicationState::UPDATE:
-
-                    App->Update();
+                    // App->Update();
                     switch ( App->Update() )
                     {
                         case Shinkiro::Core::UpdateStatus::UPDATE_STOP:

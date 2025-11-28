@@ -6,6 +6,7 @@
 #    include <Core/_Defs.h>
 
 #    include <Core/IApplication.h>
+#    include <Core/Interfaces/GuiLayerInterface.h>
 
 #    include <Core/Util/UpdateStatus.h>
 
@@ -136,6 +137,7 @@ namespace Shinkiro
     public:
         Shinkiro::Platform::InputHandler * m_InputHandler = nullptr;
         Shinkiro::Platform::Window *       m_Window       = nullptr;
+        Shinkiro::Core::IGuiLayer *        m_GuiLayer     = nullptr;
 
     private:
         std::vector<Shinkiro::Platform::Module *> m_Modules;
@@ -145,8 +147,6 @@ namespace Shinkiro
         std::string m_Version;
         int         m_Height;
         int         m_Width;
-
-        Core::AppState m_AppState = Core::AppState::LOADING;
     };
 }
 

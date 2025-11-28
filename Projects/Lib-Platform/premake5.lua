@@ -45,6 +45,7 @@ project "Lib-Platform"
         "%{wks.location}/Libraries/glfw/include",
 		"%{wks.location}/Libraries/glm/include",
         "%{wks.location}/Libraries/imgui/include",
+        "%{wks.location}/Libraries/lucide/include",
         "%{wks.location}/Libraries/miniaudio/include",
         "%{wks.location}/Libraries/stb_image/include",
 

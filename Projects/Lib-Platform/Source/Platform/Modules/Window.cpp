@@ -7,6 +7,9 @@
 #include <Core/IApplication.h>
 
 #include <Asset/AssetBundleManager.h>
+#include <Asset/_FilePath.h>
+
+#include <lucide/IconsLucide.h>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -77,15 +80,29 @@ namespace Shinkiro::Platform
         SetWindowIcon();
         LoadLogo();
 
-        InitializeImGui();
+        // if ( !InitializeImGui() )
+        // {
+        //     SHNK_CORE_ERROR( "Failed to initialize ImGui Layer" );
+        //     return false;
+        // }
 
         return true;
     }
 
     bool Window::CleanUp()
     {
-        glfwDestroyWindow( GetGLFWWindow() );
-        glfwTerminate();
+        if ( m_GuiLayer )
+        {
+            m_GuiLayer->Shutdown();
+            delete m_GuiLayer;
+            m_GuiLayer = nullptr;
+        }
+
+        if ( m_Window )
+        {
+            m_Window.reset();
+            glfwTerminate();
+        }
 
         return true;
     }
@@ -145,58 +162,59 @@ namespace Shinkiro::Platform
         }
     }
 
-    void Window::RenderImGui()
-    {
-        {
-            ImGui::SetNextWindowPos( ImVec2( 0, 0 ) );
-            ImGui::SetNextWindowSize( ImGui::GetIO().DisplaySize );
-            ImGui::Begin( "LoadingScreen", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoBackground );
-
-            float windowWidth  = ImGui::GetWindowSize().x;
-            float windowHeight = ImGui::GetWindowSize().y;
-
-            // Calculate total height of all elements for vertical centering
-            float titleTextHeight    = ImGui::CalcTextSize( m_Title.c_str() ).y;
-            float loadingTextHeight  = ImGui::CalcTextSize( "Loading..." ).y;
-            float totalContentHeight = m_LogoHeight + titleTextHeight + loadingTextHeight + ImGui::GetStyle().ItemSpacing.y * 2;
-
-            ImGui::SetCursorPosY( ( windowHeight - totalContentHeight ) * 0.5f );
-
-            if ( m_LogoTextureID != 0 )
-            {
-                ImGui::SetCursorPosX( ( windowWidth - m_LogoWidth ) * 0.5f );
-                ImGui::Image( ( intptr_t ) m_LogoTextureID, ImVec2( ( float ) m_LogoWidth, ( float ) m_LogoHeight ) );
-            }
-
-            float loadingTextWidth = ImGui::CalcTextSize( "Loading..." ).x;
-            ImGui::SetCursorPosX( ( windowWidth - loadingTextWidth ) * 0.5f );
-            ImGui::Text( "Loading..." );
-
-            ImGui::End();
-        }
-    }
-
     bool Window::InitializeImGui()
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO & io    = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.Fonts->AddFontDefault();
+
+        ImFontConfig config;
+        config.MergeMode                   = true;
+        config.GlyphMinAdvanceX            = 13.0f; // monospaced font
+        static const ImWchar icon_ranges[] = { ICON_MIN_LC, ICON_MAX_LC, 0 };
+
+        const auto LucideFont = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Fonts/Lucide/lucide.ttf" );
+
+        if ( !LucideFont.empty() )
+        {
+            // ImGui takes ownership of the font data and will free() it.
+            // We must allocate a copy using malloc because the vector will free its own memory.
+            int    fontDataSize = static_cast<int>( LucideFont.size() );
+            void * fontDataCopy = malloc( fontDataSize );
+
+            if ( fontDataCopy )
+            {
+                memcpy( fontDataCopy, LucideFont.data(), fontDataSize );
+                io.Fonts->AddFontFromMemoryTTF( fontDataCopy, fontDataSize, 22.0f, &config, icon_ranges );
+            }
+        }
 
         ImGui::StyleColorsDark();
-
-        ImGuiStyle & style = ImGui::GetStyle();
 
         ImGui_ImplGlfw_InitForOpenGL( GetGLFWWindow(), true );
         ImGui_ImplOpenGL3_Init( "#version 330" );
 
-        SHNK_CORE_INFO( "Dear ImGui initialized successfully." );
+        SHNK_CORE_INFO( "Dear ImGui initialized successfully (Platform Backend)." );
+
+        if ( m_GuiLayer )
+        {
+            return m_GuiLayer->Initialize( ImGui::GetCurrentContext() );
+        }
 
         return true;
     }
 
     bool Window::ShutdownImGui()
     {
+        // Shutdown GUI Layer first (release textures, etc.)
+        if ( m_GuiLayer )
+        {
+            m_GuiLayer->Shutdown();
+        }
+
+        // Shutdown Backends
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -209,13 +227,35 @@ namespace Shinkiro::Platform
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        if ( m_GuiLayer )
+        {
+            m_GuiLayer->BeginFrame();
+        }
     }
 
     void Window::EndImGuiFrame()
     {
+        if ( m_GuiLayer )
+        {
+            m_GuiLayer->EndFrame();
+        }
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
     }
+
+    void Window::RenderImGui()
+    {
+        if ( m_GuiLayer )
+        {
+            m_GuiLayer->RenderPanels();
+        }
+    }
+
+    // ================================================================================
+    // ================================================================================
+    // ================================================================================
 
     void Window::SetTitle( const char * title )
     {
