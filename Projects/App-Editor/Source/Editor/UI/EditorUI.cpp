@@ -307,7 +307,9 @@ namespace Shinkiro::Editor
 
     void EditorGui::RenderMainMenuBarMapName()
     {
-        const char * mapName     = "Untitled Map";
+        auto ActiveMapData = Shinkiro::Core::App->GetMapManager().GetActiveMap();
+
+        const char * mapName     = ActiveMapData->name.c_str();
         float        windowWidth = ImGui::GetWindowSize().x;
         float        textWidth   = ImGui::CalcTextSize( mapName ).x;
 
@@ -512,8 +514,16 @@ namespace Shinkiro::Editor
 
     void EditorGui::RenderTilesetPanel()
     {
+        auto ActiveMapData = Shinkiro::Core::App->GetMapManager().GetActiveMap();
+        if ( ActiveMapData->tilesets.empty() )
+        {
+            return;
+        }
+
         ImGuiViewport * viewport = ImGui::GetMainViewport();
         float           padding  = 12.0f;
+
+        bool tileSelected = false;
 
         float tileSize       = 16.0f;
         float tilesPerRow    = 24.0f;
@@ -534,6 +544,62 @@ namespace Shinkiro::Editor
 
         if ( ImGui::Begin( "TilesetPanel", nullptr, window_flags ) )
         {
+            // for ( const auto & tileset : ActiveMapData->tilesets )
+            // {
+            //     std::string header_label = "Tileset: " + std::filesystem::path( tileset.imageSource ).filename().string();
+            //     ImVec2      image_size( ( float ) tileset.imageWidth, ( float ) tileset.imageHeight );
+
+            //     float max_window_width  = tileset.tileWidth * 24.0f;
+            //     float max_window_height = tileset.tileHeight * 24.0f;
+
+            //     ImVec2 window_size = ImVec2(
+            //         std::min( image_size.x, max_window_width ),
+            //         std::min( image_size.y, max_window_height )
+            //     );
+
+            //     ImGui::SetNextWindowSize( window_size );
+
+            //     ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, ImVec2( 0, 0 ) );
+            //     if ( ImGui::Begin( header_label.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse ) )
+            //     {
+            //         if ( tileset.textureID != 0 )
+            //         {
+            //             ImGui::Image( ( intptr_t ) tileset.textureID, image_size, ImVec2( 0.0f, 1.0f ), ImVec2( 1.0f, 0.0f ) );
+
+            //             ImVec2 image_pos = ImGui::GetItemRectMin();
+            //             if ( ImGui::IsItemHovered() && ImGui::IsMouseClicked( ImGuiMouseButton_Left ) )
+            //             {
+            //                 ImVec2 mouse_pos_relative = ImVec2( ImGui::GetMousePos().x - image_pos.x, ImGui::GetMousePos().y - image_pos.y );
+            //                 if ( tileset.tileWidth > 0 && tileset.tileHeight > 0 )
+            //                 {
+            //                     int tile_x = ( int ) ( mouse_pos_relative.x / tileset.tileWidth );
+            //                     int tile_y = ( int ) ( mouse_pos_relative.y / tileset.tileHeight );
+
+            //                     if ( tile_x < tileset.columns && tile_y < tileset.rows )
+            //                     {
+            //                         int local_id      = tile_y * tileset.columns + tile_x;
+            //                         s_selectedTileGid = tileset.firstGid + local_id;
+            //                         tileSelected      = true;
+            //                     }
+            //                 }
+            //             }
+
+            //             // Draw selection rectangle
+            //             if ( s_selectedTileGid >= tileset.firstGid && s_selectedTileGid < tileset.firstGid + ( tileset.columns * tileset.rows ) )
+            //             {
+            //                 int          local_id  = s_selectedTileGid - tileset.firstGid;
+            //                 int          tile_x    = local_id % tileset.columns;
+            //                 int          tile_y    = local_id / tileset.columns;
+            //                 ImDrawList * draw_list = ImGui::GetWindowDrawList();
+            //                 ImVec2       rect_min( image_pos.x + tile_x * tileset.tileWidth, image_pos.y + tile_y * tileset.tileHeight );
+            //                 ImVec2       rect_max( rect_min.x + tileset.tileWidth, rect_min.y + tileset.tileHeight );
+            //                 draw_list->AddRect( rect_min, rect_max, IM_COL32( 255, 255, 0, 255 ), 0.0f, 0, 2.0f );
+            //             }
+            //         }
+            //     }
+            //     ImGui::PopStyleVar();
+            //     ImGui::End();
+            // }
         }
 
         ImGui::PopStyleVar( 5 );

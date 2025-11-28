@@ -24,6 +24,8 @@ project "Lib-Renderer"
         -- "%{wks.location}/Libraries/imgui/include/**.h",
 		-- "%{wks.location}/Libraries/imgui/include/**.cpp",
 
+        "%{wks.location}/Libraries/nlohmann/include/**.hpp",
+
         -- "%{wks.location}/Libraries/stb_image/include/**.h",
         "%{wks.location}/Libraries/stb_image/include/**.cpp",
 
@@ -39,6 +41,7 @@ project "Lib-Renderer"
         "%{wks.location}/Libraries/glfw/include",
         "%{wks.location}/Libraries/glm/include",
         "%{wks.location}/Libraries/imgui/include",
+        "%{wks.location}/Libraries/nlohmann/include",
         "%{wks.location}/Libraries/stb_image/include",
 
         "%{wks.location}/Projects/Lib-Asset/Include",

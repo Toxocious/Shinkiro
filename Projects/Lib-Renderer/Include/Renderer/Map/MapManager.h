@@ -1,16 +1,17 @@
+#pragma once
 #ifndef SHINKIRO_RENDERER_MAP_MANAGER_H
-#define SHINKIRO_RENDERER_MAP_MANAGER_H
+#    define SHINKIRO_RENDERER_MAP_MANAGER_H
 
-#include <Renderer/_Defs.h>
+#    include <Renderer/_Defs.h>
 
-#include <Renderer/Camera/Camera.h>
+#    include <Renderer/Camera/Camera.h>
 
-#include <Renderer/Map/MapParser.h>
-#include <Renderer/Map/MapRenderer.h>
+#    include <Renderer/Map/MapRenderer.h>
+#    include <Renderer/Map/MapSerializer.h>
 
-#include <memory>
-#include <string>
-#include <unordered_map>
+#    include <memory>
+#    include <string>
+#    include <unordered_map>
 
 namespace Shinkiro::Renderer
 {
@@ -91,7 +92,7 @@ namespace Shinkiro::Renderer
 
     private:
         std::unique_ptr<Shinkiro::Renderer::MapRenderer> m_Renderer;
-        Shinkiro::Renderer::MapParser                    m_Parser;
+        Shinkiro::Renderer::MapSerializer                m_Parser;
 
         std::unordered_map<std::string, MapData> m_CachedMaps;
         Shinkiro::Renderer::MapData *            m_ActiveMap = nullptr;

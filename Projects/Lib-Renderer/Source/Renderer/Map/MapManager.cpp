@@ -44,18 +44,25 @@ namespace Shinkiro::Renderer
         }
 
         std::filesystem::path path( mapPath );
-        std::string           mapName = path.stem().string();
+        // std::string           mapName = path.stem().string();
 
         if ( m_CachedMaps.contains( mapPath ) )
         {
             SHNK_CORE_INFO( "Map '{}' is already cached.", mapPath );
+            SetActiveMap( mapPath );
             return true;
         }
 
         SHNK_CORE_INFO( "Parsing and caching new map: {}", mapPath );
 
-        MapData mapData = m_Parser.ParseFromMemory( MapAssetData.data(), MapAssetData.size(), mapPath.c_str() );
-        if ( mapData.name.empty() )
+        // Convert the raw byte vector to a string for the JSON parser
+        std::string jsonString( MapAssetData.begin(), MapAssetData.end() );
+
+        MapData                  mapData;
+        std::vector<SceneObject> objects;
+
+        // Use the correct ParseMap signature (returns bool, outputs to references)
+        if ( !m_Parser.ParseMap( jsonString, mapData, objects ) )
         {
             SHNK_CORE_ERROR( "Failed to parse map file: {}", mapPath );
             return false;
@@ -181,6 +188,6 @@ namespace Shinkiro::Renderer
             return false;
         }
 
-        return m_Parser.SaveMap( *m_ActiveMap );
+        // return m_Parser.SaveMap( *m_ActiveMap );
     }
 }

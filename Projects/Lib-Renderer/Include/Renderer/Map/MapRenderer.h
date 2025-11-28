@@ -1,17 +1,18 @@
+#pragma once
 #ifndef SHINKIRO_RENDERER_MAP_RENDERER_H
-#define SHINKIRO_RENDERER_MAP_RENDERER_H
+#    define SHINKIRO_RENDERER_MAP_RENDERER_H
 
-#include <Renderer/Camera/Camera.h>
-#include <Renderer/Map/MapParser.h>
-#include <Renderer/Util/Shader.h>
+#    include <Renderer/Camera/Camera.h>
+#    include <Renderer/Map/MapSerializer.h>
+#    include <Renderer/Util/Shader.h>
 
-#include <glm/glm.hpp>
+#    include <glm/glm.hpp>
 
-#include <iostream>
-#include <memory>
-#include <optional>
-#include <string>
-#include <vector>
+#    include <iostream>
+#    include <memory>
+#    include <optional>
+#    include <string>
+#    include <vector>
 
 namespace Shinkiro::Renderer
 {

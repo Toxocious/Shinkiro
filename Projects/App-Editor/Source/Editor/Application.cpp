@@ -191,7 +191,7 @@ namespace Shinkiro
             p_Module->Start();
         }
 
-        GetMapManager().LoadMap( "Maps/DecorTest.tmx" );
+        GetMapManager().LoadMap( "Maps/DecorTest.shnkmap" );
 
         {
             const auto AbsolCry = Shinkiro::Core::App->GetBundleManager().GetAssetData( "Audio/Cries/absol.wav" );
